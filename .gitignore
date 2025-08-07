@@ -1,24 +1,37 @@
-# Logs
-logs
+# Node
+node_modules/
+dist/
+.yarn/
+.pnp.*
+.yarnrc.yml
+
+# Build
+build/
+out/
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
+*.tmp
+*.temp
 
-node_modules
-dist
-dist-ssr
-*.local
+# Test artifacts
+coverage/
+.vitest/
+test-results/
+test-output/
+test-report/
+*.test.ts.snap
+*.test.tsx.snap
+*.test.js.snap
+*.test.jsx.snap
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-.idea
+# Editor
+.vscode/
+.idea/
+
+# OS
 .DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+Thumbs.db
+
+# Tauri
+/src-tauri/target/
+src-tauri/.cargo/
+src-tauri/Cargo.lock

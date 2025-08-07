@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import Home from "./views/Home.vue";
+import DarkMode from "@/components/ButtonDarkMode.vue";
 </script>
 
 <template>
-  <main class="container">
+  <main class="container dark:bg-gray-500 bg-amber-100">
+    <DarkMode />
+
     <div id="app">
       <nav>
         <router-link to="/">Inicio</router-link> |
