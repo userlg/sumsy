@@ -1,17 +1,33 @@
 <script setup lang="ts">
-import DarkMode from "@/components/ButtonDarkMode.vue";
+import NavBar from "@/components/NavBar.vue";
+
+import Footer from "./components/Footer.vue";
+
+import { useDarkModeStore } from "@/stores/darkMode";
+
+const darkMode = useDarkModeStore();
+
+darkMode.initTheme();
 </script>
-
 <template>
-  <main class="container dark:bg-gray-500 bg-amber-100">
-    <DarkMode />
+  <div
+    class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 transition-colors duration-300"
+  >
+    <!-- HEADER -->
+    <header class="bg-white dark:bg-gray-800 shadow-sm">
+      <NavBar />
+    </header>
 
-    <div id="app">
-      <nav>
-        <router-link to="/">Inicio</router-link> |
-        <router-link to="/summaries">Tabla</router-link>
-      </nav>
-      <router-view />
-    </div>
-  </main>
+    <!-- MAIN -->
+    <main
+      class="flex-1 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 py-6 flex justify-center"
+    >
+      <div class="w-full max-w-5xl px-4">
+        <router-view />
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <Footer />
+  </div>
 </template>
