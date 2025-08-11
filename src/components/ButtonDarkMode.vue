@@ -1,22 +1,57 @@
 <template>
   <button
     @click="darkMode.changeMode()"
-    class="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:-rotate-1"
+    class="flex items-center justify-center p-2 rounded-full bg-transparent border border-transparent text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer select-none"
+    aria-label="Toggle dark mode"
+    title="Toggle dark mode"
   >
-    <span
-      class="transition-transform duration-500"
-      :class="darkMode.isDarkMode ? 'rotate-180' : ''"
-    >
-      {{ darkMode.isDarkMode ? "🌙" : "☀️" }}
-    </span>
-    <span class="font-medium">
-      {{ darkMode.isDarkMode ? "Dark Mode" : "Light Mode" }}
-    </span>
+    <template v-if="darkMode.isDarkMode">
+      <!-- Icono luna -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-5 h-5 stroke-amber-300 stroke-2"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75
+             0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21
+             a9.753 9.753 0 0 0 9.002-5.998Z"
+        />
+      </svg>
+      <span class="sr-only">Modo oscuro activado</span>
+    </template>
+    <template v-else>
+      <!-- Icono sol -->
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 stroke-2 stroke-yellow-300"
+        aria-hidden="true"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591
+             M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636
+             M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
+        />
+      </svg>
+      <span class="sr-only">Modo claro activado</span>
+    </template>
   </button>
 </template>
 
 <script setup lang="ts">
-import { useDarkModeStore } from "@/stores/darkMode";
+import { useDarkModeStore } from "@/stores/darkModeStore";
 
 const darkMode = useDarkModeStore();
 </script>
