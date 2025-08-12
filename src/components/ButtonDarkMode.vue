@@ -1,7 +1,7 @@
 <template>
   <button
     @click="darkMode.changeMode()"
-    class="flex items-center justify-center p-2 rounded-full bg-transparent border border-transparent text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800 transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-0 cursor-pointer select-none"
+    class="flex items-center justify-center p-2 rounded-full bg-transparent border border-transparent text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-700 transition-colors duration-200 ease-in-out focus:outline-none cursor-pointer select-none"
     aria-label="Toggle dark mode"
     title="Toggle dark mode"
   >
