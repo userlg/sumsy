@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { useResumenStore } from "@/stores/summaryStore";
+import PasteClipboard from "@/components/PasteClipBoard.vue";
 import Total from "@/components/Total.vue";
+import Table from "@/components/Table.vue";
 
 const store = useResumenStore();
 const name = ref("");
@@ -19,25 +21,33 @@ function addSummary(): void {
   name.value = "";
 }
 
-function deleteSummary(id: number): void {
-  if (confirm("¿Seguro que quieres eliminar este resumen?")) {
-    store.delete(id);
-  }
+function onPasted(text: string) {
+  name.value = text;
 }
 
-function clearAll(): void {
-  if (confirm("Esto borrará todos los resúmenes. ¿Continuar?")) {
-    store.clearAll();
-  }
+function handleDeleteSummary(id: number) {
+  store.delete(id);
+}
+
+function handleReverse() {
+  store.reverseList();
+}
+
+function handleClear() {
+  store.clearAll();
 }
 </script>
 
 <template>
-  <div>
+  <div class="flex flex-col">
     <Total :total="total" title="Resúmenes" />
 
-    <!-- Campo de entrada -->
-    <div class="flex items-center gap-2 mt-4">
+    <div>
+      <PasteClipboard @pasted="onPasted" />
+    </div>
+
+
+    <div class="flex justify-center items-center gap-2 mt-1">
       <input
         v-model="name"
         placeholder="Nombre"
@@ -55,52 +65,14 @@ function clearAll(): void {
       </button>
     </div>
 
-    <!-- Mensaje de error -->
     <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
 
-    <!-- Lista de resúmenes -->
-    <transition-group name="fade" tag="ul" class="mt-4 space-y-2">
-      <li
-        v-for="summary in store.list"
-        :key="summary.id"
-        class="flex items-center justify-between bg-white dark:bg-gray-800 px-4 py-2 rounded shadow-sm hover:shadow-md transition"
-      >
-        <span
-          >{{ summary.element }} — {{ summary.name }} — {{ summary.date }}</span
-        >
-        <button
-          @click="deleteSummary(summary.id)"
-          class="text-red-500 hover:text-red-700 transition cursor-pointer"
-          aria-label="Eliminar resumen"
-        >
-          🗑️
-        </button>
-      </li>
-    </transition-group>
-
-    <!-- Botón limpiar todo -->
-    <div v-if="total > 0" class="mt-6">
-      <button
-        @click="clearAll"
-        class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition cursor-pointer"
-      >
-        Borrar todo
-      </button>
-    </div>
+    <Table class="mt-3"
+      :summaries="store.list"
+      :isReversed="store.isReversed"
+      @deleteSummary="handleDeleteSummary"
+      @reverse="handleReverse"
+      @clear="handleClear"
+    />
   </div>
 </template>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-enter-from {
-  opacity: 0;
-  transform: translateY(-5px);
-}
-.fade-leave-to {
-  opacity: 0;
-  transform: translateY(5px);
-}
-</style>

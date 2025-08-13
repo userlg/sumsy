@@ -5,7 +5,8 @@ export const useResumenStore = defineStore('summary', {
     state: () => ({
         list: [] as Summary[],
         nextId: 1,
-        nextElement: 1
+        nextElement: 1,
+        isReversed: false, // indica si la lista está invertida
     }),
     actions: {
         create(name: string): void {
@@ -21,9 +22,17 @@ export const useResumenStore = defineStore('summary', {
 
             this.reindexAndSort()
         },
+
         getAllSummaries(): Summary[] {
             return this.list
         },
+
+        reverseList(): void {
+            // Creamos un nuevo array para que Vue detecte el cambio
+            this.list = [...this.list].reverse();
+            this.isReversed = !this.isReversed;
+        },
+
         update(id: number, datos: Partial<Summary>): void {
             const idx = this.list.findIndex(r => r.id === id)
             if (idx !== -1) {
@@ -31,24 +40,36 @@ export const useResumenStore = defineStore('summary', {
                 this.reindexAndSort()
             }
         },
+
         delete(id: number): void {
             this.list = this.list.filter(r => r.id !== id)
             this.reindexAndSort()
         },
+
         clearAll(): void {
             this.list = []
             this.nextId = 1
             this.nextElement = 1
+            this.isReversed = false
         },
+
         reindexAndSort(): void {
-            this.list.sort((a, b) => a.element - b.element)
+            // Ordenar siempre de forma ascendente por elemento
+            this.list.sort((a, b) => a.element - b.element);
 
+            // Reindexar elementos
             this.list.forEach((item, index) => {
-                item.element = index + 1
-            })
+                item.element = index + 1;
+            });
 
-            this.nextElement = this.list.length + 1
+            this.nextElement = this.list.length + 1;
+
+            // Si estaba invertida, invertir de nuevo para mantener el orden
+            if (this.isReversed) {
+                this.list = [...this.list].reverse();
+            }
         },
+
         formatDate(date: Date): string {
             const day = String(date.getDate()).padStart(2, '0')
             const month = String(date.getMonth() + 1).padStart(2, '0')
