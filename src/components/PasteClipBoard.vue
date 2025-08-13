@@ -34,7 +34,7 @@ async function pasteFromClipboard(): Promise<void> {
         viewBox="0 0 24 24"
         stroke-width="1.5"
         stroke="currentColor"
-        class="size-6 stroke-2 stroke-gray-400 dark:stroke-blue-300"
+        class="size-6 stroke-2 stroke-gray-400 dark:stroke-blue-300 hover:stroke-gray-500 dark:hover:stroke-blue-400 transition duration-500 ease-in-out"
       >
         <path
           stroke-linecap="round"

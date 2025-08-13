@@ -40,7 +40,10 @@ export const useResumenStore = defineStore('summary', {
                 this.reindexAndSort()
             }
         },
-
+        updateName(id: number, newName: string) {
+            const summary = this.list.find(s => s.id === id);
+            if (summary) summary.name = newName;
+        },
         delete(id: number): void {
             this.list = this.list.filter(r => r.id !== id)
             this.reindexAndSort()

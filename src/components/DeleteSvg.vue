@@ -5,7 +5,7 @@
     viewBox="0 0 24 24"
     stroke-width="1.5"
     stroke="currentColor"
-    class="size-5 stroke-2 stroke-pink-500 dark:stroke-blue-300"
+    class="size-5 stroke-2 stroke-pink-500 dark:stroke-blue-300 dark:hover:stroke-blue-400 hover:stroke-pink-600 transition duration-500 ease-in-out"
   >
     <path
       stroke-linecap="round"

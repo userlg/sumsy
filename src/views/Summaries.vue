@@ -21,6 +21,10 @@ function addSummary(): void {
   name.value = "";
 }
 
+function handleEditSummary(id: number, newName: string) {
+  store.updateName(id, newName); // Debes tener un método en el store para esto
+}
+
 function onPasted(text: string) {
   name.value = text;
 }
@@ -46,7 +50,6 @@ function handleClear() {
       <PasteClipboard @pasted="onPasted" />
     </div>
 
-
     <div class="flex justify-center items-center gap-2 mt-1">
       <input
         v-model="name"
@@ -67,12 +70,14 @@ function handleClear() {
 
     <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
 
-    <Table class="mt-3"
+    <Table
+      class="mt-3"
       :summaries="store.list"
       :isReversed="store.isReversed"
-      @deleteSummary="handleDeleteSummary"
+      @delete-summary="handleDeleteSummary"
       @reverse="handleReverse"
       @clear="handleClear"
+      @editSummary="handleEditSummary"
     />
   </div>
 </template>
