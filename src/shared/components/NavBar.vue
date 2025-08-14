@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import DarkMode from "@/components/ButtonDarkMode.vue";
+import DarkMode from "@/shared/components/ButtonDarkMode.vue";
 
 const isOpen = ref(false);
 </script>
@@ -10,7 +10,6 @@ const isOpen = ref(false);
     class="bg-white dark:bg-gray-800 border-b border-blue-300 dark:border-blue-700 shadow-sm"
   >
     <div class="container mx-auto flex items-center justify-between px-6 py-4">
-      
       <!-- Logo -->
       <router-link
         to="/"
@@ -22,26 +21,13 @@ const isOpen = ref(false);
 
       <!-- Navegación -->
       <nav class="hidden md:flex gap-6">
-        <router-link
-          to="/"
-          class="nav-link"
-          active-class="nav-active"
-          exact
-        >
+        <router-link to="/" class="nav-link" active-class="nav-active" exact>
           Inicio
         </router-link>
-        <router-link
-          to="/summaries"
-          class="nav-link"
-          active-class="nav-active"
-        >
+        <router-link to="/summaries" class="nav-link" active-class="nav-active">
           Resumen
         </router-link>
-        <router-link
-          to="/cases"
-          class="nav-link"
-          active-class="nav-active"
-        >
+        <router-link to="/cases" class="nav-link" active-class="nav-active">
           Casos
         </router-link>
       </nav>
@@ -82,7 +68,6 @@ const isOpen = ref(false);
 </template>
 
 <style scoped>
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s ease;

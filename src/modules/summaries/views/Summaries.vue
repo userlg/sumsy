@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import { useResumenStore } from "@/stores/summaryStore";
-import PasteClipboard from "@/components/PasteClipBoard.vue";
-import Total from "@/components/Total.vue";
-import Table from "@/components/Table.vue";
+import { useResumenStore } from "@/modules/summaries/store/summary.store";
+import PasteClipboard from "@/shared/components/PasteClipBoard.vue";
+import Total from "@/shared/components/Total.vue";
+import Table from "@/shared/components/BaseTable.vue";
 
 const store = useResumenStore();
 const name = ref("");

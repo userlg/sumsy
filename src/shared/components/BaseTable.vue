@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import type { Summary } from "@/interfaces/Summary";
+import type { Summary } from "@/modules/summaries/interfaces/Summary";
 import DeleteSvg from "./DeleteSvg.vue";
 import EditSvg from "./EditSvg.vue";
 

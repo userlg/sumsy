@@ -24,5 +24,5 @@
   </footer>
 </template>
 <script setup lang="ts">
-import Logo from "@/assets/favicon.svg";
+import Logo from "@/shared/icons/favicon.svg";
 </script>

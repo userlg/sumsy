@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { Summary } from "@/interfaces/Summary";
+import { Summary } from "@/modules/summaries/interfaces/Summary";
 
 export const useResumenStore = defineStore('summary', {
     state: () => ({
