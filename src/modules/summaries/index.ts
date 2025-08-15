@@ -1,4 +1,4 @@
-export * from "./store/summary.store";
+export * from "./store/summary.store.original";
 export * from "./interfaces/Summary";
 
 import SummariesView from "./views/Summaries.vue";

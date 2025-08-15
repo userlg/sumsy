@@ -1,0 +1,36 @@
+/* Scrollbar base */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Track (fondo del scroll) - modo claro */
+::-webkit-scrollbar-track {
+  background: #f9fafb; /* gray-50 */
+}
+
+/* Thumb (barra que se mueve) - modo claro */
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* slate-300 */
+  border-radius: 9999px;
+  border: 2px solid #f9fafb;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #0ea5e9; /* sky-500 */
+}
+
+/* Modo oscuro */
+.dark ::-webkit-scrollbar-track {
+  background: #1f2937; /* gray-800 */
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* gray-600 */
+  border: 2px solid #1f2937;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #38bdf8; /* sky-400 */
+}

@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useResumenStore } from "@/modules/summaries/store/summary.store";
+import { ref } from "vue";
+import { useSummaryStore } from "@/modules/summaries/store/summary.store";
 import PasteClipboard from "@/shared/components/PasteClipBoard.vue";
 import Total from "@/shared/components/Total.vue";
 import Table from "@/shared/components/BaseTable.vue";
 
-const store = useResumenStore();
+const store = useSummaryStore();
 const name = ref("");
 const error = ref("");
-
-const total = computed(() => store.list.length);
 
 function addSummary(): void {
   if (!name.value.trim()) {
@@ -22,7 +20,7 @@ function addSummary(): void {
 }
 
 function handleEditSummary(id: number, newName: string) {
-  store.updateName(id, newName); // Debes tener un método en el store para esto
+  store.updateName(id, newName);
 }
 
 function onPasted(text: string) {
@@ -44,7 +42,7 @@ function handleClear() {
 
 <template>
   <div class="flex flex-col">
-    <Total :total="total" title="Resúmenes" />
+    <Total :refreshTrigger="store.list.length" title="Resúmenes" />
 
     <div>
       <PasteClipboard @pasted="onPasted" />
@@ -56,7 +54,7 @@ function handleClear() {
         placeholder="Nombre"
         autocomplete="off"
         aria-label="Nombre del resumen"
-        class="border rounded px-3 py-2 flex-1 dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-400"
+        class="border rounded px-3 py-2 flex-1 dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
         @keyup.enter="addSummary"
       />
       <button
@@ -70,8 +68,9 @@ function handleClear() {
 
     <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
 
+    <div class="border-t border-neutral-400 dark:border-blue-300 my-3"></div>
+
     <Table
-      class="mt-3"
       :summaries="store.list"
       :isReversed="store.isReversed"
       @delete-summary="handleDeleteSummary"

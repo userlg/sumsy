@@ -14,7 +14,11 @@ import Logo from "@/shared/icons/favicon.svg";
       />
 
       <!-- Title -->
-      <h1 class="text-4xl font-bold text-gray-800 dark:text-white">Sumsy</h1>
+      <h1
+        class="text-4xl font-bold text-gray-800 dark:text-white cursor-default"
+      >
+        Sumsy
+      </h1>
     </div>
   </div>
 </template>

@@ -82,12 +82,12 @@ function goToPage(page: number) {
 <template>
   <div>
     <!-- Barra de búsqueda y botones -->
-    <div class="flex flex-wrap gap-2 items-center justify-between mb-3">
+    <div class="flex flex-wrap gap-2 items-center justify-between mb-2">
       <input
         type="text"
         v-model="search"
         placeholder="Buscar por nombre..."
-        class="flex-1 px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-400"
+        class="flex-1 px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
         aria-label="Buscar resumen por nombre"
         @input="currentPage = 1"
       />
@@ -95,7 +95,7 @@ function goToPage(page: number) {
       <div v-if="filteredSummaries.length > 0" class="flex gap-2">
         <button
           @click="onReverse"
-          class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition"
+          class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition duration-300 cursor-pointer"
           :aria-sort="isReversed ? 'ascending' : 'descending'"
         >
           {{ isReversed ? "ASC" : "DESC" }}
@@ -103,23 +103,31 @@ function goToPage(page: number) {
 
         <button
           @click="onClear"
-          class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition"
+          class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition duration-300 cursor-pointer"
         >
           Borrar todo
         </button>
       </div>
     </div>
 
-    <!-- Sin datos -->
+    <!-- No Data -->
     <div
       v-if="summaries.length === 0"
-      class="text-center text-gray-500 dark:text-gray-400"
+      class="text-center text-gray-500 dark:text-gray-400 my-6 font-bold"
     >
       No hay resúmenes disponibles.
     </div>
 
-    <!-- Tabla -->
-    <div v-else>
+    <!--Message when no results found -->
+    <div
+      v-else-if="filteredSummaries.length === 0 && search.length > 0"
+      class="text-center text-gray-500 dark:text-gray-400 my-6 font-bold"
+    >
+      Búsqueda sin resultado
+    </div>
+
+    <!-- Table -->
+    <div v-else="summaries.length > 0">
       <table
         class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-600"
       >

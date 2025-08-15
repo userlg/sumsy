@@ -16,7 +16,7 @@ darkMode.initTheme();
       <NavBar />
     </header>
 
-    <!-- MAIN -->
+  <!-- MAIN -->
     <main class="flex-1 py-8 flex justify-center" aria-live="polite">
       <div class="w-full max-w-5xl px-4 sm:px-6 lg:px-8">
         <router-view />
