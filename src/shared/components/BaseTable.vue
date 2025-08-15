@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import type { Summary } from "@/modules/summaries/interfaces/Summary";
+import BaseModal from "./BaseModal.vue";
+import type { BaseItem } from "@/shared/interfaces/BaseItem";
 import DeleteSvg from "./DeleteSvg.vue";
 import EditSvg from "./EditSvg.vue";
 
 const props = defineProps<{
-  summaries: Summary[];
+  summaries: BaseItem[];
   isReversed: boolean;
 }>();
 
@@ -20,7 +21,7 @@ const search = ref("");
 const currentPage = ref(1);
 const itemsPerPage = 20;
 
-// Estado para el modal
+// Modal
 const showEditModal = ref(false);
 const editId = ref<number | null>(null);
 const editName = ref("");
@@ -81,44 +82,40 @@ function goToPage(page: number) {
 
 <template>
   <div>
-    <!-- Barra de búsqueda y botones -->
+    <!-- Filtros y acciones -->
     <div class="flex flex-wrap gap-2 items-center justify-between mb-2">
       <input
         type="text"
         v-model="search"
         placeholder="Buscar por nombre..."
         class="flex-1 px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
-        aria-label="Buscar resumen por nombre"
         @input="currentPage = 1"
       />
 
       <div v-if="filteredSummaries.length > 0" class="flex gap-2">
         <button
           @click="onReverse"
-          class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition duration-300 cursor-pointer"
-          :aria-sort="isReversed ? 'ascending' : 'descending'"
+          class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition"
         >
           {{ isReversed ? "ASC" : "DESC" }}
         </button>
 
         <button
           @click="onClear"
-          class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition duration-300 cursor-pointer"
+          class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition"
         >
           Borrar todo
         </button>
       </div>
     </div>
 
-    <!-- No Data -->
+    <!-- Mensajes -->
     <div
       v-if="summaries.length === 0"
       class="text-center text-gray-500 dark:text-gray-400 my-6 font-bold"
     >
       No hay resúmenes disponibles.
     </div>
-
-    <!--Message when no results found -->
     <div
       v-else-if="filteredSummaries.length === 0 && search.length > 0"
       class="text-center text-gray-500 dark:text-gray-400 my-6 font-bold"
@@ -126,77 +123,36 @@ function goToPage(page: number) {
       Búsqueda sin resultado
     </div>
 
-    <!-- Table -->
-    <div v-else="summaries.length > 0">
+    <!-- Tabla -->
+    <div v-else>
       <table
         class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-600"
       >
         <thead>
           <tr class="bg-gray-100 dark:bg-gray-700">
-            <th
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center"
-            >
-              #
-            </th>
-            <th
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center max-w-xs truncate"
-            >
-              Nombre
-            </th>
-            <th
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center max-w-xs truncate"
-            >
-              Fecha
-            </th>
-            <th
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center"
-            >
-              Opciones
-            </th>
+            <th class="border px-4 py-2 text-center">#</th>
+            <th class="border px-4 py-2 text-center">Nombre</th>
+            <th class="border px-4 py-2 text-center">Fecha</th>
+            <th class="border px-4 py-2 text-center">Opciones</th>
           </tr>
         </thead>
-        <transition-group
-          tag="tbody"
-          name="fade-slide"
-          appear
-          class="bg-white dark:bg-gray-800"
-        >
+        <transition-group tag="tbody" name="fade-slide" appear>
           <tr
             v-for="summary in paginatedSummaries"
             :key="summary.id"
-            class="hover:shadow-md hover:bg-gray-50 dark:hover:bg-gray-900 transition-all duration-200"
+            class="hover:bg-gray-50 dark:hover:bg-gray-900 transition"
           >
-            <td
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center"
-            >
-              {{ summary.element }}
-            </td>
-            <td
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 max-w-xs truncate text-center"
-            >
-              {{ summary.name }}
-            </td>
-            <td
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 max-w-xs truncate text-center"
-            >
-              {{ summary.date }}
-            </td>
-            <td
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center flex justify-center gap-3"
-            >
+            <td class="border px-4 py-2 text-center">{{ summary.element }}</td>
+            <td class="border px-4 py-2 text-center truncate max-w-[150px]">{{ summary.name }}</td>
+            <td class="border px-4 py-2 text-center">{{ summary.date }}</td>
+            <td class="border px-4 py-2 text-center flex justify-center gap-3">
               <button
                 @click="openEditModal(summary.id, summary.name)"
-                class="cursor-pointer"
-                title="Edit"
+                title="Editar"
               >
                 <EditSvg />
               </button>
-              <button
-                @click="onDelete(summary.id)"
-                class="cursor-pointer"
-                aria-label="Delete"
-                title="Delete"
-              >
+              <button @click="onDelete(summary.id)" title="Borrar">
                 <DeleteSvg />
               </button>
             </td>
@@ -228,92 +184,28 @@ function goToPage(page: number) {
     </div>
 
     <!-- Edit Modal -->
-    <transition name="bounce">
-      <div
-        v-if="showEditModal"
-        class="fixed inset-0 bg-gray-900/50 dark:bg-gray-800/60 flex items-center justify-center z-50 backdrop-blur-sm"
-      >
-        <div
-          class="bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-md p-6"
+    <BaseModal v-model="showEditModal" title="Editar resumen">
+      <input
+        type="text"
+        v-model="editName"
+        class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
+        placeholder="Nuevo nombre"
+      />
+
+      <template #footer>
+        <button
+          @click="closeModal"
+          class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition"
         >
-          <h2 class="text-lg font-bold mb-4 text-gray-800 dark:text-gray-200">
-            Editar resumen
-          </h2>
-          <input
-            type="text"
-            v-model="editName"
-            class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
-            placeholder="Nuevo nombre"
-          />
-          <div class="flex justify-end gap-2 mt-4">
-            <button
-              @click="closeModal"
-              class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition"
-            >
-              Cancelar
-            </button>
-            <button
-              @click="saveEdit"
-              class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition"
-            >
-              Guardar
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
+          Cancelar
+        </button>
+        <button
+          @click="saveEdit"
+          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition"
+        >
+          Guardar
+        </button>
+      </template>
+    </BaseModal>
   </div>
 </template>
-
-<style scoped>
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(-5px);
-}
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(5px);
-}
-
-.bounce-enter-active {
-  animation: bounce-in 0.4s ease-out;
-}
-.bounce-leave-active {
-  animation: bounce-out 0.3s ease-in forwards;
-}
-
-@keyframes bounce-in {
-  0% {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
-  }
-  60% {
-    opacity: 1;
-    transform: scale(1.05) translateY(5px);
-  }
-  80% {
-    transform: scale(0.98) translateY(0);
-  }
-  100% {
-    transform: scale(1) translateY(0);
-  }
-}
-
-@keyframes bounce-out {
-  0% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-  20% {
-    transform: scale(1.02) translateY(-3px);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(0.9) translateY(-20px);
-  }
-}
-</style>

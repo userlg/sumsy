@@ -1,5 +1,5 @@
-//export * from "./store/summary.store";
-export * from "./interfaces/Case";
+export * from "./store/case.store";
+
 
 import CasesView from "./views/Cases.vue";
 

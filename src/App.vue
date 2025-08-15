@@ -16,10 +16,12 @@ darkMode.initTheme();
       <NavBar />
     </header>
 
-  <!-- MAIN -->
+    <!-- MAIN -->
     <main class="flex-1 py-8 flex justify-center" aria-live="polite">
       <div class="w-full max-w-5xl px-4 sm:px-6 lg:px-8">
-        <router-view />
+        <transition name="bounce" mode="in-out">
+          <router-view />
+        </transition>
       </div>
     </main>
 
@@ -27,14 +29,3 @@ darkMode.initTheme();
     <Footer />
   </div>
 </template>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
