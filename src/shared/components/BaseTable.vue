@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import BaseModal from "./BaseModal.vue";
+import EditModal from "./EditModal.vue";
+import ConfirmModal from "./ConfirmModal.vue"; // ⬅️ Importamos tu modal de confirmación
 import type { BaseItem } from "@/shared/interfaces/BaseItem";
 import DeleteSvg from "./DeleteSvg.vue";
 import EditSvg from "./EditSvg.vue";
@@ -21,10 +22,13 @@ const search = ref("");
 const currentPage = ref(1);
 const itemsPerPage = 20;
 
-// Modal
+// Modal edición
 const showEditModal = ref(false);
 const editId = ref<number | null>(null);
 const editName = ref("");
+
+// Modal confirmación
+const showConfirmModal = ref(false);
 
 const filteredSummaries = computed(() => {
   const term = search.value.trim().toLowerCase();
@@ -52,13 +56,6 @@ function openEditModal(id: number, name: string) {
   showEditModal.value = true;
 }
 
-function saveEdit() {
-  if (editId.value !== null && editName.value.trim() !== "") {
-    emit("editSummary", editId.value, editName.value.trim());
-    closeModal();
-  }
-}
-
 function closeModal() {
   showEditModal.value = false;
   editId.value = null;
@@ -69,8 +66,13 @@ function onReverse() {
   emit("reverse");
 }
 
-function onClear() {
+function confirmClear() {
+  showConfirmModal.value = true;
+}
+
+function clearAll() {
   emit("clear");
+  showConfirmModal.value = false;
 }
 
 function goToPage(page: number) {
@@ -101,7 +103,7 @@ function goToPage(page: number) {
         </button>
 
         <button
-          @click="onClear"
+          @click="confirmClear"
           class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition"
         >
           Borrar todo
@@ -140,10 +142,12 @@ function goToPage(page: number) {
           <tr
             v-for="summary in paginatedSummaries"
             :key="summary.id"
-            class="hover:bg-gray-50 dark:hover:bg-gray-900 transition"
+            class="transition-all duration-300 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-800"
           >
             <td class="border px-4 py-2 text-center">{{ summary.element }}</td>
-            <td class="border px-4 py-2 text-center truncate max-w-[150px]">{{ summary.name }}</td>
+            <td class="border px-4 py-2 text-center truncate max-w-[150px]">
+              {{ summary.name }}
+            </td>
             <td class="border px-4 py-2 text-center">{{ summary.date }}</td>
             <td class="border px-4 py-2 text-center flex justify-center gap-3">
               <button
@@ -184,28 +188,36 @@ function goToPage(page: number) {
     </div>
 
     <!-- Edit Modal -->
-    <BaseModal v-model="showEditModal" title="Editar resumen">
-      <input
-        type="text"
-        v-model="editName"
-        class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
-        placeholder="Nuevo nombre"
-      />
+    <EditModal
+      v-model="showEditModal"
+      title="Editar resumen"
+      :initialName="editName"
+      @save="(newName) => { emit('editSummary', editId!, newName); closeModal(); }"
+    />
 
-      <template #footer>
-        <button
-          @click="closeModal"
-          class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition"
-        >
-          Cancelar
-        </button>
-        <button
-          @click="saveEdit"
-          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition"
-        >
-          Guardar
-        </button>
-      </template>
-    </BaseModal>
+    <!-- Confirm Modal -->
+    <ConfirmModal
+      v-model="showConfirmModal"
+      title="Confirmar acción"
+      message="¿Seguro que quieres borrar todos los resúmenes?"
+      confirm-text="Sí, borrar todo"
+      cancel-text="Cancelar"
+      @confirm="clearAll"
+    />
   </div>
 </template>
+
+<style scoped>
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: all 0.3s ease;
+}
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(5px);
+}
+</style>
