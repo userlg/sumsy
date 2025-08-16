@@ -1,39 +1,35 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from "vue";
+  import { ref, onUnmounted } from 'vue';
 
-const props = defineProps<{
-  text: string;
-  delay?: number; 
-}>();
+  const props = defineProps<{
+    text: string;
+    delay?: number;
+  }>();
 
-const show = ref(false);
-let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  const show = ref(false);
+  let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-function onMouseEnter() {
-  timeoutId = setTimeout(() => {
-    show.value = true;
-  }, props.delay ?? 7000);
-}
-
-function onMouseLeave() {
-  if (timeoutId) {
-    clearTimeout(timeoutId);
-    timeoutId = null;
+  function onMouseEnter() {
+    timeoutId = setTimeout(() => {
+      show.value = true;
+    }, props.delay ?? 7000);
   }
-  show.value = false;
-}
 
-onUnmounted(() => {
-  if (timeoutId) clearTimeout(timeoutId);
-});
+  function onMouseLeave() {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+    show.value = false;
+  }
+
+  onUnmounted(() => {
+    if (timeoutId) clearTimeout(timeoutId);
+  });
 </script>
 
 <template>
-  <span
-    class="relative inline-block"
-    @mouseenter="onMouseEnter"
-    @mouseleave="onMouseLeave"
-  >
+  <span class="relative inline-block" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
     <slot />
     <transition name="fade-scale">
       <div
@@ -47,13 +43,15 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.fade-scale-enter-active,
-.fade-scale-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.fade-scale-enter-from,
-.fade-scale-leave-to {
-  opacity: 0;
-  transform: scale(0.8);
-}
+  .fade-scale-enter-active,
+  .fade-scale-leave-active {
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+  .fade-scale-enter-from,
+  .fade-scale-leave-to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
 </style>

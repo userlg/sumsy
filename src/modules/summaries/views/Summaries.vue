@@ -1,48 +1,48 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import { useSummaryStore } from "@/modules/summaries/store/summary.store";
-import PasteClipboard from "@/shared/components/PasteClipBoard.vue";
-import Total from "@/shared/components/Total.vue";
-import Table from "@/shared/components/BaseTable.vue";
+  import { ref } from 'vue';
+  import { useSummaryStore } from '@/modules/summaries/store/summary.store';
+  import PasteClipboard from '@/shared/components/PasteClipBoard.vue';
+  import Total from '@/shared/components/Total.vue';
+  import Table from '@/shared/components/BaseTable.vue';
 
-const store = useSummaryStore();
-const name = ref("");
-const error = ref("");
+  const store = useSummaryStore();
+  const name = ref('');
+  const error = ref('');
 
-function addSummary(): void {
-  if (!name.value.trim()) {
-    error.value = "El nombre no puede estar vacío.";
-    return;
+  function addSummary(): void {
+    if (!name.value.trim()) {
+      error.value = 'El nombre no puede estar vacío.';
+      return;
+    }
+    error.value = '';
+    store.create(name.value.trim());
+    name.value = '';
   }
-  error.value = "";
-  store.create(name.value.trim());
-  name.value = "";
-}
 
-function handleEditSummary(id: number, newName: string) {
-  store.updateName(id, newName);
-}
+  function handleEditSummary(id: number, newName: string) {
+    store.updateName(id, newName);
+  }
 
-function onPasted(text: string) {
-  name.value = text;
-}
+  function onPasted(text: string) {
+    name.value = text;
+  }
 
-function handleDeleteSummary(id: number) {
-  store.delete(id);
-}
+  function handleDeleteSummary(id: number) {
+    store.delete(id);
+  }
 
-function handleReverse() {
-  store.reverseList();
-}
+  function handleReverse() {
+    store.reverseList();
+  }
 
-function handleClear() {
-  store.clearAll();
-}
+  function handleClear() {
+    store.clearAll();
+  }
 </script>
 
 <template>
   <div class="flex flex-col">
-    <Total  title="Resúmenes" />
+    <Total title="Resúmenes" />
 
     <div>
       <PasteClipboard @pasted="onPasted" />
@@ -58,25 +58,27 @@ function handleClear() {
         @keyup.enter="addSummary"
       />
       <button
-        @click="addSummary"
         :disabled="!name.trim()"
         class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 disabled:bg-gray-400 transition cursor-pointer"
+        @click="addSummary"
       >
         Agregar
       </button>
     </div>
 
-    <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
+    <p v-if="error" class="text-red-500 text-sm mt-1">
+      {{ error }}
+    </p>
 
-    <div class="border-t border-neutral-400 dark:border-blue-300 my-3"></div>
+    <div class="border-t border-neutral-400 dark:border-blue-300 my-3" />
 
     <Table
       :summaries="store.list"
-      :isReversed="store.isReversed"
+      :is-reversed="store.isReversed"
       @delete-summary="handleDeleteSummary"
       @reverse="handleReverse"
       @clear="handleClear"
-      @editSummary="handleEditSummary"
+      @edit-summary="handleEditSummary"
     />
   </div>
 </template>

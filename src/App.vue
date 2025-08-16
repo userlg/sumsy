@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import NavBar from "@/shared/components/NavBar.vue";
-import Footer from "@/shared/components/Footer.vue";
-import { useDarkModeStore } from "@/stores/darkModeStore";
+  import NavBar from '@/shared/components/NavBar.vue';
+  import Footer from '@/shared/components/Footer.vue';
+  import { useDarkModeStore } from '@/stores/darkModeStore';
 
-const darkMode = useDarkModeStore();
-darkMode.initTheme();
+  const darkMode = useDarkModeStore();
+  darkMode.initTheme();
 </script>
 
 <template>

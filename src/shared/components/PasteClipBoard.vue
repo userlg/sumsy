@@ -1,34 +1,35 @@
 <script setup lang="ts">
-import { ref } from "vue";
+  import { ref } from 'vue';
 
-const emit = defineEmits<{
-  (e: "pasted", value: string): void;
-}>();
+  const emit = defineEmits<{
+    (e: 'pasted', value: string): void;
+  }>();
 
-const loading = ref(false);
+  const loading = ref(false);
 
-async function pasteFromClipboard(): Promise<void> {
-  try {
-    loading.value = true;
-    const text = await navigator.clipboard.readText();
-    emit("pasted", text.trim());
-  } catch (err) {
-    alert("No se pudo leer el portapapeles. Asegúrate de dar permisos.");
-  } finally {
-    loading.value = false;
+  async function pasteFromClipboard(): Promise<void> {
+    try {
+      loading.value = true;
+      const text = await navigator.clipboard.readText();
+      emit('pasted', text.trim());
+    } catch (err) {
+      alert('No se pudo leer el portapapeles. Asegúrate de dar permisos.');
+      console.log(err);
+    } finally {
+      loading.value = false;
+    }
   }
-}
 </script>
 
 <template>
   <button
-    @click="pasteFromClipboard"
     class="px-3 py-2 rounded transition cursor-pointer flex items-center justify-center"
     :disabled="loading"
     title="Pegar desde portapapeles"
+    @click="pasteFromClipboard"
   >
-    <span v-if="!loading"
-      ><svg
+    <span v-if="!loading">
+      <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

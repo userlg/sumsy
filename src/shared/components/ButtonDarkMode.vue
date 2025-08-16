@@ -1,9 +1,9 @@
 <template>
   <button
-    @click="darkMode.changeMode()"
     class="flex items-center justify-center p-2 rounded-full bg-transparent border border-transparent text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-700 transition-colors duration-200 ease-in-out focus:outline-none cursor-pointer select-none"
     aria-label="Toggle dark mode"
     title="Toggle dark mode"
+    @click="darkMode.changeMode()"
   >
     <template v-if="darkMode.isDarkMode">
       <!-- Icono luna -->
@@ -51,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDarkModeStore } from "@/stores/darkModeStore";
+  import { useDarkModeStore } from '@/stores/darkModeStore';
 
-const darkMode = useDarkModeStore();
+  const darkMode = useDarkModeStore();
 </script>

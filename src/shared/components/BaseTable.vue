@@ -1,85 +1,85 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import EditModal from "./EditModal.vue";
-import ConfirmModal from "./ConfirmModal.vue"; // ⬅️ Importamos tu modal de confirmación
-import type { BaseItem } from "@/shared/interfaces/BaseItem";
-import DeleteSvg from "./DeleteSvg.vue";
-import EditSvg from "./EditSvg.vue";
+  import { ref, computed } from 'vue';
+  import EditModal from './EditModal.vue';
+  import ConfirmModal from './ConfirmModal.vue'; // ⬅️ Importamos tu modal de confirmación
+  import type { BaseItem } from '@/shared/interfaces/BaseItem';
+  import DeleteSvg from './DeleteSvg.vue';
+  import EditSvg from './EditSvg.vue';
 
-const props = defineProps<{
-  summaries: BaseItem[];
-  isReversed: boolean;
-}>();
+  const props = defineProps<{
+    summaries: BaseItem[];
+    isReversed: boolean;
+  }>();
 
-const emit = defineEmits<{
-  (e: "reverse"): void;
-  (e: "clear"): void;
-  (e: "deleteSummary", id: number): void;
-  (e: "editSummary", id: number, newName: string): void;
-}>();
+  const emit = defineEmits<{
+    (e: 'reverse'): void;
+    (e: 'clear'): void;
+    (e: 'deleteSummary', id: number): void;
+    (e: 'editSummary', id: number, newName: string): void;
+  }>();
 
-const search = ref("");
-const currentPage = ref(1);
-const itemsPerPage = 20;
+  const search = ref('');
+  const currentPage = ref(1);
+  const itemsPerPage = 20;
 
-// Modal edición
-const showEditModal = ref(false);
-const editId = ref<number | null>(null);
-const editName = ref("");
+  // Modal edición
+  const showEditModal = ref(false);
+  const editId = ref<number | null>(null);
+  const editName = ref('');
 
-// Modal confirmación
-const showConfirmModal = ref(false);
+  // Modal confirmación
+  const showConfirmModal = ref(false);
 
-const filteredSummaries = computed(() => {
-  const term = search.value.trim().toLowerCase();
-  return term
-    ? props.summaries.filter((s) => s.name.toLowerCase().includes(term))
-    : props.summaries;
-});
+  const filteredSummaries = computed(() => {
+    const term = search.value.trim().toLowerCase();
+    return term
+      ? props.summaries.filter((s) => s.name.toLowerCase().includes(term))
+      : props.summaries;
+  });
 
-const totalPages = computed(() =>
-  Math.max(1, Math.ceil(filteredSummaries.value.length / itemsPerPage))
-);
+  const totalPages = computed(() =>
+    Math.max(1, Math.ceil(filteredSummaries.value.length / itemsPerPage))
+  );
 
-const paginatedSummaries = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage;
-  return filteredSummaries.value.slice(start, start + itemsPerPage);
-});
+  const paginatedSummaries = computed(() => {
+    const start = (currentPage.value - 1) * itemsPerPage;
+    return filteredSummaries.value.slice(start, start + itemsPerPage);
+  });
 
-function onDelete(id: number) {
-  emit("deleteSummary", id);
-}
-
-function openEditModal(id: number, name: string) {
-  editId.value = id;
-  editName.value = name;
-  showEditModal.value = true;
-}
-
-function closeModal() {
-  showEditModal.value = false;
-  editId.value = null;
-  editName.value = "";
-}
-
-function onReverse() {
-  emit("reverse");
-}
-
-function confirmClear() {
-  showConfirmModal.value = true;
-}
-
-function clearAll() {
-  emit("clear");
-  showConfirmModal.value = false;
-}
-
-function goToPage(page: number) {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
+  function onDelete(id: number) {
+    emit('deleteSummary', id);
   }
-}
+
+  function openEditModal(id: number, name: string) {
+    editId.value = id;
+    editName.value = name;
+    showEditModal.value = true;
+  }
+
+  function closeModal() {
+    showEditModal.value = false;
+    editId.value = null;
+    editName.value = '';
+  }
+
+  function onReverse() {
+    emit('reverse');
+  }
+
+  function confirmClear() {
+    showConfirmModal.value = true;
+  }
+
+  function clearAll() {
+    emit('clear');
+    showConfirmModal.value = false;
+  }
+
+  function goToPage(page: number) {
+    if (page >= 1 && page <= totalPages.value) {
+      currentPage.value = page;
+    }
+  }
 </script>
 
 <template>
@@ -87,8 +87,8 @@ function goToPage(page: number) {
     <!-- Filtros y acciones -->
     <div class="flex flex-wrap gap-2 items-center justify-between mb-2">
       <input
-        type="text"
         v-model="search"
+        type="text"
         placeholder="Buscar por nombre..."
         class="flex-1 px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
         @input="currentPage = 1"
@@ -96,15 +96,15 @@ function goToPage(page: number) {
 
       <div v-if="filteredSummaries.length > 0" class="flex gap-2">
         <button
-          @click="onReverse"
           class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition shadow-md hover:shadow-gray-400 dark:hover:shadow-gray-900"
+          @click="onReverse"
         >
-          {{ isReversed ? "ASC" : "DESC" }}
+          {{ isReversed ? 'ASC' : 'DESC' }}
         </button>
 
         <button
-          @click="confirmClear"
           class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition shadow-md hover:shadow-gray-400 dark:hover:shadow-gray-900"
+          @click="confirmClear"
         >
           Borrar todo
         </button>
@@ -144,22 +144,21 @@ function goToPage(page: number) {
             :key="summary.id"
             class="transition-all duration-300 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-800"
           >
-            <td class="border px-4 py-2 text-center">{{ summary.element }}</td>
+            <td class="border px-4 py-2 text-center">
+              {{ summary.element }}
+            </td>
             <td class="border px-4 py-2 text-center truncate max-w-[150px]">
               {{ summary.name }}
             </td>
-            <td class="border px-4 py-2 text-center">{{ summary.date }}</td>
-            <td
-              class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center"
-            >
+            <td class="border px-4 py-2 text-center">
+              {{ summary.date }}
+            </td>
+            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center">
               <div class="flex justify-center gap-4">
-                <button
-                  @click="openEditModal(summary.id, summary.name)"
-                  title="Editar"
-                >
+                <button title="Editar" @click="openEditModal(summary.id, summary.name)">
                   <EditSvg />
                 </button>
-                <button @click="onDelete(summary.id)" title="Borrar">
+                <button title="Borrar" @click="onDelete(summary.id)">
                   <DeleteSvg />
                 </button>
               </div>
@@ -169,22 +168,19 @@ function goToPage(page: number) {
       </table>
 
       <!-- Paginación -->
-      <div
-        v-if="totalPages > 1"
-        class="flex justify-center items-center gap-2 mt-4"
-      >
+      <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-4">
         <button
-          @click="goToPage(currentPage - 1)"
           :disabled="currentPage === 1"
           class="px-3 py-1 border rounded disabled:opacity-50"
+          @click="goToPage(currentPage - 1)"
         >
           Anterior
         </button>
         <span>Página {{ currentPage }} de {{ totalPages }}</span>
         <button
-          @click="goToPage(currentPage + 1)"
           :disabled="currentPage === totalPages"
           class="px-3 py-1 border rounded disabled:opacity-50"
+          @click="goToPage(currentPage + 1)"
         >
           Siguiente
         </button>
@@ -195,9 +191,14 @@ function goToPage(page: number) {
     <EditModal
       v-model="showEditModal"
       title="Editar resumen"
-      :initialName="editName"
+      :initial-name="editName"
       place-holder="editar"
-      @save="(newName) => { emit('editSummary', editId!, newName); closeModal(); }"
+      @save="
+        (newName) => {
+          emit('editSummary', editId!, newName);
+          closeModal();
+        }
+      "
     />
 
     <!-- Confirm Modal -->
@@ -213,16 +214,16 @@ function goToPage(page: number) {
 </template>
 
 <style scoped>
-.fade-slide-enter-active,
-.fade-slide-leave-active {
-  transition: all 0.3s ease;
-}
-.fade-slide-enter-from {
-  opacity: 0;
-  transform: translateY(-5px);
-}
-.fade-slide-leave-to {
-  opacity: 0;
-  transform: translateY(5px);
-}
+  .fade-slide-enter-active,
+  .fade-slide-leave-active {
+    transition: all 0.3s ease;
+  }
+  .fade-slide-enter-from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  .fade-slide-leave-to {
+    opacity: 0;
+    transform: translateY(5px);
+  }
 </style>

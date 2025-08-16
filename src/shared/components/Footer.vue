@@ -8,9 +8,7 @@
       <!-- Logo / Nombre -->
       <div class="flex items-center gap-3">
         <Logo class="w-8 h-8 text-blue-600 dark:text-blue-400" />
-        <span
-          class="font-semibold text-blue-700 dark:text-blue-300 text-lg select-none"
-        >
+        <span class="font-semibold text-blue-700 dark:text-blue-300 text-lg select-none">
           Sumsy
         </span>
       </div>
@@ -24,5 +22,5 @@
   </footer>
 </template>
 <script setup lang="ts">
-import Logo from "@/shared/icons/favicon.svg";
+  import Logo from '@/shared/icons/favicon.svg';
 </script>
