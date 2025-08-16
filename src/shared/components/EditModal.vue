@@ -5,6 +5,7 @@ const props = defineProps<{
   modelValue: boolean;
   title: string;
   initialName: string;
+  placeHolder: string;
 }>();
 
 const emit = defineEmits<{
@@ -48,7 +49,7 @@ function saveEdit() {
           type="text"
           v-model="name"
           class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-400"
-          placeholder="Nuevo nombre"
+          :placeholder=props.placeHolder
         />
 
         <div class="flex justify-end gap-2 mt-4">

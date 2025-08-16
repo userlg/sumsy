@@ -97,14 +97,14 @@ function goToPage(page: number) {
       <div v-if="filteredSummaries.length > 0" class="flex gap-2">
         <button
           @click="onReverse"
-          class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition"
+          class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition shadow-md hover:shadow-gray-400 dark:hover:shadow-gray-900"
         >
           {{ isReversed ? "ASC" : "DESC" }}
         </button>
 
         <button
           @click="confirmClear"
-          class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition"
+          class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition shadow-md hover:shadow-gray-400 dark:hover:shadow-gray-900"
         >
           Borrar todo
         </button>
@@ -149,16 +149,20 @@ function goToPage(page: number) {
               {{ summary.name }}
             </td>
             <td class="border px-4 py-2 text-center">{{ summary.date }}</td>
-            <td class="border px-4 py-2 text-center flex justify-center gap-3">
-              <button
-                @click="openEditModal(summary.id, summary.name)"
-                title="Editar"
-              >
-                <EditSvg />
-              </button>
-              <button @click="onDelete(summary.id)" title="Borrar">
-                <DeleteSvg />
-              </button>
+            <td
+              class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center"
+            >
+              <div class="flex justify-center gap-4">
+                <button
+                  @click="openEditModal(summary.id, summary.name)"
+                  title="Editar"
+                >
+                  <EditSvg />
+                </button>
+                <button @click="onDelete(summary.id)" title="Borrar">
+                  <DeleteSvg />
+                </button>
+              </div>
             </td>
           </tr>
         </transition-group>
@@ -192,6 +196,7 @@ function goToPage(page: number) {
       v-model="showEditModal"
       title="Editar resumen"
       :initialName="editName"
+      place-holder="editar"
       @save="(newName) => { emit('editSummary', editId!, newName); closeModal(); }"
     />
 

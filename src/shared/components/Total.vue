@@ -1,3 +1,34 @@
+<script setup lang="ts">
+import { reactive, watch } from "vue";
+import { useSummaryStore } from "@/modules/summaries/store/summary.store";
+import gsap from "gsap";
+
+const props = defineProps<{
+  title: string;
+}>();
+
+const store = useSummaryStore();
+const tweened = reactive({ number: 0 });
+
+watch(
+  () => store.list,
+  (newVal) => {
+    gsap
+      .timeline()
+      .to(tweened, {
+        duration: 0.3,
+        number: newVal.length == 50 ? 75 : 50,
+        ease: "power1.in",
+      })
+      .to(tweened, {
+        duration: 0.5,
+        number: newVal.length,
+        ease: "power2.inOut",
+      });
+  },
+  { immediate: true, deep: true }
+);
+</script>
 <template>
   <div
     class="flex flex-col items-center justify-center space-y-2 cursor-default"
@@ -17,33 +48,7 @@
     <h2
       class="text-sm font-medium text-gray-600 dark:text-gray-300 text-center"
     >
-      {{ title }}
+      {{ props.title }}
     </h2>
   </div>
 </template>
-
-<script setup lang="ts">
-import { reactive, watch, toRef, onMounted } from "vue";
-import gsap from "gsap";
-
-const props = defineProps<{
-  title: string;
-  refreshTrigger: number;
-}>();
-
-const number = toRef(props, "refreshTrigger");
-const tweened = reactive({
-  number: props.refreshTrigger,
-});
-
-// Animación inicial al montar
-onMounted(() => {
-  gsap.to(tweened, { duration: 0.5, number: number.value });
-});
-
-// Watcher para cambios en la prop
-watch(number, (n) => {
-  console.log("Working");
-  gsap.to(tweened, { duration: 0.5, number: Number(n) || 0 });
-});
-</script>

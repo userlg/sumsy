@@ -42,7 +42,7 @@ function handleClear() {
 
 <template>
   <div class="flex flex-col">
-    <Total :refreshTrigger="store.list.length" title="Resúmenes" />
+    <Total  title="Resúmenes" />
 
     <div>
       <PasteClipboard @pasted="onPasted" />

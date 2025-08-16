@@ -10,6 +10,7 @@ darkMode.initTheme();
 <template>
   <div
     class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-500"
+    @contextmenu.prevent
   >
     <!-- HEADER -->
     <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">

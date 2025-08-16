@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import DarkMode from "@/shared/components/ButtonDarkMode.vue";
+import { useUserStore } from "@/stores/user.store";
+
+const userStore = useUserStore();
 
 const isOpen = ref(false);
 </script>
@@ -34,6 +37,12 @@ const isOpen = ref(false);
 
       <!-- Botón Dark Mode -->
       <div class="flex items-center gap-4">
+        <div v-if="userStore.getName && userStore.getName.trim() !== ''">
+          <span class="text-gray-800 dark:text-white">{{
+            userStore.getName
+          }}</span>
+        </div>
+
         <DarkMode />
 
         <!-- Botón hamburguesa móvil -->

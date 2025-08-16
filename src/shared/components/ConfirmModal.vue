@@ -25,16 +25,16 @@ function confirmAction() {
 <template>
   <transition name="bounce">
     <div
-      v-if="modelValue"
+      v-if="props.modelValue"
       class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40"
     >
       <div
-        v-if="modelValue"
+        v-if="props.modelValue"
         class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg"
       >
         <h2 class="text-xl font-bold mb-4">{{ title }}</h2>
         <p class="text-gray-700 dark:text-gray-300 mb-6">
-          {{ message }}
+          {{ props.message }}
         </p>
 
         <div class="flex justify-end gap-2">
@@ -42,13 +42,13 @@ function confirmAction() {
             @click="closeModal"
             class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition"
           >
-            {{ cancelText || "Cancelar" }}
+            {{ props.cancelText || "Cancelar" }}
           </button>
           <button
             @click="confirmAction"
             class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition"
           >
-            {{ confirmText || "Confirmar" }}
+            {{ props.confirmText || "Confirmar" }}
           </button>
         </div>
       </div>
