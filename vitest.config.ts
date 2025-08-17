@@ -11,7 +11,8 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': path.resolve(__dirname, 'src'),
+            '@': path.resolve(__dirname, './src'),
+            '@test': path.resolve(__dirname, './tests/utils'),
         },
     },
     test: {
@@ -25,7 +26,7 @@ export default defineConfig({
             provider: 'v8',
             include: ['src/**/*.{ts,tsx,js,jsx,vue}'],
             exclude: [
-                'tests/',
+                //'tests/',
                 '**/*.d.ts',
                 '**/vitest.setup.ts',
                 '**/*.test.*',

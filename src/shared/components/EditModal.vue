@@ -39,6 +39,7 @@
     <div
       v-if="modelValue"
       class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40"
+      data-test="edit-modal"
     >
       <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg">
         <h2 class="text-xl font-bold mb-4">

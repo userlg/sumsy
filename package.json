@@ -28,6 +28,7 @@
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@pinia/testing": "^1.0.2",
     "@tauri-apps/cli": "^2",
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/vue": "^8.1.0",
