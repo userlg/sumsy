@@ -6,7 +6,7 @@
     @click="darkMode.changeMode()"
   >
     <template v-if="darkMode.isDarkMode">
-      <!-- Icono luna -->
+      <!-- Moon icon -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -27,7 +27,7 @@
       <span class="sr-only">Modo oscuro activado</span>
     </template>
     <template v-else>
-      <!-- Icono sol -->
+      <!-- Sun icon -->
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"

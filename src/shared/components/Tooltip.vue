@@ -29,17 +29,19 @@
 </script>
 
 <template>
-  <span class="relative inline-block" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
-    <slot />
-    <transition name="fade-scale">
-      <div
-        v-if="show"
-        class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap select-none z-50 pointer-events-none"
-      >
-        {{ text }}
-      </div>
-    </transition>
-  </span>
+  <div>
+    <span class="relative inline-block" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
+      <slot />
+      <transition name="fade-scale">
+        <div
+          v-if="show"
+          class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap select-none z-50 pointer-events-none"
+        >
+          {{ text }}
+        </div>
+      </transition>
+    </span>
+  </div>
 </template>
 
 <style scoped>

@@ -1,13 +1,42 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { mount, VueWrapper } from '@vue/test-utils';
+import { vi } from 'vitest';
+import { createRouter, createWebHistory, Router } from 'vue-router';
+import { createTestingPinia } from '@pinia/testing';
+
+import App from '@/App.vue';
 import Home from '@/pages/Home.vue';
 import { SummariesView } from '@/modules/summaries';
 import { CasesView } from '@/modules/cases';
 
-export const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    { path: '/', component: Home },
-    { path: '/summaries', component: SummariesView },
-    { path: '/cases', component: CasesView },
-  ],
-});
+type MountOptions = {
+  component?: any;
+  initialRoute?: string;
+};
+
+export function createTestRouter(): Router {
+  return createRouter({
+    history: createWebHistory(),
+    routes: [
+      { path: '/', component: Home },
+      { path: '/summaries', component: SummariesView },
+      { path: '/cases', component: CasesView },
+    ],
+  });
+}
+
+export async function mountFactory(options: MountOptions = {}): Promise<VueWrapper> {
+  const router = createTestRouter();
+
+  const wrapper = mount(options.component ?? App, {
+    global: {
+      plugins: [createTestingPinia({ createSpy: vi.fn }), router],
+    },
+  });
+
+  if (options.initialRoute) {
+    await router.push(options.initialRoute);
+    await router.isReady();
+  }
+
+  return wrapper;
+}

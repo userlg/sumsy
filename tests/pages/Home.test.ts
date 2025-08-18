@@ -1,18 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
-import { createTestingPinia } from '@pinia/testing';
-import { router } from '@test/index';
-import App from '@/App.vue';
+import { mountFactory } from '@test/index';
 
-const wrapper = mount(App, {
-  global: {
-    plugins: [createTestingPinia(), router],
-  },
-});
+const wrapper = await mountFactory({ initialRoute: '/' });
 
 describe('Home.vue', () => {
-  it('should render NavBar and Footer components', async () => {
-    await router.isReady();
+  it('should render NavBar and Footer components', () => {
     expect(wrapper.find('[data-test="edit-modal"]').exists()).toBe(true);
   });
 

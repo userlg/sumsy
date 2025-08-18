@@ -84,7 +84,7 @@
 
 <template>
   <div>
-    <!-- Filtros y acciones -->
+    <!-- Filters and actions -->
     <div class="flex flex-wrap gap-2 items-center justify-between mb-2">
       <input
         v-model="search"
@@ -111,7 +111,7 @@
       </div>
     </div>
 
-    <!-- Mensajes -->
+    <!-- Messages -->
     <div
       v-if="summaries.length === 0"
       class="text-center text-gray-500 dark:text-gray-400 my-6 font-bold"
@@ -125,7 +125,7 @@
       Búsqueda sin resultado
     </div>
 
-    <!-- Tabla -->
+    <!-- Table -->
     <div v-else>
       <table
         class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-600"
@@ -138,7 +138,7 @@
             <th class="border px-4 py-2 text-center">Opciones</th>
           </tr>
         </thead>
-        <transition-group tag="tbody" name="fade-slide" appear>
+        <transition-group tag="tbody" name="bounce" appear>
           <tr
             v-for="summary in paginatedSummaries"
             :key="summary.id"
@@ -153,7 +153,7 @@
             <td class="border px-4 py-2 text-center">
               {{ summary.date }}
             </td>
-            <td class="border border-gray-300 dark:border-gray-600 px-4 py-2 text-center">
+            <td class="border px-4 py-2 text-center">
               <div class="flex justify-center gap-4">
                 <button title="Editar" @click="openEditModal(summary.id, summary.name)">
                   <EditSvg />
@@ -167,7 +167,7 @@
         </transition-group>
       </table>
 
-      <!-- Paginación -->
+      <!-- Pagination-->
       <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-4">
         <button
           :disabled="currentPage === 1"
@@ -212,18 +212,3 @@
     />
   </div>
 </template>
-
-<style scoped>
-  .fade-slide-enter-active,
-  .fade-slide-leave-active {
-    transition: all 0.3s ease;
-  }
-  .fade-slide-enter-from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  .fade-slide-leave-to {
-    opacity: 0;
-    transform: translateY(5px);
-  }
-</style>

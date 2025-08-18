@@ -1,18 +1,9 @@
 import { describe, it, expect } from 'vitest';
-import { mount } from '@vue/test-utils';
-import { createTestingPinia } from '@pinia/testing';
-import App from '@/App.vue';
-import { router } from '@test/index';
+import { mountFactory } from '@test/index';
 
 describe('App.vue', () => {
   it('should render NavBar and Footer components', async () => {
-    const wrapper = mount(App, {
-      global: {
-        plugins: [createTestingPinia(), router],
-      },
-    });
-
-    await router.isReady();
+    const wrapper = await mountFactory({ initialRoute: '/' });
 
     expect(wrapper.text()).toContain('Sumsy');
 

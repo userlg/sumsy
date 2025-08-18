@@ -20,7 +20,7 @@
         Sumsy
       </router-link>
 
-      <!-- Navegación -->
+      <!-- Navigation -->
       <nav class="hidden md:flex gap-6">
         <router-link to="/" class="nav-link" active-class="nav-active" exact>Inicio</router-link>
         <router-link to="/summaries" class="nav-link" active-class="nav-active">
@@ -29,15 +29,15 @@
         <router-link to="/cases" class="nav-link" active-class="nav-active">Casos</router-link>
       </nav>
 
-      <!-- Botón Dark Mode -->
-      <div class="flex items-center gap-4">
+      <!-- Button Dark Mode -->
+      <div class="flex items-center gap-4 cursor-default">
         <div v-if="userStore.getName && userStore.getName.trim() !== ''">
           <span class="text-gray-800 dark:text-white">{{ userStore.getName }}</span>
         </div>
 
         <DarkMode />
 
-        <!-- Botón hamburguesa móvil -->
+        <!-- Burger icon menu -->
         <button
           class="md:hidden p-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
           aria-label="Menú"
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <!-- Menú móvil -->
+    <!-- Mobile menu -->
     <transition name="fade" mode="out-in">
       <nav
         v-if="isOpen"
@@ -76,20 +76,3 @@
     </transition>
   </header>
 </template>
-
-<style scoped>
-  .fade-slide-enter-active,
-  .fade-slide-leave-active {
-    transition: all 0.25s ease;
-  }
-
-  .fade-slide-enter-from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-
-  .fade-slide-leave-to {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-</style>
