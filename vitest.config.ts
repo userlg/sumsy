@@ -26,11 +26,12 @@ export default defineConfig({
             provider: 'v8',
             include: ['src/**/*.{ts,tsx,js,jsx,vue}'],
             exclude: [
-                //'tests/',
+                'tests/',
                 '**/*.d.ts',
                 '**/vitest.setup.ts',
                 '**/*.test.*',
                 'node_modules/',
+                'src/main.ts',
             ],
         }
     },

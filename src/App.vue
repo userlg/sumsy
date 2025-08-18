@@ -20,9 +20,11 @@
     <!-- MAIN -->
     <main class="flex-1 py-8 flex justify-center" aria-live="polite">
       <div class="w-full max-w-5xl px-4 sm:px-6 lg:px-8">
-        <transition name="bounce" mode="in-out">
-          <router-view />
-        </transition>
+        <router-view v-slot="{ Component }">
+          <transition name="bounce" mode="in-out">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </div>
     </main>
 
