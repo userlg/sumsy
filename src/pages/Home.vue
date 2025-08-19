@@ -41,12 +41,13 @@
         class="w-32 h-32 mb-4 hover:scale-110 transition-transform duration-200"
       />
 
-      <!-- Título -->
+      <!-- Title -->
       <h1 class="text-4xl font-bold text-gray-800 dark:text-white cursor-default">Sumsy</h1>
 
-      <!-- Mensaje de bienvenida -->
+      <!-- Welcome message -->
       <h2
         v-if="userStore.getName && userStore.getName.trim() !== ''"
+        id="welcome-message"
         class="mt-2 text-lg text-gray-600 dark:text-gray-300"
       >
         Bienvenido,
@@ -62,18 +63,19 @@
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5"
           fill="none"
           viewBox="0 0 24 24"
+          stroke-width="1.5"
           stroke="currentColor"
-          stroke-width="2"
+          class="size-6"
         >
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
-            d="M15.232 5.232l3.536 3.536M4 13v7h7l9.536-9.536a1.5 1.5 0 00-2.122-2.122L9 17H4v-4z"
+            d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"
           />
         </svg>
+
         Cambiar nombre
       </button>
     </div>
