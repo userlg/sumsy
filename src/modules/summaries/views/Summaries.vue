@@ -1,4 +1,14 @@
 <script setup lang="ts">
+  /**
+   * @file Summaries.vue
+   * @namespace src.modules.summaries.views
+   * @description Summaries view component for the application
+   *
+   * @component
+   * @example
+   * <Summaries />
+   */
+
   import { ref } from 'vue';
   import { useSummaryStore } from '@/modules/summaries/store/summary.store';
   import { useUserStore } from '@/stores/user.store';

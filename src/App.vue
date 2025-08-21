@@ -1,4 +1,14 @@
 <script setup lang="ts">
+  /**
+   * @file App.vue
+   * @namespace src
+   * @description App main component
+   *
+   * @component
+   * @example
+   * <App />
+   */
+
   import NavBar from '@/shared/components/NavBar.vue';
   import Footer from '@/shared/components/Footer.vue';
   import { useDarkModeStore } from '@/stores/darkModeStore';

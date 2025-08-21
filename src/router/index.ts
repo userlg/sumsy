@@ -1,3 +1,9 @@
+/**
+ * @file index.ts
+ * @namespace src.router
+ * @description Index file for the router
+ */
+
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import Home from '@/pages/Home.vue';
 import { summariesRoute } from '@/modules/summaries';

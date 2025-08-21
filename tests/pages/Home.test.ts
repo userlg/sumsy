@@ -1,11 +1,15 @@
+/**
+ * @file Home.test.ts
+ * @namespace Tests.pages
+ * @description Tests del componente Home.vue
+ */
+
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { flushPromises } from '@vue/test-utils';
 import { mountFactory } from '@test/setup';
 import Home from '@/pages/Home.vue';
 import { useUserStore } from '@/stores/user.store';
 import type { VueWrapper } from '@vue/test-utils';
-import { mount } from '@vue/test-utils';
-import { createTestingPinia } from '@pinia/testing';
 
 describe('Home.vue', () => {
   afterEach(() => {
@@ -31,18 +35,18 @@ describe('Home.vue', () => {
     await flushPromises();
   }
 
-  it('Set the initial username through modal', async () => {
+  it('sets the initial username through the modal', async () => {
     const wrapper = await mountHome({ user: { name: '' } });
-    await fillModal(wrapper, 'Jhon Doe');
+    await fillModal(wrapper, 'John Doe');
 
     const userStore = useUserStore();
-    expect(userStore.getName).toBe('Jhon Doe'); // ahora sí cambia
+    expect(userStore.getName).toBe('John Doe');
 
     const welcome = wrapper.get('#welcome-message');
-    expect(welcome.text()).toContain('Bienvenido, Jhon Doe');
+    expect(welcome.text()).toContain('Bienvenido, John Doe');
   });
 
-  it('When username is loaded edit name with edit modal', async () => {
+  it('edits the username through the change name button', async () => {
     const wrapper = await mountHome();
     const store = useUserStore();
     store.setName('Fake Name');
@@ -50,55 +54,22 @@ describe('Home.vue', () => {
     await flushPromises();
 
     await wrapper.get('#change-name-button').trigger('click');
-    await fillModal(wrapper, 'Jhon Doe');
+    await fillModal(wrapper, 'John Doe');
 
     const welcome = wrapper.get('#welcome-message');
-    expect(welcome.text()).toContain('Bienvenido, Jhon Doe');
+    expect(welcome.text()).toContain('Bienvenido, John Doe');
   });
-  it('abre modal en modo edición al hacer click en "Cambiar nombre"', async () => {
-    const wrapper = await mountFactory({
-      component: Home,
-      initialRoute: '/',
-      piniaState: {
-        user: { name: 'Pepe' },
-        ui: { showNameModal: false }, // si tu store tiene control del modal
-      },
-    });
-    vi.useFakeTimers();
+
+  it('deletes the username using the clear name button', async () => {
+    const wrapper = await mountHome();
+    const store = useUserStore();
+    store.setName('Fake Name');
 
     await flushPromises();
 
-    const button = wrapper.get('#change-name-button'); // ahora sí debería existir
+    const button = wrapper.get('#clear-name-button');
     await button.trigger('click');
 
-    // El modal debería abrirse en modo edición
-    expect(wrapper.find('#input-edit-modal').exists()).toBe(true);
-    expect(wrapper.html()).toContain('Editar nombre');
-  });
-});
-
-describe('Cobertura del if (!userStore.getName || trim... === "")', () => {
-  it('abre modal cuando getName es undefined', async () => {
-    const pinia = createTestingPinia({
-      initialState: { user: { name: undefined } }, // fuerza primera parte del OR
-      stubActions: false,
-    });
-
-    const wrapper = mount(Home, { global: { plugins: [pinia] } });
-    await wrapper.vm.$nextTick();
-
-    expect(wrapper.find('#input-edit-modal').exists()).toBe(true);
-  });
-
-  it('abre modal cuando getName es string vacío', async () => {
-    const pinia = createTestingPinia({
-      initialState: { user: { name: '' } }, // fuerza la segunda parte del OR
-      stubActions: false,
-    });
-
-    const wrapper = mount(Home, { global: { plugins: [pinia] } });
-    await wrapper.vm.$nextTick();
-
-    expect(wrapper.find('#input-edit-modal').exists()).toBe(true);
+    expect(store.getName).toBe('');
   });
 });

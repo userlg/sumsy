@@ -1,4 +1,9 @@
-// bootstrap.ts
+/**
+ * @file bootstrap.ts
+ * @namespace src
+ * @description Bootstrap file for the application
+ */
+
 import { createApp, type App as VueApp, type ComponentPublicInstance } from 'vue';
 import { createPinia } from 'pinia';
 import App from './App.vue';

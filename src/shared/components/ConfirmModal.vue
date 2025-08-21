@@ -1,4 +1,14 @@
 <script setup lang="ts">
+  /**
+   * @file ConfirmModal.vue
+   * @namespace src.shared.components
+   * @description Main modal component for confirming actions
+   *
+   * @component
+   * @example
+   * <ConfirmModal />
+   */
+
   const props = defineProps<{
     modelValue: boolean;
     title: string;

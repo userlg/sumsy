@@ -1,3 +1,9 @@
+/**
+ * @file base.store.test.ts
+ * @namespace Tests.shared.stores
+ * @description Test for the base store
+ */
+
 import { describe, it, expect, beforeEach } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { createListStore } from '@/shared/stores/base.store';

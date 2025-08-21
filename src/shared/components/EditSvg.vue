@@ -1,3 +1,14 @@
+<script setup lang="ts">
+  /**
+   * @file EditSvg.vue
+   * @namespace src.shared.components
+   * @description Svg icon for edit action
+   *
+   * @component
+   * @example
+   * <EditSvg />
+   */
+</script>
 <template>
   <svg
     xmlns="http://www.w3.org/2000/svg"

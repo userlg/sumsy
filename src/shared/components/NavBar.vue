@@ -1,4 +1,14 @@
 <script setup lang="ts">
+  /**
+   * @file NavBar.vue
+   * @namespace src.shared.components
+   * @description Navigation bar component for the application
+   *
+   * @component
+   * @example
+   * <NavBar />
+   */
+
   import { ref } from 'vue';
   import DarkMode from '@/shared/components/ButtonDarkMode.vue';
   import { useUserStore } from '@/stores/user.store';

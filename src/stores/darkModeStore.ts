@@ -1,3 +1,8 @@
+/**
+ * @file darkModeStore.ts
+ * @namespace Stores
+ * @description Store para manejar el modo oscuro
+ */
 import { defineStore } from 'pinia';
 
 export const useDarkModeStore = defineStore('darkMode', {

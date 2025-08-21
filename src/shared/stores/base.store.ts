@@ -1,3 +1,9 @@
+/**
+ * @file base.store.ts
+ * @namespace src.shared.stores
+ * @description  Base store to handle common state management logic summaries or cases
+ */
+
 import { defineStore } from 'pinia';
 import { BaseItem } from '@/shared/interfaces/BaseItem';
 

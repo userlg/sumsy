@@ -1,7 +1,17 @@
 <script setup lang="ts">
+  /**
+   * @file BaseTable.vue
+   * @namespace src.shared.components
+   * @description Main base table component
+   *
+   * @component
+   * @example
+   * <BaseTable />
+   */
+
   import { ref, computed } from 'vue';
   import EditModal from './EditModal.vue';
-  import ConfirmModal from './ConfirmModal.vue'; // ⬅️ Importamos tu modal de confirmación
+  import ConfirmModal from './ConfirmModal.vue';
   import type { BaseItem } from '@/shared/interfaces/BaseItem';
   import type { useUserStore } from '@/stores/user.store';
   import DeleteSvg from './DeleteSvg.vue';
@@ -24,12 +34,10 @@
   const currentPage = ref(1);
   const itemsPerPage = 20;
 
-  // Modal edición
   const showEditModal = ref(false);
   const editId = ref<number | null>(null);
   const editName = ref('');
 
-  // Modal confirmación
   const showConfirmModal = ref(false);
 
   const filteredSummaries = computed(() => {

@@ -1,3 +1,9 @@
+/**
+ * @file App.test.ts
+ * @namespace Tests
+ * @description Testing App.vue component
+ */
+
 import { describe, it, expect, beforeEach } from 'vitest';
 import { mountFactory } from '@test/setup';
 import App from '@/App.vue';
@@ -24,7 +30,7 @@ describe('App.vue', () => {
     expect(wrapper.text()).toContain('Sumsy');
 
     expect(wrapper.text()).toContain(
-      'Sumsy Inicio Resumen CasosJhon DoeModo claro activadoIntroduce tu nombre Cancelar  Guardar  Sumsy  © 2025 Sumsy — Todos los derechos reservados'
+      'Sumsy Inicio Resumen CasosJhon DoeLight mode enabledIntroduce tu nombre Cancelar  Guardar  Sumsy  © 2025 Sumsy — Todos los derechos reservados'
     );
   });
 });

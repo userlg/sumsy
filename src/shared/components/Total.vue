@@ -1,4 +1,14 @@
 <script setup lang="ts">
+  /**
+   * @file Total.vue
+   * @namespace src.shared.components
+   * @description Total component for the application
+   *
+   * @component
+   * @example
+   * <Total />
+   */
+
   import { reactive, watch } from 'vue';
   import { useSummaryStore } from '@/modules/summaries/store/summary.store';
   import gsap from 'gsap';

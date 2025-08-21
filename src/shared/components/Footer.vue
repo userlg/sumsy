@@ -1,3 +1,16 @@
+<script setup lang="ts">
+  /**
+   * @file Footer.vue
+   * @namespace src.shared.components
+   * @description Footer component for the application
+   *
+   * @component
+   * @example
+   * <Footer />
+   */
+
+  import Logo from '@/shared/icons/favicon.svg';
+</script>
 <template>
   <footer
     class="w-full border-t border-blue-200 dark:border-blue-700 bg-white dark:bg-gray-900 cursor-default transition-colors duration-500"
@@ -21,6 +34,3 @@
     </div>
   </footer>
 </template>
-<script setup lang="ts">
-  import Logo from '@/shared/icons/favicon.svg';
-</script>

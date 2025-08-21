@@ -1,4 +1,14 @@
 <script setup lang="ts">
+  /**
+   * @file PasteClipBoard.vue
+   * @namespace src.shared.components
+   * @description Paste clipboard component for the application
+   *
+   * @component
+   * @example
+   * <PasteClipBoard />
+   */
+
   import { ref } from 'vue';
 
   const emit = defineEmits<{

@@ -1,3 +1,9 @@
+/**
+ * @file home.logic.ts
+ * @namespace src.modules.home
+ * @description Logic for the home module
+ */
+
 import type { Ref } from 'vue';
 import { useUserStore } from '@/stores/user.store';
 

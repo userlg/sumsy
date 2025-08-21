@@ -1,9 +1,29 @@
+<script setup lang="ts">
+  /**
+   * @file ButtonDarkMode.vue
+   * @namespace src.shared.components
+   * @description Main button component for toggling dark mode
+   *
+   * @component
+   * @example
+   * <ButtonDarkMode />
+   */
+
+  import { useDarkModeStore } from '@/stores/darkModeStore';
+
+  const darkMode = useDarkModeStore();
+
+  function toggleDarkMode(): void {
+    darkMode.changeMode();
+  }
+</script>
 <template>
   <button
+    id="toggle-dark-mode"
     class="flex items-center justify-center p-2 rounded-full bg-transparent border border-transparent text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-700 transition-colors duration-200 ease-in-out focus:outline-none cursor-pointer select-none"
     aria-label="Toggle dark mode"
     title="Toggle dark mode"
-    @click="darkMode.changeMode()"
+    @click="toggleDarkMode()"
   >
     <template v-if="darkMode.isDarkMode">
       <!-- Moon icon -->
@@ -15,6 +35,7 @@
         stroke="currentColor"
         class="w-5 h-5 stroke-amber-300 stroke-2"
         aria-hidden="true"
+        data-test="icon-moon"
       >
         <path
           stroke-linecap="round"
@@ -24,7 +45,7 @@
              a9.753 9.753 0 0 0 9.002-5.998Z"
         />
       </svg>
-      <span class="sr-only">Modo oscuro activado</span>
+      <span class="sr-only">Dark mode enabled</span>
     </template>
     <template v-else>
       <!-- Sun icon -->
@@ -36,6 +57,7 @@
         stroke="currentColor"
         class="w-6 h-6 stroke-2 stroke-yellow-300"
         aria-hidden="true"
+        data-test="icon-sun"
       >
         <path
           stroke-linecap="round"
@@ -45,13 +67,7 @@
              M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
         />
       </svg>
-      <span class="sr-only">Modo claro activado</span>
+      <span class="sr-only">Light mode enabled</span>
     </template>
   </button>
 </template>
-
-<script setup lang="ts">
-  import { useDarkModeStore } from '@/stores/darkModeStore';
-
-  const darkMode = useDarkModeStore();
-</script>

@@ -1,3 +1,9 @@
+/**
+ * @file bootstrap.test.ts
+ * @namespace Tests
+ * @description Test for the Bootstrap
+ */
+
 import { describe, it, expect } from 'vitest';
 import { setAppVue, createVueApp } from '@/bootstrap';
 

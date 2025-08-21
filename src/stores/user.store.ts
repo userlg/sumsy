@@ -1,3 +1,9 @@
+/**
+ * @file user.store.ts
+ * @namespace Stores
+ * @description Store global para manejar el nombre del usuario
+ */
+
 import { defineStore } from 'pinia';
 
 interface UserState {

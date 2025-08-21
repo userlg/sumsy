@@ -1,3 +1,14 @@
+<script setup lang="ts">
+  /**
+   * @file DeleteSvg.vue
+   * @namespace src.shared.components
+   * @description Svg icon for delete action
+   *
+   * @component
+   * @example
+   * <DeleteSvg />
+   */
+</script>
 <template>
   <div>
     <svg

@@ -1,4 +1,14 @@
 <script setup lang="ts">
+  /**
+   * @file EditModal.vue
+   * @namespace src.shared.components
+   * @description Main modal component for editing items
+   *
+   * @component
+   * @example
+   * <EditModal />
+   */
+
   import { ref, watch } from 'vue';
   import type { useUserStore } from '@/stores/user.store';
 

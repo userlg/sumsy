@@ -1,3 +1,9 @@
+/**
+ * @file setup.ts
+ * @namespace Tests
+ * @description setup file to export the mountFactory function
+ */
+
 import { mount, VueWrapper } from '@vue/test-utils';
 import { vi } from 'vitest';
 import { createRouter, createWebHistory, Router } from 'vue-router';
@@ -12,6 +18,7 @@ type MountOptions = {
   component?: any;
   initialRoute?: string;
   piniaState?: Record<string, any>;
+  componentProps?: Record<string, any>;
 };
 
 export function createTestRouter(): Router {
@@ -29,6 +36,7 @@ export async function mountFactory(options: MountOptions = {}): Promise<VueWrapp
   const router = createTestRouter();
 
   const wrapper = mount(options.component ?? App, {
+    props: options.componentProps,
     global: {
       plugins: [
         createTestingPinia({

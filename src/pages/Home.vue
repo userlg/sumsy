@@ -1,4 +1,14 @@
 <script setup lang="ts">
+  /**
+   * @file Home.vue
+   * @namespace src.pages
+   * @description Home page component for the application
+   *
+   * @component
+   * @example
+   * <Home />
+   */
+
   import { ref, onMounted } from 'vue';
   import Logo from '@/shared/icons/favicon.svg';
   import { useUserStore } from '@/stores/user.store';

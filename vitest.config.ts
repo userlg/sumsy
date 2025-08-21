@@ -23,7 +23,7 @@ export default defineConfig({
         setupFiles: './vitest.setup.ts',
         include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx', 'tests/**/*.test.vue'],
         coverage: {
-            provider: 'istanbul',
+            provider: 'v8',
             include: ['src/**/*.{ts,tsx,js,jsx,vue}'],
             exclude: [
                 'tests/',
