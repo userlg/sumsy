@@ -3,12 +3,14 @@
   import EditModal from './EditModal.vue';
   import ConfirmModal from './ConfirmModal.vue'; // ⬅️ Importamos tu modal de confirmación
   import type { BaseItem } from '@/shared/interfaces/BaseItem';
+  import type { useUserStore } from '@/stores/user.store';
   import DeleteSvg from './DeleteSvg.vue';
   import EditSvg from './EditSvg.vue';
 
   const props = defineProps<{
     summaries: BaseItem[];
     isReversed: boolean;
+    userStore: ReturnType<typeof useUserStore>;
   }>();
 
   const emit = defineEmits<{
@@ -78,6 +80,13 @@
   function goToPage(page: number) {
     if (page >= 1 && page <= totalPages.value) {
       currentPage.value = page;
+    }
+  }
+
+  function saveEdit(newName: string) {
+    if (editId.value !== null) {
+      emit('editSummary', editId.value, newName);
+      closeModal();
     }
   }
 </script>
@@ -191,14 +200,10 @@
     <EditModal
       v-model="showEditModal"
       title="Editar resumen"
+      :user-store="props.userStore"
       :initial-name="editName"
       place-holder="editar"
-      @save="
-        (newName) => {
-          emit('editSummary', editId!, newName);
-          closeModal();
-        }
-      "
+      @save="saveEdit"
     />
 
     <!-- Confirm Modal -->

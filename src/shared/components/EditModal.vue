@@ -1,11 +1,13 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue';
+  import type { useUserStore } from '@/stores/user.store';
 
   const props = defineProps<{
     modelValue: boolean;
     title: string;
     initialName: string;
     placeHolder: string;
+    userStore: ReturnType<typeof useUserStore>;
   }>();
 
   const emit = defineEmits<{
@@ -38,7 +40,7 @@
   <div>
     <transition name="bounce">
       <div
-        v-if="modelValue"
+        v-show="modelValue"
         class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40"
         data-test="edit-modal"
       >
@@ -58,7 +60,8 @@
           <div class="flex justify-end gap-2 mt-4">
             <button
               id="cancel-button"
-              class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition"
+              class="px-4 py-2 rounded transition bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              :disabled="!userStore.getName || userStore.getName.trim() === ''"
               @click="closeModal"
             >
               Cancelar

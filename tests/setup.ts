@@ -11,6 +11,7 @@ import { CasesView } from '@/modules/cases';
 type MountOptions = {
   component?: any;
   initialRoute?: string;
+  piniaState?: Record<string, any>;
 };
 
 export function createTestRouter(): Router {
@@ -29,7 +30,14 @@ export async function mountFactory(options: MountOptions = {}): Promise<VueWrapp
 
   const wrapper = mount(options.component ?? App, {
     global: {
-      plugins: [createTestingPinia({ createSpy: vi.fn }), router],
+      plugins: [
+        createTestingPinia({
+          initialState: options.piniaState,
+          stubActions: false,
+          createSpy: vi.fn,
+        }),
+        router,
+      ],
     },
   });
 

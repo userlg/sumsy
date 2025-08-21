@@ -1,11 +1,13 @@
 <script setup lang="ts">
   import { ref } from 'vue';
   import { useSummaryStore } from '@/modules/summaries/store/summary.store';
+  import { useUserStore } from '@/stores/user.store';
   import PasteClipboard from '@/shared/components/PasteClipBoard.vue';
   import Total from '@/shared/components/Total.vue';
   import Table from '@/shared/components/BaseTable.vue';
 
-  const store = useSummaryStore();
+  const userStore = useUserStore();
+  const summarytStore = useSummaryStore();
   const name = ref('');
   const error = ref('');
 
@@ -15,12 +17,12 @@
       return;
     }
     error.value = '';
-    store.create(name.value.trim());
+    summarytStore.create(name.value.trim());
     name.value = '';
   }
 
   function handleEditSummary(id: number, newName: string) {
-    store.updateName(id, newName);
+    summarytStore.updateName(id, newName);
   }
 
   function onPasted(text: string) {
@@ -28,15 +30,15 @@
   }
 
   function handleDeleteSummary(id: number) {
-    store.delete(id);
+    summarytStore.delete(id);
   }
 
   function handleReverse() {
-    store.reverseList();
+    summarytStore.reverseList();
   }
 
   function handleClear() {
-    store.clearAll();
+    summarytStore.clearAll();
   }
 </script>
 
@@ -73,8 +75,9 @@
     <div class="border-t border-neutral-400 dark:border-blue-300 my-3" />
 
     <Table
-      :summaries="store.list"
-      :is-reversed="store.isReversed"
+      :summaries="summarytStore.list"
+      :is-reversed="summarytStore.isReversed"
+      :user-store="userStore"
       @delete-summary="handleDeleteSummary"
       @reverse="handleReverse"
       @clear="handleClear"

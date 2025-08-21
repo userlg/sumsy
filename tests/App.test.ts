@@ -1,14 +1,30 @@
-import { describe, it, expect } from 'vitest';
-import { mountFactory } from '@test/index';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { mountFactory } from '@test/setup';
+import App from '@/App.vue';
+import { useUserStore } from '@/stores/user.store';
+import type { VueWrapper } from '@vue/test-utils';
+
+let wrapper: VueWrapper;
 
 describe('App.vue', () => {
-  it('should render NavBar and Footer components', async () => {
-    const wrapper = await mountFactory({ initialRoute: '/' });
+  beforeEach(async () => {
+    wrapper = await mountFactory({
+      component: App,
+      initialRoute: '/',
+    });
+
+    const store = useUserStore();
+    store.name = 'Jhon Doe';
+  });
+
+  it('should render NavBar and Footer components', () => {
+    const store = useUserStore();
+    store.name = 'Jhon Doe';
 
     expect(wrapper.text()).toContain('Sumsy');
 
     expect(wrapper.text()).toContain(
-      'Sumsy Inicio Resumen CasosModo claro activadoIntroduce tu nombre Cancelar  Guardar  Sumsy  © 2025 Sumsy — Todos los derechos reservados'
+      'Sumsy Inicio Resumen CasosJhon DoeModo claro activadoIntroduce tu nombre Cancelar  Guardar  Sumsy  © 2025 Sumsy — Todos los derechos reservados'
     );
   });
 });

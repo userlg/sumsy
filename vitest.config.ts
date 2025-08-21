@@ -12,7 +12,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './src'),
-            '@test': path.resolve(__dirname, './tests/utils'),
+            '@test': path.resolve(__dirname, './tests'),
         },
     },
     test: {
@@ -23,7 +23,7 @@ export default defineConfig({
         setupFiles: './vitest.setup.ts',
         include: ['tests/**/*.test.ts', 'tests/**/*.test.tsx', 'tests/**/*.test.vue'],
         coverage: {
-            provider: 'v8',
+            provider: 'istanbul',
             include: ['src/**/*.{ts,tsx,js,jsx,vue}'],
             exclude: [
                 'tests/',
