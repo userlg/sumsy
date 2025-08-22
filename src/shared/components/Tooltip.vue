@@ -1,7 +1,7 @@
 <script setup lang="ts">
   /**
    * @file Tooltip.vue
-   * @namespace shared.components
+   * @namespace src.shared.components
    * @description Tooltip component
    *
    * @component

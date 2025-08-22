@@ -1,7 +1,7 @@
 /**
  * @file user.store.ts
- * @namespace Stores
- * @description Store global para manejar el nombre del usuario
+ * @namespace src.stores
+ * @description Global store to handle the user name
  */
 
 import { defineStore } from 'pinia';

@@ -44,7 +44,7 @@
 
 <template>
   <div class="relative flex flex-col items-center justify-center text-center p-4 h-full">
-    <div v-if="showContent">
+    <div v-if="showContent" class="text-center flex flex-col items-center justify-center">
       <!-- Logo -->
       <Logo
         id="Logo"
@@ -54,18 +54,21 @@
       />
 
       <!-- Title -->
-      <h1 class="text-4xl font-bold text-gray-800 dark:text-white cursor-default">Sumsy</h1>
+      <h1 class="text-4xl text-center font-bold text-gray-800 dark:text-white cursor-default">
+        Sumsy
+      </h1>
 
       <!-- Welcome message -->
-      <h2
+      <div
         v-if="userStore.getName && userStore.getName.trim() !== ''"
-        id="welcome-message"
-        class="mt-2 text-lg text-gray-600 dark:text-gray-300"
+        class="flex flex-row justify-center items-center"
       >
-        Bienvenido,
-        <span class="font-semibold">{{ userStore.getName }}</span>
-        !
-      </h2>
+        <h2 id="welcome-message" class="mt-4 text-lg text-gray-600 dark:text-gray-300 text-center">
+          Bienvenido,
+          <span class="font-semibold">{{ userStore.getName }}</span>
+          !
+        </h2>
+      </div>
 
       <!-- Botón Borrar Nombre (solo desarrollo) -->
       <button

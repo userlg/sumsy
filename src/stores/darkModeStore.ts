@@ -1,6 +1,6 @@
 /**
  * @file darkModeStore.ts
- * @namespace Stores
+ * @namespace src.stores
  * @description Store para manejar el modo oscuro
  */
 import { defineStore } from 'pinia';

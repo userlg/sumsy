@@ -1,6 +1,6 @@
 /**
  * @file setup.ts
- * @namespace Tests
+ * @namespace tests
  * @description setup file to export the mountFactory function
  */
 
