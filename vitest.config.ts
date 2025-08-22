@@ -32,6 +32,7 @@ export default defineConfig({
                 '**/*.test.*',
                 'node_modules/',
                 'src/main.ts',
+                'src/scripts/run-reset-app.ts',
             ],
         }
     },
