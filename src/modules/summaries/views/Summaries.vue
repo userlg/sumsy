@@ -82,12 +82,14 @@
       {{ error }}
     </p>
 
+    <!-- Horizontal Line -->
     <div class="border-t border-neutral-400 dark:border-blue-300 my-3" />
 
     <Table
       :items="summarytStore.list"
       :is-reversed="summarytStore.isReversed"
       :user-store="userStore"
+      title-modal-view="Detalles del Resumen"
       message="No hay resúmenes disponibles."
       @delete-summary="handleDeleteSummary"
       @reverse="handleReverse"

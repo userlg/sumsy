@@ -21,6 +21,7 @@
 
   const props = defineProps<{
     items: BaseItem[];
+    titleModalView: string;
     isReversed: boolean;
     userStore: ReturnType<typeof useUserStore>;
     message: string;
@@ -242,6 +243,12 @@
     />
 
     <!-- View Modal -->
-    <ViewModal :id="tempId" v-model="showViewModal" :name="tempName" :date="tempDate" />
+    <ViewModal
+      :id="tempId"
+      v-model="showViewModal"
+      :title="props.titleModalView"
+      :name="tempName"
+      :date="tempDate"
+    />
   </div>
 </template>

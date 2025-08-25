@@ -88,6 +88,7 @@
       :items="caseStore.list"
       :is-reversed="caseStore.isReversed"
       :user-store="userStore"
+      title-modal-view="Detalles del Caso"
       message="No hay casos disponibles."
       @delete-summary="handleDeleteSummary"
       @reverse="handleReverse"

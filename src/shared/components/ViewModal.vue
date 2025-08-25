@@ -1,15 +1,7 @@
 <script setup lang="ts">
-  /**
-   * @file ViewModal.vue
-   * @namespace src.shared.components
-   * @description Main modal component for viewing details
-   *
-   * @component
-   * @example
-   * <ViewModal v-model="isOpen" name="Case A" :id="1" date="24-08-25" />
-   */
   const props = defineProps<{
     modelValue: boolean;
+    title: string;
     name: string;
     id: number;
     date: string;
@@ -32,29 +24,31 @@
     >
       <!-- Modal Card -->
       <div
-        class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg p-6 relative border border-gray-200 dark:border-gray-700"
+        class="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-xl p-6 relative border border-gray-200 dark:border-gray-700"
       >
         <!-- Header -->
-        <h2
-          class="text-xl sm:text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4 leading-snug break-words max-h-40 overflow-y-auto pr-2"
+        <h1 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-3">
+          {{ props.title }}
+        </h1>
+
+        <!-- Nombre largo -->
+        <div
+          class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 mb-5 max-h-36 overflow-y-auto text-gray-800 dark:text-blue-300 text-base leading-relaxed"
         >
           {{ props.name }}
-        </h2>
+        </div>
 
         <!-- Content -->
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">#</span>
-            <span class="text-base font-semibold text-gray-700 dark:text-gray-200">
-              {{ props.id }}
-            </span>
+        <div class="border-t border-neutral-400 dark:border-blue-300 my-3" />
+        <div class="grid grid-cols-2 gap-y-3 text-sm">
+          <div class="text-gray-500 dark:text-gray-400 font-medium">#</div>
+          <div class="text-gray-800 dark:text-gray-200 font-semibold">
+            {{ props.id }}
           </div>
 
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">Fecha</span>
-            <span class="text-base font-semibold text-gray-700 dark:text-gray-200">
-              {{ props.date }}
-            </span>
+          <div class="text-gray-500 dark:text-gray-400 font-medium">Fecha</div>
+          <div class="text-gray-800 dark:text-gray-200 font-semibold">
+            {{ props.date }}
           </div>
         </div>
 
