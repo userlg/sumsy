@@ -2,18 +2,18 @@
   /**
    * @file Charts.vue
    * @namespace src.shared.components
-   * @description Reusable chart component with props for title and data, compatible with dark/light mode via store
+   * @description Reusable chart component with props for title y data, compatible con dark/light mode via store
    *
    * @example
    * <Charts title="Resúmenes" :items="summaryStore.list" />
    */
 
   import { ref, onMounted, watch, computed } from 'vue';
-  import { Chart, ChartData, ChartOptions, registerables } from 'chart.js';
+  import { Chart as ChartJS, ChartData, ChartOptions, registerables } from 'chart.js';
   import { useDarkModeStore } from '@/stores/darkModeStore';
 
-  // Registrar Chart.js
-  Chart.register(...registerables);
+  // Registrar Chart.js (solo en producción real)
+  ChartJS.register(...registerables);
 
   interface Item {
     date: string;
@@ -23,7 +23,10 @@
   const props = defineProps<{
     title: string;
     items: Item[];
+    Chart?: typeof ChartJS; // 🟢 Permite inyectar un mock en tests
   }>();
+
+  const chartClass = props.Chart ?? ChartJS; // usar el mock si se pasa
 
   // Store de dark mode
   const darkModeStore = useDarkModeStore();
@@ -52,14 +55,14 @@
   });
 
   const chartRef = ref<HTMLCanvasElement | null>(null);
-  let chartInstance: Chart<'line'> | null = null;
+  let chartInstance: InstanceType<typeof chartClass> | null = null;
 
   // Función para inicializar / actualizar el gráfico
   const renderChart = () => {
     if (!chartRef.value) return;
 
-    const labels = props.items.map((item) => item.date);
-    const dataValues = props.items.map((item) => item.element);
+    const labels = props.items.map((i) => i.date);
+    const dataValues = props.items.map((i) => i.element);
 
     const data: ChartData<'line'> = {
       labels,
@@ -100,36 +103,20 @@
       },
     };
 
-    if (chartInstance) {
-      chartInstance.destroy();
-    }
+    if (chartInstance) chartInstance.destroy();
 
-    chartInstance = new Chart(chartRef.value, {
-      type: 'line',
-      data,
-      options,
-    });
+    chartInstance = new chartClass(chartRef.value, { type: 'line', data, options });
   };
 
-  // Renderizar al montar
-  onMounted(() => {
-    renderChart();
-  });
+  onMounted(renderChart);
 
-  // Re-render si cambian items o el modo dark
-  watch(
-    [() => props.items, () => darkModeStore.isDarkMode],
-    () => {
-      renderChart();
-    },
-    { deep: true }
-  );
+  watch([() => props.items, () => darkModeStore.isDarkMode], renderChart, { deep: true });
 </script>
 
 <template>
   <div class="w-full max-w-4xl mx-auto my-6 p-6 bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-lg">
     <div class="h-80">
-      <canvas ref="chartRef"></canvas>
+      <canvas ref="chartRef" id="chart"></canvas>
     </div>
   </div>
 </template>
