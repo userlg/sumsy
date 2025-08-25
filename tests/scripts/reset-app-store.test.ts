@@ -1,3 +1,9 @@
+/**
+ * @file reset-app-store.test.ts
+ * @namespace tests.scripts
+ * @description Tests for the reset-app-store script
+ */
+
 import { describe, it, expect, beforeAll } from 'vitest';
 import fs from 'fs';
 import path from 'path';

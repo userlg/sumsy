@@ -54,7 +54,7 @@
 
 <template>
   <div class="flex flex-col">
-    <Total title="Resúmenes" />
+    <Total title="Resúmenes" :store="summarytStore" />
 
     <div>
       <PasteClipboard @pasted="onPasted" />
@@ -85,9 +85,10 @@
     <div class="border-t border-neutral-400 dark:border-blue-300 my-3" />
 
     <Table
-      :summaries="summarytStore.list"
+      :items="summarytStore.list"
       :is-reversed="summarytStore.isReversed"
       :user-store="userStore"
+      message="No hay resúmenes disponibles."
       @delete-summary="handleDeleteSummary"
       @reverse="handleReverse"
       @clear="handleClear"

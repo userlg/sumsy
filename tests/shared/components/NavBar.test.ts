@@ -1,6 +1,6 @@
 /**
  * @file NavBar.test.ts
- * @namespace Tests.shared.components
+ * @namespace tests.shared.components
  * @description Tests del componente NavBar.vue
  */
 

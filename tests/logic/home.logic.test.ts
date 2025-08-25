@@ -1,6 +1,6 @@
 /**
  * @file home.logic.test.ts
- * @namespace Tests.logic
+ * @namespace tests.logic
  * @description Test for the home.logic
  */
 

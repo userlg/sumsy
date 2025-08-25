@@ -16,11 +16,14 @@
   import type { useUserStore } from '@/stores/user.store';
   import DeleteSvg from './DeleteSvg.vue';
   import EditSvg from './EditSvg.vue';
+  import ViewModal from './ViewModal.vue';
+  import ViewSvg from './ViewSvg.vue';
 
   const props = defineProps<{
-    summaries: BaseItem[];
+    items: BaseItem[];
     isReversed: boolean;
     userStore: ReturnType<typeof useUserStore>;
+    message: string;
   }>();
 
   const emit = defineEmits<{
@@ -34,26 +37,27 @@
   const currentPage = ref(1);
   const itemsPerPage = 20;
 
+  const showViewModal = ref(false);
+
   const showEditModal = ref(false);
-  const editId = ref<number | null>(null);
-  const editName = ref('');
+  const tempId = ref<number>(0);
+  const tempName = ref('');
+  const tempDate = ref('');
 
   const showConfirmModal = ref(false);
 
-  const filteredSummaries = computed(() => {
+  const filteredItems = computed(() => {
     const term = search.value.trim().toLowerCase();
-    return term
-      ? props.summaries.filter((s) => s.name.toLowerCase().includes(term))
-      : props.summaries;
+    return term ? props.items.filter((s) => s.name.toLowerCase().includes(term)) : props.items;
   });
 
   const totalPages = computed(() =>
-    Math.max(1, Math.ceil(filteredSummaries.value.length / itemsPerPage))
+    Math.max(1, Math.ceil(filteredItems.value.length / itemsPerPage))
   );
 
-  const paginatedSummaries = computed(() => {
+  const paginatedItems = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage;
-    return filteredSummaries.value.slice(start, start + itemsPerPage);
+    return filteredItems.value.slice(start, start + itemsPerPage);
   });
 
   function onDelete(id: number) {
@@ -61,15 +65,23 @@
   }
 
   function openEditModal(id: number, name: string) {
-    editId.value = id;
-    editName.value = name;
+    tempId.value = id;
+    tempName.value = name;
     showEditModal.value = true;
+  }
+
+  function openViewModal(id: number, name: string, date: string) {
+    tempId.value = id;
+    tempName.value = name;
+    tempDate.value = date;
+    showViewModal.value = true;
   }
 
   function closeModal() {
     showEditModal.value = false;
-    editId.value = null;
-    editName.value = '';
+    tempId.value = 0;
+    tempName.value = '';
+    tempDate.value = '';
   }
 
   function onReverse() {
@@ -92,8 +104,8 @@
   }
 
   function saveEdit(newName: string) {
-    if (editId.value !== null) {
-      emit('editSummary', editId.value, newName);
+    if (tempId.value !== null) {
+      emit('editSummary', tempId.value, newName);
       closeModal();
     }
   }
@@ -111,7 +123,7 @@
         @input="currentPage = 1"
       />
 
-      <div v-if="filteredSummaries.length > 0" class="flex gap-2">
+      <div v-if="filteredItems.length > 0" class="flex gap-2">
         <button
           class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition shadow-md hover:shadow-gray-400 dark:hover:shadow-gray-900"
           @click="onReverse"
@@ -130,13 +142,13 @@
 
     <!-- Messages -->
     <div
-      v-if="summaries.length === 0"
+      v-if="items.length === 0"
       class="text-center text-gray-500 dark:text-gray-400 my-6 font-bold"
     >
-      No hay resúmenes disponibles.
+      {{ props.message }}
     </div>
     <div
-      v-else-if="filteredSummaries.length === 0 && search.length > 0"
+      v-else-if="filteredItems.length === 0 && search.length > 0"
       class="text-center text-gray-500 dark:text-gray-400 my-6 font-bold"
     >
       Búsqueda sin resultado
@@ -157,25 +169,30 @@
         </thead>
         <transition-group tag="tbody" name="bounce" appear>
           <tr
-            v-for="summary in paginatedSummaries"
-            :key="summary.id"
+            v-for="item in paginatedItems"
+            :key="item.id"
             class="transition-all duration-300 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-800"
           >
             <td class="border px-4 py-2 text-center">
-              {{ summary.element }}
+              {{ item.element }}
             </td>
             <td class="border px-4 py-2 text-center truncate max-w-[150px]">
-              {{ summary.name }}
+              {{ item.name }}
             </td>
             <td class="border px-4 py-2 text-center">
-              {{ summary.date }}
+              {{ item.date }}
             </td>
             <td class="border px-4 py-2 text-center">
               <div class="flex justify-center gap-4">
-                <button title="Editar" @click="openEditModal(summary.id, summary.name)">
+                <button title="Editar" @click="openEditModal(item.id, item.name)">
                   <EditSvg />
                 </button>
-                <button title="Borrar" @click="onDelete(summary.id)">
+
+                <button title="Editar" @click="openViewModal(item.id, item.name, item.date)">
+                  <ViewSvg />
+                </button>
+
+                <button title="Borrar" @click="onDelete(item.id)">
                   <DeleteSvg />
                 </button>
               </div>
@@ -209,7 +226,7 @@
       v-model="showEditModal"
       title="Editar resumen"
       :user-store="props.userStore"
-      :initial-name="editName"
+      :initial-name="tempName"
       place-holder="editar"
       @save="saveEdit"
     />
@@ -223,5 +240,8 @@
       cancel-text="Cancelar"
       @confirm="clearAll"
     />
+
+    <!-- View Modal -->
+    <ViewModal :id="tempId" v-model="showViewModal" :name="tempName" :date="tempDate" />
   </div>
 </template>

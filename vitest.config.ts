@@ -29,6 +29,7 @@ export default defineConfig({
         'node_modules/',
         'src/main.ts',
         'src/scripts/run-reset-app.ts',
+         'src/shared/interfaces/**',
       ],
     },
   },

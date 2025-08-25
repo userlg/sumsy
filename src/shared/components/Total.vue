@@ -6,22 +6,22 @@
    *
    * @component
    * @example
-   * <Total />
+   * <Total :title="'Summaries'" :store="useSummaryStore()" />
    */
 
   import { reactive, watch } from 'vue';
-  import { useSummaryStore } from '@/modules/summaries/store/summary.store';
   import gsap from 'gsap';
 
+  // ✅ Ahora recibe el store como prop
   const props = defineProps<{
     title: string;
+    store: { list: unknown[] }; // mínimo que debe tener (puedes tipar con BaseItem[])
   }>();
 
-  const store = useSummaryStore();
   const tweened = reactive({ number: 0 });
 
   watch(
-    () => store.list,
+    () => props.store.list,
     (newVal) => {
       gsap
         .timeline()
@@ -39,6 +39,7 @@
     { immediate: true, deep: true }
   );
 </script>
+
 <template>
   <div class="flex flex-col items-center justify-center space-y-2 cursor-default">
     <!-- Circle-->

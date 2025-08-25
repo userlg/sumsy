@@ -1,6 +1,6 @@
 /**
  * @file Home.test.ts
- * @namespace Tests.pages
+ * @namespace tests.pages
  * @description Tests del componente Home.vue
  */
 

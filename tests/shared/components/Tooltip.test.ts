@@ -1,6 +1,6 @@
 /**
  * @file Tooltip.test.ts
- * @namespace Tests.shared.components
+ * @namespace tests.shared.components
  * @description Test for the Tooltip component
  */
 

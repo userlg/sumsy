@@ -1,6 +1,6 @@
 /**
  * @file bootstrap.test.ts
- * @namespace Tests
+ * @namespace tests
  * @description Test for the Bootstrap
  */
 

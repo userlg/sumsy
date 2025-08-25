@@ -1,6 +1,6 @@
 /**
  * @file App.test.ts
- * @namespace Tests
+ * @namespace tests
  * @description Testing App.vue component
  */
 
