@@ -12,26 +12,23 @@
   import { Chart as ChartJS, ChartData, ChartOptions, registerables } from 'chart.js';
   import { useDarkModeStore } from '@/stores/darkModeStore';
 
-  // Registrar Chart.js (solo en producción real)
-  ChartJS.register(...registerables);
-
   interface Item {
     date: string;
     element: number;
   }
 
+  // Permite inyectar Chart para tests
   const props = defineProps<{
     title: string;
     items: Item[];
-    Chart?: typeof ChartJS; // 🟢 Permite inyectar un mock en tests
+    Chart?: typeof ChartJS;
   }>();
 
-  const chartClass = props.Chart ?? ChartJS; // usar el mock si se pasa
+  const Chart = props.Chart || ChartJS;
+  Chart.register(...registerables);
 
-  // Store de dark mode
   const darkModeStore = useDarkModeStore();
 
-  // 🎨 Paleta de colores dependiente del tema
   const colors = computed(() => {
     if (darkModeStore.isDarkMode) {
       return {
@@ -55,9 +52,8 @@
   });
 
   const chartRef = ref<HTMLCanvasElement | null>(null);
-  let chartInstance: InstanceType<typeof chartClass> | null = null;
+  let chartInstance: ChartJS<'line'> | null = null;
 
-  // Función para inicializar / actualizar el gráfico
   const renderChart = () => {
     if (!chartRef.value) return;
 
@@ -104,19 +100,21 @@
     };
 
     if (chartInstance) chartInstance.destroy();
-
-    chartInstance = new chartClass(chartRef.value, { type: 'line', data, options });
+    chartInstance = new Chart(chartRef.value, {
+      type: 'line',
+      data,
+      options,
+    });
   };
 
   onMounted(renderChart);
-
   watch([() => props.items, () => darkModeStore.isDarkMode], renderChart, { deep: true });
 </script>
 
 <template>
   <div class="w-full max-w-4xl mx-auto my-6 p-6 bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-lg">
     <div class="h-80">
-      <canvas ref="chartRef" id="chart"></canvas>
+      <canvas id="chart" ref="chartRef"></canvas>
     </div>
   </div>
 </template>

@@ -1,7 +1,42 @@
-# Tauri + Vue + TypeScript
+# 🌟 Sumsy
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Sumsy es una aplicación moderna y ligera para gestionar tus datos de casos y resumenes de manera eficiente. Construida con las últimas tecnologías, Sumsy combina rendimiento, estilo y escalabilidad en un solo lugar.
 
-## Recommended IDE Setup
+---
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
+## 🛠 Tecnologías Utilizadas
+
+- **Tauri** ⚡ – Aplicación de escritorio rápida y segura.
+- **Vue 3** 🖖 – Framework progresivo para interfaces reactivas.
+- **TailwindCSS** 🎨 – Estilos modernos y altamente personalizables.
+- **TypeScript** 📝 – Tipado estático para mayor seguridad y productividad.
+- **Tauri** 📝 – Rust to create the exe with tauri.
+
+---
+
+## 🚀 Instalación
+
+Clona el repositorio y corre la aplicación localmente:
+
+```bash
+git clone https://github.com/userlg/sumsy.git
+
+cd sumsy
+yarn
+# to execute in local
+
+yarn tauri dev
+
+# to generate the build
+
+yarn tauri build
+
+# Project tree file
+
+src/
+├─ components/  # Componentes Vue reutilizables
+├─ pages/       # Páginas de la app
+├─ stores/      # Pinia stores
+├─ modules/     # Lógica de negocio
+├─ assets/      # Imágenes, fuentes y estilos
+```
