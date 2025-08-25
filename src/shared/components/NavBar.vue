@@ -37,6 +37,9 @@
           Resumen
         </router-link>
         <router-link to="/cases" class="nav-link" active-class="nav-active">Casos</router-link>
+        <router-link to="/graphs" class="nav-link" active-class="nav-active">
+          Estadísticas
+        </router-link>
       </nav>
 
       <!-- Button Dark Mode -->

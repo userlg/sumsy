@@ -21,6 +21,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@tauri-apps/api": "2.8.0",
     "@tauri-apps/plugin-opener": "2.5.0",
+    "chart.js": "^4.5.0",
     "gsap": "^3.13.0",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.4.1",

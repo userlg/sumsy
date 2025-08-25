@@ -30,7 +30,7 @@ describe('App.vue', () => {
     expect(wrapper.text()).toContain('Sumsy');
 
     expect(wrapper.text()).toContain(
-      'Sumsy Inicio Resumen CasosJhon DoeLight mode enabledIntroduce tu nombre Cancelar  Guardar  Sumsy  © 2025 Sumsy — Todos los derechos reservados'
+      'Sumsy Inicio Resumen Casos Estadísticas Jhon DoeLight mode enabledIntroduce tu nombre Cancelar  Guardar  Sumsy  © 2025 Sumsy — Todos los derechos reservados.'
     );
   });
 });

@@ -11,6 +11,7 @@ import { createTestingPinia } from '@pinia/testing';
 
 import App from '@/App.vue';
 import Home from '@/pages/Home.vue';
+import Graphs from '@/pages/Graphs.vue';
 import { SummariesView } from '@/modules/summaries';
 import { CasesView } from '@/modules/cases';
 
@@ -26,6 +27,7 @@ export function createTestRouter(): Router {
     history: createWebHistory(),
     routes: [
       { path: '/', component: Home },
+      { path: '/graphs', component: Graphs },
       { path: '/summaries', component: SummariesView },
       { path: '/cases', component: CasesView },
     ],
