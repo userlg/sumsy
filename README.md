@@ -42,3 +42,13 @@ src/
 ├─ modules/     # Lógica de negocio
 ├─ assets/      # Imágenes, fuentes y estilos
 ```
+
+## Screenshots
+![Sumsy 1](./screenshots/1.png)
+---
+![Sumsy 2](./screenshots/2.png)
+---
+![Sumsy 3](./screenshots/3.png)
+---
+![Sumsy 4](./screenshots/4.png)
+---
