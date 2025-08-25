@@ -1,6 +1,8 @@
-# 🌟 Sumsy
+Sumsy
 
 Sumsy es una aplicación moderna y ligera para gestionar tus datos de casos y resumenes de manera eficiente. Construida con las últimas tecnologías, Sumsy combina rendimiento, estilo y escalabilidad en un solo lugar.
+
+![Sumsy SVG](./public/favicon.png)
 
 ---
 
@@ -19,7 +21,7 @@ Sumsy es una aplicación moderna y ligera para gestionar tus datos de casos y re
 Clona el repositorio y corre la aplicación localmente:
 
 ```bash
-git clone https://github.com/userlg/sumsy.git
+git clone https://github.com/userlg/sumsy
 
 cd sumsy
 yarn
