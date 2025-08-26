@@ -2,7 +2,9 @@ Sumsy
 
 Sumsy es una aplicación moderna y ligera para gestionar tus datos de casos y resumenes de manera eficiente. Construida con las últimas tecnologías, Sumsy combina rendimiento, estilo y escalabilidad en un solo lugar.
 
-![Sumsy SVG](./public/favicon.png)
+![Sumsy SVG](./public/favicon32.svg)
+![Vue ](./public/vue.svg)
+![Vite ](./public/vite.svg)
 
 ---
 
@@ -44,11 +46,11 @@ src/
 ```
 
 ## Screenshots
-![Sumsy 1](./screenshots/1.png)
----
-![Sumsy 2](./screenshots/2.png)
----
-![Sumsy 3](./screenshots/3.png)
----
-![Sumsy 4](./screenshots/4.png)
----
+
+## ![Sumsy 1](./screenshots/1.png)
+
+## ![Sumsy 2](./screenshots/2.png)
+
+## ![Sumsy 3](./screenshots/3.png)
+
+## ![Sumsy 4](./screenshots/4.png)

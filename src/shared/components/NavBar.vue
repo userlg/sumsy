@@ -42,12 +42,21 @@
         </router-link>
       </nav>
 
-      <!-- Button Dark Mode -->
+      <!-- User name-->
       <div class="flex items-center gap-4 cursor-default">
         <div v-if="userStore.getName && userStore.getName.trim() !== ''">
-          <span class="text-gray-800 dark:text-white">{{ userStore.getName }}</span>
+          <span
+            :class="[
+              userStore.getName.toLowerCase() === 'orlando'
+                ? 'neon-name'
+                : 'text-gray-800 dark:text-white',
+            ]"
+          >
+            {{ userStore.getName }}
+          </span>
         </div>
 
+        <!-- Button Dark Mode -->
         <DarkMode />
 
         <!-- Burger icon menu -->

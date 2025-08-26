@@ -1,0 +1,34 @@
+.neon-name {
+  --neon-color: #00e5ff; /* color principal */
+  --neon-soft: #99f6ff; /* resplandor más suave */
+  --text-color: #0f172a; /* texto oscuro en claro */
+  color: var(--text-color);
+  font-weight: 600;
+
+  text-shadow:
+    0 0 2px var(--neon-color),
+    0 0 6px var(--neon-soft);
+
+  animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .neon-name {
+    --text-color: #ffffff;
+    color: var(--text-color);
+  }
+}
+
+@keyframes subtlePulse {
+  0%,
+  100% {
+    text-shadow:
+      0 0 2px var(--neon-color),
+      0 0 6px var(--neon-soft);
+  }
+  50% {
+    text-shadow:
+      0 0 3px var(--neon-color),
+      0 0 10px var(--neon-soft);
+  }
+}

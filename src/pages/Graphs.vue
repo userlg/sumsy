@@ -20,6 +20,7 @@
 <template>
   <div class="flex flex-col items-center space-y-8 py-6">
     <Charts title="Resúmenes" :items="summaryStore.list" />
+    <div class="w-full border-t border-neutral-400 dark:border-blue-300 my-3" />
     <Charts title="Casos" :items="caseStore.list" />
   </div>
 </template>
