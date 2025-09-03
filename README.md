@@ -60,3 +60,12 @@ src/
 ## ![Sumsy 3](./screenshots/3.png)
 
 ## ![Sumsy 4](./screenshots/4.png)
+
+## 🤝 Contribuciones
+¡Las contribuciones son bienvenidas!  
+Revisa [CONTRIBUTING.md](CONTRIBUTING.md) para detalles.
+
+## 📜 Licencia
+Este proyecto está bajo la licencia MIT.  
+Consulta el archivo [LICENSE](LICENSE.md) para más información.
+
