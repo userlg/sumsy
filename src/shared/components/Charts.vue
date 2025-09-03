@@ -21,10 +21,10 @@
   const props = defineProps<{
     title: string;
     items: Item[];
-    Chart?: typeof ChartJS;
+    chart?: typeof ChartJS;
   }>();
 
-  const Chart = props.Chart || ChartJS;
+  const Chart = props.chart || ChartJS;
   Chart.register(...registerables);
 
   const darkModeStore = useDarkModeStore();
