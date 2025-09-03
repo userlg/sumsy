@@ -1,5 +1,11 @@
-Sumsy
+# Sumsy - Desktop App with Vue 3, Tauri 2, Vite, TailwindCSS
 
+![Vue 3](https://img.shields.io/badge/Vue-3-brightgreen?style=for-the-badge&logo=vuedotjs&logoColor=white)
+![Tauri 2](https://img.shields.io/badge/Tauri-2.0-ffc131?style=for-the-badge&logo=tauri&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-purple?style=for-the-badge&logo=vite&logoColor=white)
+![License](https://img.shields.io/github/license/userlg/sumsy?style=for-the-badge&color=blue)
+![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen?style=for-the-badge&logo=github)
+---
 Sumsy es una aplicación moderna y ligera para gestionar tus datos de casos y resumenes de manera eficiente. Construida con las últimas tecnologías, Sumsy combina rendimiento, estilo y escalabilidad en un solo lugar.
 
 ![Sumsy SVG](./public/favicon32.svg)
