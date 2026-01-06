@@ -19,7 +19,9 @@
 </script>
 
 <template>
-  <header class="bg-white dark:bg-gray-800 border-b border-blue-300 dark:border-blue-700 shadow-sm">
+  <header
+    class="sticky top-0 z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-500"
+  >
     <div class="container mx-auto flex items-center justify-between px-6 py-3">
       <!-- Logo -->
       <router-link

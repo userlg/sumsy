@@ -37,13 +37,6 @@ export const useDarkModeStore = defineStore('darkMode', {
       }
     },
     changeMode(): void {
-      if (this.darkIsActive) {
-        localStorage.theme = 'light';
-        document.documentElement.classList.remove('dark');
-      } else {
-        localStorage.theme = 'dark';
-        document.documentElement.classList.add('dark');
-      }
       this.toggleDarkMode();
     },
   },

@@ -15,6 +15,28 @@ export function createListStore(storeId: string) {
       nextElement: 1,
       isReversed: false,
     }),
+    getters: {
+      getItemsGroupedByDate: (state) => {
+        const groupedMap = new Map<string, number>();
+
+        state.list.forEach((item) => {
+          const count = groupedMap.get(item.date) || 0;
+          groupedMap.set(item.date, count + 1);
+        });
+
+        const sortedEntries = Array.from(groupedMap.entries()).sort((a, b) => {
+          // Parse date DD-MM-YY to verify order
+          const [dayA, monthA, yearA] = a[0].split('-').map(Number);
+          const [dayB, monthB, yearB] = b[0].split('-').map(Number);
+          // Assume 20XX for year
+          const dateA = new Date(2000 + yearA, monthA - 1, dayA);
+          const dateB = new Date(2000 + yearB, monthB - 1, dayB);
+          return dateA.getTime() - dateB.getTime();
+        });
+
+        return sortedEntries.map(([date, count]) => ({ date, count }));
+      },
+    },
     actions: {
       create(name: string): void {
         const dateCurrent = new Date();
@@ -74,6 +96,28 @@ export function createListStore(storeId: string) {
         const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = String(date.getFullYear()).slice(-2);
         return `${day}-${month}-${year}`;
+      },
+      seed(count: number, prefix: string): void {
+        const currentDate = new Date();
+        const oneYearAgo = new Date();
+        oneYearAgo.setFullYear(currentDate.getFullYear() - 1);
+
+        for (let i = 0; i < count; i++) {
+          // Random date between one year ago and now
+          const randomTimestamp =
+            oneYearAgo.getTime() + Math.random() * (currentDate.getTime() - oneYearAgo.getTime());
+          const randomDate = new Date(randomTimestamp);
+          const formattedDate = this.formatDate(randomDate);
+
+          const newItem: BaseItem = {
+            id: this.nextId++,
+            name: `${prefix} ${i + 1}`,
+            date: formattedDate,
+            element: this.nextElement++,
+          };
+          this.list.push(newItem);
+        }
+        this.reindexAndSort();
       },
     },
     persist: true,

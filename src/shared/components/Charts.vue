@@ -14,7 +14,7 @@
 
   interface Item {
     date: string;
-    element: number;
+    count: number;
   }
 
   // Permite inyectar Chart para tests
@@ -58,7 +58,7 @@
     if (!chartRef.value) return;
 
     const labels = props.items.map((i) => i.date);
-    const dataValues = props.items.map((i) => i.element);
+    const dataValues = props.items.map((i) => i.count);
 
     const data: ChartData<'line'> = {
       labels,
@@ -67,13 +67,26 @@
           label: props.title,
           data: dataValues,
           borderColor: colors.value.border,
-          backgroundColor: colors.value.background,
+          backgroundColor: (context) => {
+            const ctx = context.chart.ctx;
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            if (darkModeStore.isDarkMode) {
+              gradient.addColorStop(0, 'rgba(96, 165, 250, 0.5)'); // Blue-400
+              gradient.addColorStop(1, 'rgba(96, 165, 250, 0.0)');
+            } else {
+              gradient.addColorStop(0, 'rgba(59, 130, 246, 0.5)'); // Blue-500
+              gradient.addColorStop(1, 'rgba(59, 130, 246, 0.0)');
+            }
+            return gradient;
+          },
           pointBackgroundColor: colors.value.point,
           pointBorderColor: colors.value.border,
-          pointRadius: 5,
-          pointHoverRadius: 7,
+          pointRadius: 6,
+          pointHoverRadius: 8,
+          pointBorderWidth: 2,
           fill: true,
-          tension: 0.35,
+          tension: 0.4, // Smoother curve
+          borderWidth: 3,
         },
       ],
     };
@@ -112,9 +125,16 @@
 </script>
 
 <template>
-  <div class="w-full max-w-4xl mx-auto my-6 p-6 bg-gray-300 dark:bg-gray-800 rounded-2xl shadow-lg">
-    <div class="h-80">
-      <canvas id="chart" ref="chartRef"></canvas>
+  <div
+    class="w-full bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 p-6 flex flex-col h-full transform hover:scale-[1.01] transition-transform duration-300"
+  >
+    <h3
+      class="text-xl font-bold text-gray-700 dark:text-gray-200 mb-6 pl-2 border-l-4 border-blue-500"
+    >
+      {{ title }}
+    </h3>
+    <div class="flex-1 min-h-[400px] relative w-full">
+      <canvas ref="chartRef"></canvas>
     </div>
   </div>
 </template>

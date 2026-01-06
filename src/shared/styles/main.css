@@ -15,7 +15,7 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 body {
-  @apply font-inter;
+  @apply font-inter antialiased text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950;
 }
 
 .nav-link {

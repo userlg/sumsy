@@ -14,6 +14,7 @@
   import { useUserStore } from '@/stores/user.store';
   import EditModal from '@/shared/components/EditModal.vue';
   import { initHome } from '@/logic/home.logic';
+  import { useSummaryStore } from '@/modules/summaries/store/summary.store';
 
   const userStore = useUserStore();
   const showNameModal = ref(false);
@@ -35,6 +36,13 @@
   function clearName(): void {
     userStore.clearName();
     openNameModal(true);
+  }
+
+  const summaryStore = useSummaryStore();
+
+  function seedSummaries(): void {
+    summaryStore.seed(30, 'Resumen de prueba');
+    alert('Se han cargado 30 resúmenes de prueba.');
   }
 
   onMounted(() => {
@@ -88,6 +96,31 @@
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
         </svg>
         Borrar Nombre
+      </button>
+
+      <!-- Botón Seed Summaries (solo desarrollo) -->
+      <button
+        v-if="isDev"
+        id="seed-summaries-button"
+        class="absolute bottom-0 flex items-center gap-2 bg-gradient-to-r from-emerald-400 to-emerald-500 text-white px-4 py-2 rounded-full shadow-md hover:scale-105 hover:shadow-lg active:scale-95 transition-all duration-200"
+        style="left: 50%; transform: translateX(-50%)"
+        @click="seedSummaries"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-5 h-5"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 0 1-1.125-1.125M3.375 19.5h7.5c.621 0 1.125-.504 1.125-1.125m-9.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m0 3.75h-7.5A1.125 1.125 0 0 1 12 18.375m9.75-12.75c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125m19.5 0v1.5c0 .621-.504 1.125-1.125 1.125M2.25 5.625v1.5c0 .621.504 1.125 1.125 1.125m0 0h17.25m-17.25 0h7.5c.621 0 1.125.504 1.125 1.125M3.375 8.25c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125m17.25-3.75h-7.5c-.621 0-1.125.504-1.125 1.125m8.625-1.125c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125M12 10.875v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 10.875c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125M13.125 12h7.5m-7.5 0c-.621 0-1.125.504-1.125 1.125M20.625 12c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-17.25 0h7.5M12 14.625v-1.5m0 1.5c0 .621-.504 1.125-1.125 1.125M12 14.625c0 .621.504 1.125 1.125 1.125m-2.25 0c.621 0 1.125.504 1.125 1.125m0 0h7.5"
+          />
+        </svg>
+        Cargar Datos
       </button>
 
       <!-- Botón cambiar nombre abajo a la derecha -->

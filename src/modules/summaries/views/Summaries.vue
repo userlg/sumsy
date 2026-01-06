@@ -31,8 +31,8 @@
     name.value = '';
   }
 
-  function handleEditSummary(id: number, newName: string) {
-    summarytStore.updateName(id, newName);
+  function handleEditSummary(id: number, newName: string, newDate?: string) {
+    summarytStore.update(id, { name: newName, date: newDate });
   }
 
   function onPasted(text: string) {

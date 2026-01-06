@@ -31,7 +31,7 @@
     (e: 'reverse'): void;
     (e: 'clear'): void;
     (e: 'deleteSummary', id: number): void;
-    (e: 'editSummary', id: number, newName: string): void;
+    (e: 'editSummary', id: number, newName: string, newDate?: string): void;
   }>();
 
   const search = ref('');
@@ -65,9 +65,12 @@
     emit('deleteSummary', id);
   }
 
-  function openEditModal(id: number, name: string) {
+  const isDev = import.meta.env.DEV;
+
+  function openEditModal(id: number, name: string, date: string) {
     tempId.value = id;
     tempName.value = name;
+    tempDate.value = date;
     showEditModal.value = true;
   }
 
@@ -104,9 +107,9 @@
     }
   }
 
-  function saveEdit(newName: string) {
+  function saveEdit(newName: string, newDate?: string) {
     if (tempId.value !== null) {
-      emit('editSummary', tempId.value, newName);
+      emit('editSummary', tempId.value, newName, newDate);
       closeModal();
     }
   }
@@ -185,7 +188,7 @@
             </td>
             <td class="border px-4 py-2 text-center">
               <div class="flex justify-center gap-4">
-                <button title="Editar" @click="openEditModal(item.id, item.name)">
+                <button title="Editar" @click="openEditModal(item.id, item.name, item.date)">
                   <EditSvg />
                 </button>
 
@@ -228,6 +231,8 @@
       title="Editar resumen"
       :user-store="props.userStore"
       :initial-name="tempName"
+      :initial-date="tempDate"
+      :is-dev="isDev"
       place-holder="editar"
       @save="saveEdit"
     />

@@ -19,13 +19,11 @@
 
 <template>
   <div
-    class="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-500"
+    class="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-950 dark:to-gray-900 text-slate-900 dark:text-slate-100 transition-colors duration-500"
     @contextmenu.prevent
   >
     <!-- HEADER -->
-    <header class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-50">
-      <NavBar />
-    </header>
+    <NavBar />
 
     <!-- MAIN -->
     <main class="flex-1 py-8 flex justify-center" aria-live="polite">

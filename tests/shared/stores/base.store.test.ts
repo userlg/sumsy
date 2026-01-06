@@ -146,10 +146,68 @@ describe('Base Store', () => {
 
   describe('formatDate()', () => {
     it('formats a date as DD-MM-YY', () => {
-      const fixedDate = new Date('2025-01-15T12:00:00Z');
+      const fixedDate = new Date(2025, 0, 15); // Year 2025, Month 0 (Jan), Day 15
       const formatted = store.formatDate(fixedDate);
 
+      // Verify the output matches DD-MM-YY
       expect(formatted).toBe('15-01-25');
+    });
+  });
+
+  describe('getItemsGroupedByDate getter', () => {
+    it('groups items by date and counts them', () => {
+      store.list = [
+        { id: 1, name: 'A', date: '01-01-23', element: 1 },
+        { id: 2, name: 'B', date: '01-01-23', element: 2 },
+        { id: 3, name: 'C', date: '02-01-23', element: 3 },
+      ];
+
+      const grouped = store.getItemsGroupedByDate;
+
+      expect(grouped).toHaveLength(2);
+      expect(grouped[0]).toEqual({ date: '01-01-23', count: 2 });
+      expect(grouped[1]).toEqual({ date: '02-01-23', count: 1 });
+    });
+
+    it('sorts grouped items by date ascending', () => {
+      store.list = [
+        { id: 1, name: 'A', date: '05-01-23', element: 1 },
+        { id: 2, name: 'B', date: '01-01-23', element: 2 },
+      ];
+
+      const grouped = store.getItemsGroupedByDate;
+
+      expect(grouped[0].date).toBe('01-01-23');
+      expect(grouped[1].date).toBe('05-01-23');
+    });
+  });
+
+  describe('seed()', () => {
+    it('populates the list with dummy data', () => {
+      store.seed(5, 'Test Item');
+
+      expect(store.list.length).toBe(5);
+      expect(store.list[0].name).toContain('Test Item');
+      // Should have generated date in DD-MM-YY
+      expect(store.list[0].date).toMatch(/^\d{2}-\d{2}-\d{2}$/);
+    });
+
+    it('generates random dates within the last year', () => {
+      store.seed(1, 'Item');
+      const itemDateStr = store.list[0].date;
+      const [day, month, year] = itemDateStr.split('-').map(Number);
+
+      // Reconstruct date assuming 20XX
+      const itemDate = new Date(2000 + year, month - 1, day);
+      const now = new Date();
+      const oneYearAgo = new Date();
+      oneYearAgo.setFullYear(now.getFullYear() - 1);
+
+      // Allow a small margin of error for test execution time, or simply check range logic broadly
+      // Check if itemDate is effectively <= now and >= oneYearAgo (ignoring time mostly)
+      // Since the seed uses exact time, we can check timestamps
+      expect(itemDate.getTime()).toBeLessThanOrEqual(now.getTime() + 100000); // padding
+      expect(itemDate.getTime()).toBeGreaterThanOrEqual(oneYearAgo.getTime() - 86400000); // minus 1 day padding
     });
   });
 });

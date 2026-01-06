@@ -13,7 +13,7 @@
 </script>
 <template>
   <footer
-    class="w-full border-t border-blue-200 dark:border-blue-700 bg-white dark:bg-gray-900 cursor-default transition-colors duration-500"
+    class="w-full border-t border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm cursor-default transition-colors duration-500"
   >
     <div
       class="max-w-7xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4"
