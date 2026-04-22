@@ -4,7 +4,6 @@ import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 import svgLoader from 'vite-svg-loader';
 
-// @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vite.dev/config/
@@ -18,6 +17,20 @@ export default defineConfig(async () => ({
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
+  },
+
+  // Split large dependencies into separate chunks
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-vue': ['vue', 'vue-router', 'pinia'],
+          'vendor-chart': ['chart.js'],
+          'vendor-ui': ['gsap']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600, // Slightly increase the warning limit just in case
   },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
