@@ -9,7 +9,7 @@
    * <EditModal />
    */
 
-  import { ref, watch } from 'vue';
+  import { ref, watch, computed } from 'vue';
   import type { useUserStore } from '@/stores/user.store';
 
   const props = defineProps<{
@@ -19,7 +19,6 @@
     placeHolder: string;
     userStore: ReturnType<typeof useUserStore>;
     initialDate?: string;
-    isDev?: boolean;
   }>();
 
   const emit = defineEmits<{
@@ -28,7 +27,41 @@
   }>();
 
   const name = ref(props.initialName);
-  const date = ref(props.initialDate || '');
+  const internalDate = ref(props.initialDate || '');
+
+  /**
+   * Converts DD-MM-YY to YYYY-MM-DD for the native date input
+   */
+  function toIsoDate(ddmmyy: string): string {
+    if (!ddmmyy) return '';
+    const parts = ddmmyy.split('-');
+    if (parts.length !== 3) return '';
+    const [day, month, year] = parts;
+    return `20${year}-${month}-${day}`;
+  }
+
+  /**
+   * Converts YYYY-MM-DD from the native date input to DD-MM-YY
+   */
+  function fromIsoDate(isoDate: string): string {
+    if (!isoDate) return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return '';
+    const [fullYear, month, day] = parts;
+    const year = fullYear.slice(-2);
+    return `${day}-${month}-${year}`;
+  }
+
+  /**
+   * Computed property to bridge the native date input (YYYY-MM-DD)
+   * with the internal DD-MM-YY format
+   */
+  const dateInputValue = computed({
+    get: () => toIsoDate(internalDate.value),
+    set: (isoVal: string) => {
+      internalDate.value = fromIsoDate(isoVal);
+    },
+  });
 
   watch(
     () => props.initialName,
@@ -40,7 +73,7 @@
   watch(
     () => props.initialDate,
     (newVal) => {
-      date.value = newVal || '';
+      internalDate.value = newVal || '';
     }
   );
 
@@ -50,7 +83,7 @@
 
   function saveEdit() {
     if (name.value.trim() !== '') {
-      emit('save', name.value.trim(), date.value);
+      emit('save', name.value.trim(), internalDate.value);
       closeModal();
     }
   }
@@ -78,14 +111,14 @@
               :placeholder="props.placeHolder"
             />
 
-            <!-- Dev only: Date edit -->
-            <div v-if="props.isDev" class="flex flex-col gap-1">
-              <label class="text-xs text-gray-500">Fecha (DD-MM-YY)</label>
+            <!-- Date edit -->
+            <div v-if="initialDate !== undefined" class="flex flex-col gap-1">
+              <label class="text-xs text-gray-500 dark:text-gray-400">Fecha</label>
               <input
-                v-model="date"
-                type="text"
+                id="input-edit-date"
+                v-model="dateInputValue"
+                type="date"
                 class="w-full px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-400"
-                placeholder="DD-MM-YY"
               />
             </div>
           </div>

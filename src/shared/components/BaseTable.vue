@@ -65,7 +65,7 @@
     emit('deleteSummary', id);
   }
 
-  const isDev = import.meta.env.DEV;
+
 
   function openEditModal(id: number, name: string, date: string) {
     tempId.value = id;
@@ -232,7 +232,6 @@
       :user-store="props.userStore"
       :initial-name="tempName"
       :initial-date="tempDate"
-      :is-dev="isDev"
       place-holder="editar"
       @save="saveEdit"
     />

@@ -34,38 +34,38 @@ describe('EditModal.vue', () => {
   });
 
   it('updates local date when initialDate prop changes', async () => {
-    const wrapper = mountComponent({ isDev: true, initialDate: '01-01-23' });
+    const wrapper = mountComponent({ initialDate: '01-01-23' });
 
-    // Check initial state
-    const dateInputs = wrapper.findAll('input[type="text"]');
-    // usually the second input is the date one if isDev is true
-    const dateInput = dateInputs.length > 1 ? dateInputs[1] : null;
-    expect((dateInput?.element as HTMLInputElement).value).toBe('01-01-23');
+    // The date input should always be visible now (type="date")
+    const dateInput = wrapper.find('input[type="date"]');
+    expect(dateInput.exists()).toBe(true);
+    // Native date input expects YYYY-MM-DD; 01-01-23 -> 2023-01-01
+    expect((dateInput.element as HTMLInputElement).value).toBe('2023-01-01');
 
-    // Update prop
+    // Update prop to a new date
     await wrapper.setProps({ initialDate: '05-05-25' });
-    expect((dateInput?.element as HTMLInputElement).value).toBe('05-05-25');
+    expect((dateInput.element as HTMLInputElement).value).toBe('2025-05-05');
 
     // Test clearing the date (undefined or empty) to cover the `|| ''` branch
     await wrapper.setProps({ initialDate: undefined });
-    expect((dateInput?.element as HTMLInputElement).value).toBe('');
+    expect(wrapper.find('input[type="date"]').exists()).toBe(false);
   });
 
-  it('renders date input only when isDev is true', () => {
-    const wrapperDev = mountComponent({ isDev: true });
-    expect(wrapperDev.findAll('input').length).toBeGreaterThan(1); // Name + Date
-
-    const wrapperProd = mountComponent({ isDev: false });
-    expect(wrapperProd.findAll('input').length).toBe(1); // Only Name
+  it('conditionally renders date input based on initialDate', () => {
+    const wrapper = mountComponent();
+    expect(wrapper.find('input[type="text"]').exists()).toBe(true);
+    expect(wrapper.find('input[type="date"]').exists()).toBe(false);
+    expect(wrapper.findAll('input').length).toBe(1); // Name only
   });
 
-  it('emits save with date when isDev is true', async () => {
-    const wrapper = mountComponent({ isDev: true, initialDate: '01-01-23' });
+  it('emits save with date in DD-MM-YY format', async () => {
+    const wrapper = mountComponent({ initialDate: '01-01-23' });
     const saveBtn = wrapper.find('#save-button');
 
     await saveBtn.trigger('click');
 
     expect(wrapper.emitted('save')).toBeTruthy();
+    // The save event should emit the DD-MM-YY format internally
     expect(wrapper.emitted('save')?.[0]).toEqual(['Initial Name', '01-01-23']);
   });
 });
