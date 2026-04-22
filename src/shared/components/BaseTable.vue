@@ -118,25 +118,25 @@
 <template>
   <div>
     <!-- Filters and actions -->
-    <div class="flex flex-wrap gap-2 items-center justify-between mb-2">
+    <div class="flex flex-col sm:flex-row gap-3 items-center justify-between mb-4">
       <input
         v-model="search"
         type="text"
         placeholder="Buscar por nombre..."
-        class="flex-1 px-3 py-2 border rounded dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+        class="w-full sm:flex-1 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100"
         @input="currentPage = 1"
       />
 
-      <div v-if="filteredItems.length > 0" class="flex gap-2">
+      <div v-if="filteredItems.length > 0" class="flex gap-2 w-full sm:w-auto">
         <button
-          class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 focus:ring-2 focus:ring-blue-400 transition shadow-md hover:shadow-gray-400 dark:hover:shadow-gray-900"
+          class="flex-1 sm:flex-none bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium px-4 py-2.5 rounded-xl transition-all border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-slate-400"
           @click="onReverse"
         >
           {{ isReversed ? 'ASC' : 'DESC' }}
         </button>
 
         <button
-          class="bg-pink-500 text-white px-3 py-2 rounded hover:bg-pink-600 focus:ring-2 focus:ring-pink-400 transition shadow-md hover:shadow-gray-400 dark:hover:shadow-gray-900"
+          class="flex-1 sm:flex-none bg-red-500/10 hover:bg-red-500 text-red-600 dark:text-red-400 hover:text-white font-medium px-4 py-2.5 rounded-xl transition-all border border-red-200 dark:border-red-900/50 hover:border-red-500 focus:ring-2 focus:ring-red-400"
           @click="confirmClear"
         >
           Borrar todo
@@ -160,50 +160,50 @@
 
     <!-- Table -->
     <div v-else>
-      <table
-        class="min-w-full table-auto border-collapse border border-gray-300 dark:border-gray-600"
-      >
-        <thead>
-          <tr class="bg-gray-100 dark:bg-gray-700">
-            <th class="border px-4 py-2 text-center">#</th>
-            <th class="border px-4 py-2 text-center">Nombre</th>
-            <th class="border px-4 py-2 text-center">Fecha</th>
-            <th class="border px-4 py-2 text-center">Opciones</th>
-          </tr>
-        </thead>
-        <transition-group tag="tbody" name="bounce" appear>
-          <tr
-            v-for="item in paginatedItems"
-            :key="item.id"
-            class="transition-all duration-300 ease-in-out hover:bg-gray-300 dark:hover:bg-gray-800"
-          >
-            <td class="border px-4 py-2 text-center">
-              {{ item.element }}
-            </td>
-            <td class="border px-4 py-2 text-center truncate max-w-[150px]">
-              {{ item.name }}
-            </td>
-            <td class="border px-4 py-2 text-center">
-              {{ item.date }}
-            </td>
-            <td class="border px-4 py-2 text-center">
-              <div class="flex justify-center gap-4">
-                <button title="Editar" @click="openEditModal(item.id, item.name, item.date)">
-                  <EditSvg />
-                </button>
+      <div class="bg-white/70 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-x-auto">
+        <table class="w-full text-left text-sm whitespace-nowrap">
+          <thead class="bg-slate-50/50 dark:bg-slate-700/30 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-700/80">
+            <tr>
+              <th class="px-6 py-4 text-center font-medium">#</th>
+              <th class="px-6 py-4 text-center font-medium">Nombre</th>
+              <th class="px-6 py-4 text-center font-medium hidden sm:table-cell">Fecha</th>
+              <th class="px-6 py-4 text-center font-medium">Opciones</th>
+            </tr>
+          </thead>
+          <transition-group tag="tbody" name="bounce" appear>
+            <tr
+              v-for="item in paginatedItems"
+              :key="item.id"
+              class="transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 border-b last:border-none border-slate-100 dark:border-slate-700/50"
+            >
+              <td class="px-6 py-4 text-center text-slate-500 dark:text-slate-400">
+                {{ item.element }}
+              </td>
+              <td class="px-6 py-4 text-center text-slate-700 dark:text-slate-200 truncate max-w-[150px] sm:max-w-[200px]">
+                {{ item.name }}
+              </td>
+              <td class="px-6 py-4 text-center text-slate-500 dark:text-slate-400 hidden sm:table-cell">
+                {{ item.date }}
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex justify-center gap-4">
+                  <button title="Editar" class="text-slate-400 hover:text-blue-500 transition-colors" @click="openEditModal(item.id, item.name, item.date)">
+                    <EditSvg />
+                  </button>
 
-                <button title="Editar" @click="openViewModal(item.id, item.name, item.date)">
-                  <ViewSvg />
-                </button>
+                  <button title="Ver" class="text-slate-400 hover:text-emerald-500 transition-colors" @click="openViewModal(item.id, item.name, item.date)">
+                    <ViewSvg />
+                  </button>
 
-                <button title="Borrar" @click="onDelete(item.id)">
-                  <DeleteSvg />
-                </button>
-              </div>
-            </td>
-          </tr>
-        </transition-group>
-      </table>
+                  <button title="Borrar" class="text-slate-400 hover:text-red-500 transition-colors" @click="onDelete(item.id)">
+                    <DeleteSvg />
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </transition-group>
+        </table>
+      </div>
 
       <!-- Pagination-->
       <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-4">

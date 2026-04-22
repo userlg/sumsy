@@ -14,6 +14,7 @@
 
 - **Blazing Fast**: Powered by Tauri's Rust backend for minimal resource usage.
 - **Modern UI**: Polished interface with Glassmorphism, dark mode support, and smooth transitions.
+- **Minimalist Architecture**: Clean, centered layouts with a dedicated sidebar for all actions, maintaining visual simplicity.
 - **Data Management**: Efficiently handle cases and summaries.
 - **Visualize Data**: Interactive charts powered by Chart.js.
 - **Desktop Native**: Works offline with native operating system integration.

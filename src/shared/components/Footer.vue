@@ -26,9 +26,7 @@
         </span>
       </div>
 
-      <div
-        class="border-b border-blue-200 dark:border-blue-700 py-4 text-center text-xs text-blue-600 dark:text-blue-400"
-      >
+      <div class="text-center text-xs text-slate-500 dark:text-slate-400">
         © {{ new Date().getFullYear() }} Sumsy — Todos los derechos reservados.
       </div>
     </div>

@@ -17,7 +17,7 @@
   import Table from '@/shared/components/BaseTable.vue';
 
   const userStore = useUserStore();
-  const summarytStore = useSummaryStore();
+  const summaryStore = useSummaryStore();
   const name = ref('');
   const error = ref('');
 
@@ -27,12 +27,12 @@
       return;
     }
     error.value = '';
-    summarytStore.create(name.value.trim());
+    summaryStore.create(name.value.trim());
     name.value = '';
   }
 
   function handleEditSummary(id: number, newName: string, newDate?: string) {
-    summarytStore.update(id, { name: newName, date: newDate });
+    summaryStore.update(id, { name: newName, date: newDate });
   }
 
   function onPasted(text: string) {
@@ -40,21 +40,21 @@
   }
 
   function handleDeleteSummary(id: number) {
-    summarytStore.delete(id);
+    summaryStore.delete(id);
   }
 
   function handleReverse() {
-    summarytStore.reverseList();
+    summaryStore.reverseList();
   }
 
   function handleClear() {
-    summarytStore.clearAll();
+    summaryStore.clearAll();
   }
 </script>
 
 <template>
   <div class="flex flex-col">
-    <Total title="Resúmenes" :store="summarytStore" />
+    <Total title="Resúmenes" :store="summaryStore" />
 
     <div>
       <PasteClipboard @pasted="onPasted" />
@@ -66,12 +66,12 @@
         placeholder="Nombre"
         autocomplete="off"
         aria-label="Nombre del resumen"
-        class="border rounded px-3 py-2 flex-1 dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+        class="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 flex-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100"
         @keyup.enter="addSummary"
       />
       <button
         :disabled="!name.trim()"
-        class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 disabled:bg-gray-400 transition cursor-pointer"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         @click="addSummary"
       >
         Agregar
@@ -82,12 +82,11 @@
       {{ error }}
     </p>
 
-    <!-- Horizontal Line -->
-    <div class="border-t border-neutral-400 dark:border-blue-300 my-3" />
+    <div class="border-t border-slate-200 dark:border-slate-700/80 my-4" />
 
     <Table
-      :items="summarytStore.list"
-      :is-reversed="summarytStore.isReversed"
+      :items="summaryStore.list"
+      :is-reversed="summaryStore.isReversed"
       :user-store="userStore"
       title-modal-view="Detalles del Resumen"
       message="No hay resúmenes disponibles."

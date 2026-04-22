@@ -91,11 +91,14 @@
         v-if="isOpen"
         class="md:hidden flex flex-col gap-4 px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700"
       >
-        <router-link to="/" class="nav-link" active-class="nav-active" exact>Inicio</router-link>
-        <router-link to="/summaries" class="nav-link" active-class="nav-active">
+        <router-link to="/" class="nav-link" active-class="nav-active" exact @click="isOpen = false">Inicio</router-link>
+        <router-link to="/summaries" class="nav-link" active-class="nav-active" @click="isOpen = false">
           Resumen
         </router-link>
-        <router-link to="/cases" class="nav-link" active-class="nav-active">Casos</router-link>
+        <router-link to="/cases" class="nav-link" active-class="nav-active" @click="isOpen = false">Casos</router-link>
+        <router-link to="/graphs" class="nav-link" active-class="nav-active" @click="isOpen = false">
+          Estadísticas
+        </router-link>
       </nav>
     </transition>
   </header>

@@ -65,13 +65,13 @@
         v-model="name"
         placeholder="Nombre"
         autocomplete="off"
-        aria-label="Nombre del resumen"
-        class="border rounded px-3 py-2 flex-1 dark:bg-gray-700 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-sky-400"
+        aria-label="Nombre del caso"
+        class="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 flex-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100"
         @keyup.enter="addSummary"
       />
       <button
         :disabled="!name.trim()"
-        class="bg-sky-500 text-white px-4 py-2 rounded hover:bg-sky-600 disabled:bg-gray-400 transition cursor-pointer"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         @click="addSummary"
       >
         Agregar
@@ -82,7 +82,7 @@
       {{ error }}
     </p>
 
-    <div class="border-t border-neutral-400 dark:border-blue-300 my-3" />
+    <div class="border-t border-slate-200 dark:border-slate-700/80 my-4" />
 
     <Table
       :items="caseStore.list"
