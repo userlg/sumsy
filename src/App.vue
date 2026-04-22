@@ -19,7 +19,7 @@
 
 <template>
   <div
-    class="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-gray-100 dark:from-slate-950 dark:to-gray-900 text-slate-900 dark:text-slate-100 transition-colors duration-500"
+    class="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 text-slate-800 dark:text-slate-200 transition-colors duration-500"
     @contextmenu.prevent
   >
     <!-- HEADER -->

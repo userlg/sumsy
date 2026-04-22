@@ -15,14 +15,28 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 body {
-  @apply font-inter antialiased text-slate-900 dark:text-slate-100 bg-slate-50 dark:bg-slate-950;
+  @apply font-inter antialiased text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950;
 }
 
 .nav-link {
-  @apply text-blue-700 dark:text-blue-300 hover:text-blue-500 dark:hover:text-blue-400 transition-colors font-medium;
+  @apply relative text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300 font-medium pb-1;
 }
+
+.nav-link::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-full h-[2px] bg-blue-500 scale-x-0 origin-right transition-transform duration-300 ease-out;
+}
+
+.nav-link:hover::after {
+  @apply scale-x-100 origin-left;
+}
+
 .nav-active {
-  @apply underline underline-offset-4 decoration-2 text-blue-900 dark:text-blue-100;
+  @apply text-blue-600 dark:text-blue-400 font-semibold;
+}
+
+.nav-active::after {
+  @apply scale-x-100 origin-left bg-blue-600 dark:bg-blue-400;
 }
 
 @keyframes glow {

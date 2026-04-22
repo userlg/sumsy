@@ -20,7 +20,7 @@
 
 <template>
   <header
-    class="sticky top-0 z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-500"
+    class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-colors duration-500"
   >
     <div class="container mx-auto flex items-center justify-between px-6 py-3">
       <!-- Logo -->
