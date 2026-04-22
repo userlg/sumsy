@@ -65,8 +65,6 @@
     emit('deleteSummary', id);
   }
 
-
-
   function openEditModal(id: number, name: string, date: string) {
     tempId.value = id;
     tempName.value = name;
@@ -160,9 +158,13 @@
 
     <!-- Table -->
     <div v-else>
-      <div class="bg-white/70 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-x-auto">
+      <div
+        class="bg-white/70 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-x-auto"
+      >
         <table class="w-full text-left text-sm whitespace-nowrap">
-          <thead class="bg-slate-50/50 dark:bg-slate-700/30 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-700/80">
+          <thead
+            class="bg-slate-50/50 dark:bg-slate-700/30 text-slate-500 dark:text-slate-400 font-semibold border-b border-slate-200 dark:border-slate-700/80"
+          >
             <tr>
               <th class="px-6 py-4 text-center font-medium">#</th>
               <th class="px-6 py-4 text-center font-medium">Nombre</th>
@@ -179,23 +181,39 @@
               <td class="px-6 py-4 text-center text-slate-500 dark:text-slate-400">
                 {{ item.element }}
               </td>
-              <td class="px-6 py-4 text-center text-slate-700 dark:text-slate-200 truncate max-w-[150px] sm:max-w-[200px]">
+              <td
+                class="px-6 py-4 text-center text-slate-700 dark:text-slate-200 truncate max-w-[150px] sm:max-w-[200px]"
+              >
                 {{ item.name }}
               </td>
-              <td class="px-6 py-4 text-center text-slate-500 dark:text-slate-400 hidden sm:table-cell">
+              <td
+                class="px-6 py-4 text-center text-slate-500 dark:text-slate-400 hidden sm:table-cell"
+              >
                 {{ item.date }}
               </td>
               <td class="px-6 py-4">
                 <div class="flex justify-center gap-4">
-                  <button title="Editar" class="text-slate-400 hover:text-blue-500 transition-colors" @click="openEditModal(item.id, item.name, item.date)">
+                  <button
+                    title="Editar"
+                    class="text-slate-400 hover:text-blue-500 transition-colors"
+                    @click="openEditModal(item.id, item.name, item.date)"
+                  >
                     <EditSvg />
                   </button>
 
-                  <button title="Ver" class="text-slate-400 hover:text-emerald-500 transition-colors" @click="openViewModal(item.id, item.name, item.date)">
+                  <button
+                    title="Ver"
+                    class="text-slate-400 hover:text-emerald-500 transition-colors"
+                    @click="openViewModal(item.id, item.name, item.date)"
+                  >
                     <ViewSvg />
                   </button>
 
-                  <button title="Borrar" class="text-slate-400 hover:text-red-500 transition-colors" @click="onDelete(item.id)">
+                  <button
+                    title="Borrar"
+                    class="text-slate-400 hover:text-red-500 transition-colors"
+                    @click="onDelete(item.id)"
+                  >
                     <DeleteSvg />
                   </button>
                 </div>

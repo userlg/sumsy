@@ -137,16 +137,19 @@
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const data = JSON.parse(content);
+        const data = JSON.parse(content) as {
+          summaries?: Array<{ id: number; [key: string]: unknown }>;
+          cases?: Array<{ id: number; [key: string]: unknown }>;
+        };
 
         if (data.summaries && Array.isArray(data.summaries)) {
-          summaryStore.list = data.summaries;
-          summaryStore.nextId = Math.max(0, ...data.summaries.map((s: any) => s.id)) + 1;
+          summaryStore.list = data.summaries as any;
+          summaryStore.nextId = Math.max(0, ...data.summaries.map((s) => s.id)) + 1;
           summaryStore.reindexAndSort();
         }
         if (data.cases && Array.isArray(data.cases)) {
-          caseStore.list = data.cases;
-          caseStore.nextId = Math.max(0, ...data.cases.map((c: any) => c.id)) + 1;
+          caseStore.list = data.cases as any;
+          caseStore.nextId = Math.max(0, ...data.cases.map((c) => c.id)) + 1;
           caseStore.reindexAndSort();
         }
         alert('Datos importados correctamente.');
@@ -173,19 +176,16 @@
   <div class="relative flex flex-col items-center justify-center p-4 h-full">
     <!-- Input oculto para importar -->
     <input
-      type="file"
       ref="fileInput"
+      type="file"
       accept=".json"
       class="hidden"
-      @change="importData"
       aria-label="Seleccionar archivo de copia de seguridad"
+      @change="importData"
     />
 
     <!-- Layout principal -->
-    <div
-      v-if="showContent"
-      class="flex flex-col items-center justify-center w-full relative"
-    >
+    <div v-if="showContent" class="flex flex-col items-center justify-center w-full relative">
       <!-- Contenido principal centrado -->
       <div class="text-center flex flex-col items-center justify-center">
         <!-- Logo -->

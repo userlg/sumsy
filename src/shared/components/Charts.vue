@@ -113,33 +113,33 @@
           callbacks: {
             title: (context) => `Fecha: ${context[0].label}`,
             label: (context) => `${props.title}: ${context.parsed.y}`,
-          }
-        }
+          },
+        },
       },
       scales: {
         x: {
-          ticks: { 
+          ticks: {
             color: colors.value.axis,
             maxTicksLimit: 8, // Avoid overlapping dates
             maxRotation: 45,
             minRotation: 45,
-            font: { size: 11 }
+            font: { size: 11 },
           },
-          grid: { 
-            display: false // Cleaner background
+          grid: {
+            display: false, // Cleaner background
           },
         },
         y: {
           beginAtZero: true,
-          ticks: { 
+          ticks: {
             color: colors.value.axis,
             stepSize: 1, // Cases/summaries are integers
-            font: { size: 11 }
+            font: { size: 11 },
           },
           border: {
             display: false, // Remove vertical axis line
           },
-          grid: { 
+          grid: {
             color: colors.value.grid,
           },
         },
