@@ -13,10 +13,13 @@
   import Logo from '@/shared/icons/favicon.svg';
   import { useUserStore } from '@/stores/user.store';
   import EditModal from '@/shared/components/EditModal.vue';
+  import NotifyModal from '@/shared/components/NotifyModal.vue';
   import HomeSidebar from '@/shared/components/HomeSidebar.vue';
   import { initHome } from '@/logic/home.logic';
   import { useSummaryStore } from '@/modules/summaries/store/summary.store';
   import { useCaseStore } from '@/modules/cases/store/case.store';
+  import { save } from '@tauri-apps/plugin-dialog';
+  import { writeTextFile } from '@tauri-apps/plugin-fs';
 
   const userStore = useUserStore();
   const summaryStore = useSummaryStore();
@@ -27,6 +30,19 @@
   const modalPlaceholder = ref('');
   const showContent = ref(false);
   const isDev = import.meta.env.DEV;
+
+  // Notification modal state
+  const showNotify = ref(false);
+  const notifyTitle = ref('');
+  const notifyMessage = ref('');
+  const notifyType = ref<'success' | 'error' | 'info'>('info');
+
+  function notify(title: string, message: string, type: 'success' | 'error' | 'info' = 'info') {
+    notifyTitle.value = title;
+    notifyMessage.value = message;
+    notifyType.value = type;
+    showNotify.value = true;
+  }
 
   const hasDataToExport = computed(() => {
     return summaryStore.list.length > 0 || caseStore.list.length > 0;
@@ -49,77 +65,93 @@
 
   function seedSummaries(): void {
     summaryStore.seed(30, 'Resumen de prueba');
-    alert('Se han cargado 30 resúmenes de prueba.');
+    notify('Datos cargados', 'Se han cargado 30 resúmenes de prueba.', 'success');
   }
 
   // EXPORT / IMPORT LOGIC
-  function exportJSON(): void {
-    const data = {
-      exportDate: new Date().toISOString(),
-      totals: {
-        summaries: summaryStore.list.length,
-        cases: caseStore.list.length,
-      },
-      summaries: summaryStore.list,
-      cases: caseStore.list,
-    };
+  async function exportJSON(): Promise<void> {
+    try {
+      const data = {
+        exportDate: new Date().toISOString(),
+        totals: {
+          summaries: summaryStore.list.length,
+          cases: caseStore.list.length,
+        },
+        summaries: summaryStore.list,
+        cases: caseStore.list,
+      };
 
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `sumsy-backup-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+      const defaultName = `sumsy-backup-${new Date().toISOString().split('T')[0]}.json`;
+      const filePath = await save({
+        defaultPath: defaultName,
+        filters: [{ name: 'JSON', extensions: ['json'] }],
+      });
+
+      if (filePath) {
+        await writeTextFile(filePath, JSON.stringify(data, null, 2));
+        notify('Exportación exitosa', 'Archivo JSON exportado correctamente.', 'success');
+      }
+    } catch (err) {
+      console.error('Error al exportar JSON:', err);
+      notify('Error', `No se pudo exportar el archivo JSON: ${err}`, 'error');
+    }
   }
 
-  function exportTXT(): void {
-    const totalSummaries = summaryStore.list.length;
-    const totalCases = caseStore.list.length;
-    const date = new Date().toLocaleDateString('es-ES', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-
-    let txtContent = `====================================================\n`;
-    txtContent += `                 REPORTE DE SUMSY\n`;
-    txtContent += `====================================================\n\n`;
-    txtContent += `Fecha de generación: ${date}\n`;
-    txtContent += `Usuario: ${userStore.getName || 'Desconocido'}\n\n`;
-
-    txtContent += `----------------------------------------------------\n`;
-    txtContent += ` RESÚMENES: ${totalSummaries} en total\n`;
-    txtContent += `----------------------------------------------------\n`;
-    if (totalSummaries > 0) {
-      summaryStore.list.forEach((s) => {
-        txtContent += ` - [${s.date}] ${s.name}\n`;
+  async function exportTXT(): Promise<void> {
+    try {
+      const totalSummaries = summaryStore.list.length;
+      const totalCases = caseStore.list.length;
+      const date = new Date().toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
       });
-    } else {
-      txtContent += `   (No hay resúmenes registrados)\n`;
-    }
-    txtContent += `\n`;
 
-    txtContent += `----------------------------------------------------\n`;
-    txtContent += ` CASOS: ${totalCases} en total\n`;
-    txtContent += `----------------------------------------------------\n`;
-    if (totalCases > 0) {
-      caseStore.list.forEach((c) => {
-        txtContent += ` - [${c.date}] ${c.name}\n`;
+      let txtContent = `====================================================\n`;
+      txtContent += `                 REPORTE DE SUMSY\n`;
+      txtContent += `====================================================\n\n`;
+      txtContent += `Fecha de generación: ${date}\n`;
+      txtContent += `Usuario: ${userStore.getName || 'Desconocido'}\n\n`;
+
+      txtContent += `----------------------------------------------------\n`;
+      txtContent += ` RESÚMENES: ${totalSummaries} en total\n`;
+      txtContent += `----------------------------------------------------\n`;
+      if (totalSummaries > 0) {
+        summaryStore.list.forEach((s) => {
+          txtContent += ` - [${s.date}] ${s.name}\n`;
+        });
+      } else {
+        txtContent += `   (No hay resúmenes registrados)\n`;
+      }
+      txtContent += `\n`;
+
+      txtContent += `----------------------------------------------------\n`;
+      txtContent += ` CASOS: ${totalCases} en total\n`;
+      txtContent += `----------------------------------------------------\n`;
+      if (totalCases > 0) {
+        caseStore.list.forEach((c) => {
+          txtContent += ` - [${c.date}] ${c.name}\n`;
+        });
+      } else {
+        txtContent += `   (No hay casos registrados)\n`;
+      }
+      txtContent += `\n====================================================\n`;
+
+      const defaultName = `Reporte-Sumsy-${new Date().toISOString().split('T')[0]}.txt`;
+      const filePath = await save({
+        defaultPath: defaultName,
+        filters: [{ name: 'Texto', extensions: ['txt'] }],
       });
-    } else {
-      txtContent += `   (No hay casos registrados)\n`;
-    }
-    txtContent += `\n====================================================\n`;
 
-    const blob = new Blob([txtContent], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `Reporte-Sumsy-${new Date().toISOString().split('T')[0]}.txt`;
-    a.click();
-    URL.revokeObjectURL(url);
+      if (filePath) {
+        await writeTextFile(filePath, txtContent);
+        notify('Exportación exitosa', 'Archivo TXT exportado correctamente.', 'success');
+      }
+    } catch (err) {
+      console.error('Error al exportar TXT:', err);
+      notify('Error', `No se pudo exportar el archivo TXT: ${err}`, 'error');
+    }
   }
 
   const fileInput = ref<HTMLInputElement | null>(null);
@@ -152,11 +184,13 @@
           caseStore.nextId = Math.max(0, ...data.cases.map((c) => c.id)) + 1;
           caseStore.reindexAndSort();
         }
-        alert('Datos importados correctamente.');
+        notify('Importación exitosa', 'Datos importados correctamente.', 'success');
       } catch (err) {
         console.error(err);
-        alert(
-          'Error al importar los datos. Verifica que sea un archivo JSON válido generado por Sumsy.'
+        notify(
+          'Error de importación',
+          'No se pudieron importar los datos. Verifica que sea un archivo JSON válido generado por Sumsy.',
+          'error'
         );
       } finally {
         if (fileInput.value) {
@@ -238,7 +272,7 @@
       />
     </div>
 
-    <!-- Modal -->
+    <!-- Edit Modal -->
     <EditModal
       v-model="showNameModal"
       :title="modalTitle"
@@ -246,6 +280,14 @@
       :place-holder="modalPlaceholder"
       :user-store="userStore"
       @save="handleSaveName"
+    />
+
+    <!-- Notification Modal -->
+    <NotifyModal
+      v-model="showNotify"
+      :title="notifyTitle"
+      :message="notifyMessage"
+      :type="notifyType"
     />
   </div>
 </template>
