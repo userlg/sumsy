@@ -68,4 +68,28 @@ describe('EditModal.vue', () => {
     // The save event should emit the DD-MM-YY format internally
     expect(wrapper.emitted('save')?.[0]).toEqual(['Initial Name', '01-01-23']);
   });
+  it('updates internalDate when dateInputValue is changed (fromIsoDate)', async () => {
+    const wrapper = mountComponent({ initialDate: '15-01-25' });
+    const dateInput = wrapper.find('input[type="date"]');
+    
+    // Set native date input value to YYYY-MM-DD
+    await dateInput.setValue('2024-12-31');
+    
+    // Trigger save to see if the emitted date is converted back to DD-MM-YY correctly
+    await wrapper.findAll('button').find((b) => b.text() === 'Guardar')!.trigger('click');
+    expect(wrapper.emitted('save')).toBeTruthy();
+    expect(wrapper.emitted('save')![0]).toEqual(['Initial Name', '31-12-24']);
+  });
+
+  it('handles invalid date structures gracefully in fromIsoDate', async () => {
+    const wrapper = mountComponent({ initialDate: '15-01-25' });
+    const dateInput = wrapper.find('input[type="date"]');
+    
+    // Set native date input value to invalid format
+    await dateInput.setValue('invalid-date');
+    await wrapper.findAll('button').find((b) => b.text() === 'Guardar')!.trigger('click');
+    
+    expect(wrapper.emitted('save')).toBeTruthy();
+    expect(wrapper.emitted('save')![0]).toEqual(['Initial Name', '']);
+  });
 });

@@ -110,6 +110,7 @@
       </h3>
 
       <button
+        id="change-name-button"
         class="flex items-center gap-2.5 w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-white bg-pink-500 hover:bg-pink-600 focus-visible:ring-2 focus-visible:ring-pink-500 focus-visible:outline-none transition-all duration-200"
         aria-label="Cambiar nombre de usuario"
         @click="$emit('changeName')"
@@ -142,6 +143,7 @@
       </h3>
 
       <button
+        id="seed-summaries-button"
         class="flex items-center gap-2.5 w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-white bg-emerald-500 hover:bg-emerald-600 focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:outline-none transition-all duration-200"
         aria-label="Cargar datos de prueba"
         @click="$emit('seedData')"
@@ -165,6 +167,7 @@
 
       <button
         v-if="hasUser"
+        id="clear-name-button"
         class="flex items-center gap-2.5 w-full text-left px-3.5 py-2.5 rounded-xl text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700/50 hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-900/30 dark:hover:text-red-400 focus-visible:ring-2 focus-visible:ring-slate-400 focus-visible:outline-none transition-all duration-200"
         aria-label="Borrar nombre de usuario"
         @click="$emit('clearName')"
