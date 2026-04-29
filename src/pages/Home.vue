@@ -259,7 +259,7 @@
       <!-- Sidebar derecho (fijo a la derecha) -->
       <HomeSidebar
         v-if="userStore.getName && userStore.getName.trim() !== ''"
-        class="lg:absolute lg:-right-10 lg:top-1/2 lg:-translate-y-1/2 mt-8 lg:mt-0"
+        class="lg:fixed lg:right-8 lg:top-1/2 lg:-translate-y-1/2 mt-8 lg:mt-0 z-10"
         :has-data="hasDataToExport"
         :is-dev="isDev"
         :has-user="!!(userStore.getName && userStore.getName.trim() !== '')"
