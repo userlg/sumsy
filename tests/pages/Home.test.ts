@@ -117,25 +117,27 @@ describe('Home.vue', () => {
   });
   it('handles Sidebar events for export and import', async () => {
     const wrapper = await mountHome({ user: { name: 'Tester' } });
-    
+
     const sidebar = wrapper.findComponent({ name: 'HomeSidebar' });
     if (sidebar.exists()) {
       // Test exportJSON
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       sidebar.vm.$emit('exportJSON');
       await flushPromises();
-      
+
       // Test exportTXT
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       sidebar.vm.$emit('exportTXT');
       await flushPromises();
 
       // Test importData
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       sidebar.vm.$emit('importData');
       await flushPromises();
-      
+
       // Notifications are shown during these async tauri events (since we globally mocked tauri plugins).
       // Coverage is hit here.
       expect(wrapper.findComponent({ name: 'NotifyModal' }).exists()).toBe(true);
     }
   });
-
 });

@@ -93,7 +93,7 @@
       }
     } catch (err) {
       console.error('Error al exportar JSON:', err);
-      notify('Error', `No se pudo exportar el archivo JSON: ${err}`, 'error');
+      notify('Error', `No se pudo exportar el archivo JSON: ${String(err)}`, 'error');
     }
   }
 
@@ -150,7 +150,7 @@
       }
     } catch (err) {
       console.error('Error al exportar TXT:', err);
-      notify('Error', `No se pudo exportar el archivo TXT: ${err}`, 'error');
+      notify('Error', `No se pudo exportar el archivo TXT: ${String(err)}`, 'error');
     }
   }
 

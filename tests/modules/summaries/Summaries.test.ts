@@ -39,7 +39,10 @@ describe('Summaries.vue', () => {
 
     const input = wrapper.find('input[aria-label="Nombre del resumen"]');
     await input.setValue('Test Summary');
-    await wrapper.findAll('button').find((b) => b.text() === 'Agregar')!.trigger('click');
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text() === 'Agregar')!
+      .trigger('click');
     await flushPromises();
 
     expect(summaryStore.list.length).toBe(1);
@@ -61,32 +64,39 @@ describe('Summaries.vue', () => {
     const wrapper = await mountSummaries();
     const summaryStore = useSummaryStore();
     summaryStore.create('Original');
-    
+
     // Test onPasted from PasteClipboard
     const pasteClipboard = wrapper.findComponent({ name: 'PasteClipboard' });
     if (pasteClipboard.exists()) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       pasteClipboard.vm.$emit('pasted', 'Pasted Text');
       await flushPromises();
-      expect((wrapper.find('input[aria-label="Nombre del resumen"]').element as HTMLInputElement).value).toBe('Pasted Text');
+      expect(
+        (wrapper.find('input[aria-label="Nombre del resumen"]').element as HTMLInputElement).value
+      ).toBe('Pasted Text');
     }
 
     // Test Table events
     const table = wrapper.findComponent({ name: 'BaseTable' });
     if (table.exists()) {
       // Edit
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       table.vm.$emit('editSummary', 1, 'Edited', '15-05-25');
       expect(summaryStore.list[0].name).toBe('Edited');
 
       // Reverse
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       table.vm.$emit('reverse');
       expect(summaryStore.isReversed).toBe(true);
 
       // Delete
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       table.vm.$emit('deleteSummary', 1);
       expect(summaryStore.list.length).toBe(0);
 
       // Clear
       summaryStore.create('Another');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       table.vm.$emit('clear');
       expect(summaryStore.list.length).toBe(0);
     }
@@ -97,7 +107,10 @@ describe('Summaries.vue', () => {
 
     const input = wrapper.find('input[aria-label="Nombre del resumen"]');
     await input.setValue('Test Summary');
-    await wrapper.findAll('button').find((b) => b.text() === 'Agregar')!.trigger('click');
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text() === 'Agregar')!
+      .trigger('click');
     await flushPromises();
 
     expect((input.element as HTMLInputElement).value).toBe('');

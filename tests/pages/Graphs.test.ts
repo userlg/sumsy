@@ -46,9 +46,7 @@ describe('Graphs.vue', () => {
     });
 
     const summaryStore = useSummaryStore();
-    summaryStore.list = [
-      { id: 1, name: 'S1', date: '01-01-25', element: 1 },
-    ];
+    summaryStore.list = [{ id: 1, name: 'S1', date: '01-01-25', element: 1 }];
     await flushPromises();
     await wrapper.vm.$nextTick();
 
@@ -62,9 +60,7 @@ describe('Graphs.vue', () => {
     });
 
     const caseStore = useCaseStore();
-    caseStore.list = [
-      { id: 1, name: 'C1', date: '01-01-25', element: 1 },
-    ];
+    caseStore.list = [{ id: 1, name: 'C1', date: '01-01-25', element: 1 }];
     await flushPromises();
     await wrapper.vm.$nextTick();
 

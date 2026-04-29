@@ -39,9 +39,7 @@ describe('HomeSidebar.vue', () => {
 
   it('disables export buttons when hasData is false', () => {
     const wrapper = mountComponent({ hasData: false });
-    const exportButtons = wrapper.findAll('button').filter((b) =>
-      b.text().includes('Exportar')
-    );
+    const exportButtons = wrapper.findAll('button').filter((b) => b.text().includes('Exportar'));
     exportButtons.forEach((btn) => {
       expect(btn.attributes('disabled')).toBeDefined();
     });

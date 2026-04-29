@@ -52,13 +52,13 @@ describe('Total.vue', () => {
         store,
       },
     });
-    
+
     // Change store.list to trigger the watch
     store.list = [{ id: 1 }, { id: 2 }];
-    
+
     // Wait for the watch to execute
     await wrapper.vm.$nextTick();
-    
+
     // Value will animate, GSAP changes the internal tweened value
     expect(wrapper.find('span').exists()).toBe(true);
   });

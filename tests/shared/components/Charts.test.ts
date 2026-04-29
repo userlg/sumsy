@@ -79,14 +79,12 @@ describe('Charts.vue', () => {
   });
   it('watches for items change and updates chart', async () => {
     const wrapper = mountComponent();
-    
+
     // Update items to trigger watch
     await wrapper.setProps({
-      items: [
-        { date: '04-01-25', count: 10 }
-      ]
+      items: [{ date: '04-01-25', count: 10 }],
     });
-    
+
     await wrapper.vm.$nextTick();
     // If the watch fired, the chart would have been updated/re-rendered.
     expect(wrapper.find('canvas').exists()).toBe(true);
@@ -94,10 +92,10 @@ describe('Charts.vue', () => {
 
   it('watches for dark mode change and updates chart', async () => {
     const wrapper = mountComponent();
-    
+
     const store = useDarkModeStore();
     store.darkIsActive = true;
-    
+
     await wrapper.vm.$nextTick();
     // If the watch fired, the chart would have been updated/re-rendered.
     expect(wrapper.find('canvas').exists()).toBe(true);

@@ -132,7 +132,7 @@ describe('BaseTable.vue', () => {
     expect(wrapper.text()).toContain('¿Seguro que quieres borrar todos los resúmenes?');
   });
 
-  it('hides ASC/DESC and "Borrar todo" buttons when filteredItems is empty', async () => {
+  it('hides ASC/DESC and "Borrar todo" buttons when filteredItems is empty', () => {
     const wrapper = mountComponent({ items: [] });
     expect(wrapper.findAll('button').filter((b) => b.text() === 'DESC').length).toBe(0);
     expect(wrapper.findAll('button').filter((b) => b.text() === 'Borrar todo').length).toBe(0);
@@ -155,6 +155,7 @@ describe('BaseTable.vue', () => {
 
     const viewModal = wrapper.findComponent({ name: 'ViewModal' });
     if (viewModal.exists()) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       viewModal.vm.$emit('update:modelValue', false);
       await wrapper.vm.$nextTick();
       expect(wrapper.findComponent({ name: 'ViewModal' }).props('modelValue')).toBe(false);
@@ -165,15 +166,17 @@ describe('BaseTable.vue', () => {
     const wrapper = mountComponent();
     // Click edit button on first item
     await wrapper.findAll('button[title="Editar"]')[0].trigger('click');
-    
+
     const editModal = wrapper.findComponent({ name: 'EditModal' });
     if (editModal.exists()) {
       // Test save
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       editModal.vm.$emit('save', 'New Name', '15-05-25');
       expect(wrapper.emitted('editSummary')).toBeTruthy();
       expect(wrapper.emitted('editSummary')![0]).toEqual([1, 'New Name', '15-05-25']);
 
       // Test close
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       editModal.vm.$emit('update:modelValue', false);
       await wrapper.vm.$nextTick();
       expect(wrapper.findComponent({ name: 'EditModal' }).props('modelValue')).toBe(false);
@@ -183,15 +186,20 @@ describe('BaseTable.vue', () => {
   it('handles ConfirmModal confirm and close events', async () => {
     const wrapper = mountComponent();
     // Click clear all button
-    await wrapper.findAll('button').find((b) => b.text() === 'Borrar todo')!.trigger('click');
-    
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text() === 'Borrar todo')!
+      .trigger('click');
+
     const confirmModal = wrapper.findComponent({ name: 'ConfirmModal' });
     if (confirmModal.exists()) {
       // Test confirm
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       confirmModal.vm.$emit('confirm');
       expect(wrapper.emitted('clear')).toBeTruthy();
 
       // Test close
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       confirmModal.vm.$emit('update:modelValue', false);
       await wrapper.vm.$nextTick();
       expect(wrapper.findComponent({ name: 'ConfirmModal' }).props('modelValue')).toBe(false);
