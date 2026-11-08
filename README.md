@@ -13,11 +13,25 @@
 ## ✨ Features
 
 - **Blazing Fast**: Powered by Tauri's Rust backend for minimal resource usage.
-- **Modern UI**: Polished interface with Glassmorphism, dark mode support, and smooth transitions.
+- **Modern UI**: Polished interface with glassmorphism, dark mode, a subtle dot-grid background and smooth transitions.
 - **Minimalist Architecture**: Clean, centered layouts with a dedicated sidebar for all actions, maintaining visual simplicity.
-- **Data Management**: Efficiently handle cases and summaries.
-- **Visualize Data**: Interactive charts powered by Chart.js.
+- **Data Management**: Add, edit, sort (with animated reordering) and delete cases and summaries.
+- **Statistics**:
+  - **Activity calendar**: a GitHub-style heatmap of the last year whose cells get deeper with more items per day, with streaks, filters and keyboard navigation.
+  - **All-time share**: a doughnut chart with the percentage of summaries and cases.
+  - **Evolution**: bar charts for the last 7, 30 or 90 days, or 12 months grouped by week.
+- **Monthly Export**: Exports the current month by default (JSON or TXT report). You can pick a past month (year above, month name below) or make a full backup.
+- **Safe Import**: Imported JSON files are merged by id and malformed items are skipped.
+- **Motion with care**: Directional view transitions, scroll reveal and a "back to top" button, all respecting `prefers-reduced-motion`.
 - **Desktop Native**: Works offline with native operating system integration.
+
+### Development tools
+
+In development mode (`yarn tauri dev`), the sidebar shows a **Dev** section that production builds hide:
+
+- **Cargar Datos**: adds 30 sample summaries.
+- **Generar demo**: fills the last 12 months with 20–50 random summaries and 20–50 random cases per month, to try the charts and every behavior.
+- **Borrar Nombre**: clears the user name.
 
 ## 🛠 Tech Stack
 
@@ -34,7 +48,7 @@
 
 - [Node.js](https://nodejs.org/) (v18+)
 - [Rust](https://www.rust-lang.org/tools/install) (for Tauri development)
-- [Yarn](https://yarnpkg.com/) or npm
+- [Yarn](https://yarnpkg.com/) (the project uses `yarn.lock`)
 
 ### Installation
 
@@ -49,8 +63,6 @@
 
     ```bash
     yarn install
-    # or
-    npm install
     ```
 
 3.  **Run Development Mode**
@@ -58,16 +70,12 @@
 
     ```bash
     yarn tauri dev
-    # or
-    npm run tauri dev
     ```
 
 4.  **Build for Production**
     Generate the native installer/executable:
     ```bash
     yarn tauri build
-    # or
-    npm run tauri build
     ```
 
 ## 📂 Project Structure
@@ -76,13 +84,17 @@
 src/
 ├── assets/      # Static assets (images, fonts)
 ├── components/  # Local components
-├── logic/       # Business logic helpers
+├── logic/       # Pure business logic (activity, charts, export, demo data)
 ├── modules/     # Feature-based architecture
 ├── pages/       # Vue Router views
 ├── scripts/     # Utility scripts
 ├── shared/      # Shared components, styles, and utilities
-│   ├── components/ # Reusable UI components (NavBar, Footer, etc.)
-│   └── styles/     # Global styles (main.css, Tailwind)
+│   ├── components/  # Reusable UI components (NavBar, ActivityHeatmap, ShareDonut, etc.)
+│   ├── composables/ # Shared composition functions (useScrollY)
+│   ├── directives/  # Custom directives (v-reveal)
+│   ├── stores/      # Base list store shared by cases and summaries
+│   ├── styles/      # Global styles, tokens and transitions (Tailwind)
+│   └── utils/       # Helpers (date parsing and formatting)
 ├── stores/      # Pinia state stores
 ├── App.vue      # Root component
 └── main.ts      # Application entry point
@@ -93,8 +105,8 @@ src/
 Run the test suite with Vitest:
 
 ```bash
-npm run test        # Run unit tests
-npm run coverage    # Generate coverage report
+yarn test           # Run unit tests
+yarn coverage       # Generate coverage report
 ```
 
 ## 🤝 Contributing
