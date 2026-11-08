@@ -20,6 +20,17 @@
   import { useCaseStore } from '@/modules/cases/store/case.store';
   import { save } from '@tauri-apps/plugin-dialog';
   import { writeTextFile } from '@tauri-apps/plugin-fs';
+  import {
+    buildJsonExport,
+    buildTxtReport,
+    exportFileName,
+    mergeById,
+    monthKey,
+    scopeLabel,
+    scopedLists,
+    validItems,
+    type ExportScope,
+  } from '@/logic/export.logic';
 
   const userStore = useUserStore();
   const summaryStore = useSummaryStore();
@@ -44,9 +55,14 @@
     showNotify.value = true;
   }
 
-  const hasDataToExport = computed(() => {
-    return summaryStore.list.length > 0 || caseStore.list.length > 0;
-  });
+  // Exports cover the current month unless another month or a full backup is chosen.
+  const exportScope = ref<ExportScope>(monthKey(new Date()));
+  const exportLists = computed(() =>
+    scopedLists({ summaries: summaryStore.list, cases: caseStore.list }, exportScope.value)
+  );
+  const hasDataToExport = computed(
+    () => exportLists.value.summaries.length > 0 || exportLists.value.cases.length > 0
+  );
 
   function openNameModal(isEditing = false) {
     modalTitle.value = isEditing ? 'Editar nombre' : 'Introduce tu nombre';
@@ -69,89 +85,38 @@
   }
 
   // EXPORT / IMPORT LOGIC
-  async function exportJSON(): Promise<void> {
+  async function saveFile(extension: 'json' | 'txt', content: string): Promise<void> {
+    const label = extension.toUpperCase();
     try {
-      const data = {
-        exportDate: new Date().toISOString(),
-        totals: {
-          summaries: summaryStore.list.length,
-          cases: caseStore.list.length,
-        },
-        summaries: summaryStore.list,
-        cases: caseStore.list,
-      };
-
-      const defaultName = `sumsy-backup-${new Date().toISOString().split('T')[0]}.json`;
       const filePath = await save({
-        defaultPath: defaultName,
-        filters: [{ name: 'JSON', extensions: ['json'] }],
+        defaultPath: exportFileName(exportScope.value, extension),
+        filters: [{ name: extension === 'json' ? 'JSON' : 'Texto', extensions: [extension] }],
       });
 
       if (filePath) {
-        await writeTextFile(filePath, JSON.stringify(data, null, 2));
-        notify('Exportación exitosa', 'Archivo JSON exportado correctamente.', 'success');
+        await writeTextFile(filePath, content);
+        notify(
+          'Exportación exitosa',
+          `${scopeLabel(exportScope.value)} exportado a ${label} correctamente.`,
+          'success'
+        );
       }
     } catch (err) {
-      console.error('Error al exportar JSON:', err);
-      notify('Error', `No se pudo exportar el archivo JSON: ${String(err)}`, 'error');
+      console.error(`Error al exportar ${label}:`, err);
+      notify('Error', `No se pudo exportar el archivo ${label}: ${String(err)}`, 'error');
     }
   }
 
-  async function exportTXT(): Promise<void> {
-    try {
-      const totalSummaries = summaryStore.list.length;
-      const totalCases = caseStore.list.length;
-      const date = new Date().toLocaleDateString('es-ES', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-      });
+  function exportJSON(): Promise<void> {
+    const data = buildJsonExport(exportLists.value, exportScope.value);
+    return saveFile('json', JSON.stringify(data, null, 2));
+  }
 
-      let txtContent = `====================================================\n`;
-      txtContent += `                 REPORTE DE SUMSY\n`;
-      txtContent += `====================================================\n\n`;
-      txtContent += `Fecha de generación: ${date}\n`;
-      txtContent += `Usuario: ${userStore.getName || 'Desconocido'}\n\n`;
-
-      txtContent += `----------------------------------------------------\n`;
-      txtContent += ` RESÚMENES: ${totalSummaries} en total\n`;
-      txtContent += `----------------------------------------------------\n`;
-      if (totalSummaries > 0) {
-        summaryStore.list.forEach((s) => {
-          txtContent += ` - [${s.date}] ${s.name}\n`;
-        });
-      } else {
-        txtContent += `   (No hay resúmenes registrados)\n`;
-      }
-      txtContent += `\n`;
-
-      txtContent += `----------------------------------------------------\n`;
-      txtContent += ` CASOS: ${totalCases} en total\n`;
-      txtContent += `----------------------------------------------------\n`;
-      if (totalCases > 0) {
-        caseStore.list.forEach((c) => {
-          txtContent += ` - [${c.date}] ${c.name}\n`;
-        });
-      } else {
-        txtContent += `   (No hay casos registrados)\n`;
-      }
-      txtContent += `\n====================================================\n`;
-
-      const defaultName = `Reporte-Sumsy-${new Date().toISOString().split('T')[0]}.txt`;
-      const filePath = await save({
-        defaultPath: defaultName,
-        filters: [{ name: 'Texto', extensions: ['txt'] }],
-      });
-
-      if (filePath) {
-        await writeTextFile(filePath, txtContent);
-        notify('Exportación exitosa', 'Archivo TXT exportado correctamente.', 'success');
-      }
-    } catch (err) {
-      console.error('Error al exportar TXT:', err);
-      notify('Error', `No se pudo exportar el archivo TXT: ${String(err)}`, 'error');
-    }
+  function exportTXT(): Promise<void> {
+    return saveFile(
+      'txt',
+      buildTxtReport(exportLists.value, exportScope.value, userStore.getName || '')
+    );
   }
 
   const fileInput = ref<HTMLInputElement | null>(null);
@@ -169,22 +134,26 @@
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const data = JSON.parse(content) as {
-          summaries?: Array<{ id: number; [key: string]: unknown }>;
-          cases?: Array<{ id: number; [key: string]: unknown }>;
-        };
+        const data = JSON.parse(content) as { summaries?: unknown; cases?: unknown };
+        const summaries = validItems(data.summaries);
+        const cases = validItems(data.cases);
+        if (summaries.length === 0 && cases.length === 0) throw new Error('Sin registros válidos');
 
-        if (data.summaries && Array.isArray(data.summaries)) {
-          summaryStore.list = data.summaries as any;
-          summaryStore.nextId = Math.max(0, ...data.summaries.map((s) => s.id)) + 1;
-          summaryStore.reindexAndSort();
+        // Merge, never replace: importing one month must not erase the others.
+        for (const [store, items] of [
+          [summaryStore, summaries],
+          [caseStore, cases],
+        ] as const) {
+          if (items.length === 0) continue;
+          store.list = mergeById(store.list, items);
+          store.nextId = Math.max(0, ...store.list.map((item) => item.id)) + 1;
+          store.reindexAndSort();
         }
-        if (data.cases && Array.isArray(data.cases)) {
-          caseStore.list = data.cases as any;
-          caseStore.nextId = Math.max(0, ...data.cases.map((c) => c.id)) + 1;
-          caseStore.reindexAndSort();
-        }
-        notify('Importación exitosa', 'Datos importados correctamente.', 'success');
+        notify(
+          'Importación exitosa',
+          `Se agregaron o actualizaron ${summaries.length} resúmenes y ${cases.length} casos.`,
+          'success'
+        );
       } catch (err) {
         console.error(err);
         notify(
@@ -207,7 +176,7 @@
 </script>
 
 <template>
-  <div class="relative flex flex-col items-center justify-center p-4 h-full">
+  <div class="relative flex flex-col items-center justify-center p-4 h-full" data-view-static>
     <!-- Input oculto para importar -->
     <input
       ref="fileInput"
@@ -259,8 +228,11 @@
       <!-- Sidebar derecho (fijo a la derecha) -->
       <HomeSidebar
         v-if="userStore.getName && userStore.getName.trim() !== ''"
+        v-model:scope="exportScope"
         class="lg:fixed lg:right-8 lg:top-1/2 lg:-translate-y-1/2 mt-8 lg:mt-0 z-10"
         :has-data="hasDataToExport"
+        :summary-count="exportLists.summaries.length"
+        :case-count="exportLists.cases.length"
         :is-dev="isDev"
         :has-user="!!(userStore.getName && userStore.getName.trim() !== '')"
         @import-click="triggerImport"

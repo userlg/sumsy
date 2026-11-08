@@ -8,6 +8,12 @@ import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
 import HomeSidebar from '@/shared/components/HomeSidebar.vue';
 
+/** Last value emitted through v-model:scope. */
+function lastScope(wrapper: { emitted: (event: string) => unknown[][] | undefined }): unknown[] {
+  const emitted = wrapper.emitted('update:scope') ?? [];
+  return emitted[emitted.length - 1];
+}
+
 describe('HomeSidebar.vue', () => {
   const mountComponent = (props = {}) => {
     return mount(HomeSidebar, {
@@ -116,5 +122,32 @@ describe('HomeSidebar.vue', () => {
     const wrapper = mountComponent({ isDev: true, hasUser: true });
     await wrapper.get('#clear-name-button').trigger('click');
     expect(wrapper.emitted('clearName')).toBeTruthy();
+  });
+
+  it('defaults the export period to the current month and shows its counts', () => {
+    const wrapper = mountComponent({ summaryCount: 3, caseCount: 1 });
+    const now = new Date();
+    const current = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    expect((wrapper.get('#export-month').element as HTMLInputElement).value).toBe(current);
+    expect(wrapper.text()).toContain('3 resúmenes · 1 caso');
+  });
+
+  it('emits the picked month and the full backup scope', async () => {
+    const wrapper = mountComponent();
+    await wrapper.get('#export-month').setValue('2026-09');
+    await wrapper.get('#export-month').trigger('change');
+    expect(lastScope(wrapper)).toEqual(['2026-09']);
+
+    await wrapper.get('input[type="checkbox"]').setValue(true);
+    expect(lastScope(wrapper)).toEqual(['all']);
+    expect(wrapper.get('#export-month').attributes('disabled')).toBeDefined();
+
+    await wrapper.get('input[type="checkbox"]').setValue(false);
+    expect(lastScope(wrapper)).toEqual(['2026-09']);
+  });
+
+  it('says when the chosen month has nothing to export', () => {
+    const wrapper = mountComponent({ hasData: false });
+    expect(wrapper.text()).toContain('Este mes no tiene registros');
   });
 });
