@@ -42,7 +42,10 @@
 
     <!-- MAIN -->
     <main class="flex-1 py-8 flex justify-center overflow-x-clip" aria-live="polite">
-      <div class="w-full max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div
+        class="w-full"
+        :class="route.meta.wide ? 'container px-6' : 'max-w-5xl px-4 sm:px-6 lg:px-8'"
+      >
         <router-view v-slot="{ Component }">
           <transition :name="transitionName" mode="out-in">
             <component :is="Component" />

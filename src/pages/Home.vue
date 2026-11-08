@@ -190,7 +190,7 @@
 </script>
 
 <template>
-  <div class="relative flex flex-col items-center justify-center p-4 h-full" data-view-static>
+  <div class="relative flex flex-col items-center justify-center p-4 lg:px-0 h-full">
     <!-- Input oculto para importar -->
     <input
       ref="fileInput"
@@ -202,7 +202,15 @@
     />
 
     <!-- Layout principal -->
-    <div v-if="showContent" class="flex flex-col items-center justify-center w-full relative">
+    <!-- On large screens: spacer · welcome · sidebar in equal side columns, so the welcome
+         stays centered and the sidebar lines up with the nav bar's right edge, inside the
+         main area (never over the navbar or footer). -->
+    <div
+      v-if="showContent"
+      class="flex flex-col items-center w-full lg:grid lg:grid-cols-[minmax(16rem,1fr)_auto_minmax(16rem,1fr)] lg:items-center lg:gap-8"
+    >
+      <div class="hidden lg:block" aria-hidden="true" />
+
       <!-- Contenido principal centrado -->
       <div class="text-center flex flex-col items-center justify-center">
         <!-- Logo -->
@@ -239,11 +247,11 @@
         </div>
       </div>
 
-      <!-- Sidebar derecho (fijo a la derecha) -->
+      <!-- Sidebar derecho -->
       <HomeSidebar
         v-if="userStore.getName && userStore.getName.trim() !== ''"
         v-model:scope="exportScope"
-        class="lg:fixed lg:right-8 lg:top-1/2 lg:-translate-y-1/2 mt-8 lg:mt-0 z-10"
+        class="mt-8 lg:mt-0 lg:justify-self-end"
         :has-data="hasDataToExport"
         :summary-count="exportLists.summaries.length"
         :case-count="exportLists.cases.length"

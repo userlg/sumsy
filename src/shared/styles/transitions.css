@@ -109,16 +109,6 @@
   filter: blur(3px);
 }
 
-/* Views with position:fixed children (the Home sidebar) only fade: a transform or filter on
-   the view would make those children jump when the transition ends. */
-[data-view-static].view-forward-enter-from,
-[data-view-static].view-forward-leave-to,
-[data-view-static].view-back-enter-from,
-[data-view-static].view-back-leave-to {
-  transform: none;
-  filter: none;
-}
-
 /* v-reveal (shared/directives/reveal.ts) */
 .reveal {
   opacity: 0;

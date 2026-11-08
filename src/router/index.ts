@@ -14,6 +14,8 @@ declare module 'vue-router' {
   interface RouteMeta {
     /** Position in the nav bar; decides which way the view transition slides. */
     order?: number;
+    /** Uses the nav bar's wider container instead of the narrow reading width. */
+    wide?: boolean;
   }
 }
 
@@ -25,7 +27,7 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: Home,
-    meta: { order: 0 },
+    meta: { order: 0, wide: true },
   },
   {
     path: '/graphs',
