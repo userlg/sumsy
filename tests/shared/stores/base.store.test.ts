@@ -210,4 +210,19 @@ describe('Base Store', () => {
       expect(itemDate.getTime()).toBeGreaterThanOrEqual(oneYearAgo.getTime() - 86400000); // minus 1 day padding
     });
   });
+
+  describe('addMany()', () => {
+    it('appends the entries in order and keeps their dates', () => {
+      store.create('Existente');
+      store.addMany([
+        { name: 'Viejo', date: '01-01-26' },
+        { name: 'Nuevo', date: '05-03-26' },
+      ]);
+
+      expect(store.list.map((i) => i.name)).toEqual(['Existente', 'Viejo', 'Nuevo']);
+      expect(store.list.slice(1).map((i) => i.date)).toEqual(['01-01-26', '05-03-26']);
+      expect(store.list.map((i) => i.element)).toEqual([1, 2, 3]);
+      expect(new Set(store.list.map((i) => i.id)).size).toBe(3);
+    });
+  });
 });

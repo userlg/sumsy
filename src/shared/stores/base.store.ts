@@ -93,6 +93,13 @@ export function createListStore(storeId: string) {
         const year = String(date.getFullYear()).slice(-2);
         return `${day}-${month}-${year}`;
       },
+      /** Appends several items at once, keeping each one's own date (used by demo data). */
+      addMany(entries: { name: string; date: string }[]): void {
+        for (const { name, date } of entries) {
+          this.list.push({ id: this.nextId++, name, date, element: this.nextElement++ });
+        }
+        this.reindexAndSort();
+      },
       seed(count: number, prefix: string): void {
         const currentDate = new Date();
         const oneYearAgo = new Date();

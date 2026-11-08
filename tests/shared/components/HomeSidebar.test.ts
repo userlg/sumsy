@@ -73,6 +73,7 @@ describe('HomeSidebar.vue', () => {
     const wrapper = mountComponent({ isDev: false });
     expect(wrapper.text()).not.toContain('Dev');
     expect(wrapper.text()).not.toContain('Cargar Datos');
+    expect(wrapper.find('#seed-demo-button').exists()).toBe(false);
   });
 
   it('shows clear name button in dev section when hasUser is true', () => {
@@ -118,6 +119,12 @@ describe('HomeSidebar.vue', () => {
     expect(wrapper.emitted('seedData')).toBeTruthy();
   });
 
+  it('emits seedDemo when the demo button is clicked', async () => {
+    const wrapper = mountComponent({ isDev: true });
+    await wrapper.get('#seed-demo-button').trigger('click');
+    expect(wrapper.emitted('seedDemo')).toBeTruthy();
+  });
+
   it('emits clearName when clear name button is clicked', async () => {
     const wrapper = mountComponent({ isDev: true, hasUser: true });
     await wrapper.get('#clear-name-button').trigger('click');
@@ -127,27 +134,49 @@ describe('HomeSidebar.vue', () => {
   it('defaults the export period to the current month and shows its counts', () => {
     const wrapper = mountComponent({ summaryCount: 3, caseCount: 1 });
     const now = new Date();
-    const current = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    expect((wrapper.get('#export-month').element as HTMLInputElement).value).toBe(current);
+    expect(wrapper.get('#export-year').text()).toBe(String(now.getFullYear()));
+    expect((wrapper.get('#export-month').element as HTMLSelectElement).value).toBe(
+      String(now.getMonth() + 1)
+    );
+    const shown = wrapper.findAll('#export-month option')[now.getMonth()];
+    expect(shown.text()).not.toMatch(/\d/);
     expect(wrapper.text()).toContain('3 resúmenes · 1 caso');
   });
 
   it('emits the picked month and the full backup scope', async () => {
     const wrapper = mountComponent();
-    await wrapper.get('#export-month').setValue('2026-09');
-    await wrapper.get('#export-month').trigger('change');
-    expect(lastScope(wrapper)).toEqual(['2026-09']);
+    const year = new Date().getFullYear() - 1;
+    await wrapper.get('#export-year-prev').trigger('click');
+    await wrapper.get('#export-month').setValue('9');
+    expect(lastScope(wrapper)).toEqual([`${year}-09`]);
 
     await wrapper.get('input[type="checkbox"]').setValue(true);
     expect(lastScope(wrapper)).toEqual(['all']);
     expect(wrapper.get('#export-month').attributes('disabled')).toBeDefined();
+    expect(wrapper.get('#export-year-prev').attributes('disabled')).toBeDefined();
 
     await wrapper.get('input[type="checkbox"]').setValue(false);
-    expect(lastScope(wrapper)).toEqual(['2026-09']);
+    expect(lastScope(wrapper)).toEqual([`${year}-09`]);
   });
 
-  it('says when the chosen month has nothing to export', () => {
+  it('never moves past the current month', async () => {
+    const wrapper = mountComponent();
+    const now = new Date();
+    expect(wrapper.get('#export-year-next').attributes('disabled')).toBeDefined();
+
+    // From December of last year, stepping forward lands on this month at most.
+    await wrapper.get('#export-year-prev').trigger('click');
+    await wrapper.get('#export-month').setValue('12');
+    await wrapper.get('#export-year-next').trigger('click');
+    const month = Math.min(12, now.getMonth() + 1);
+    expect(lastScope(wrapper)).toEqual([`${now.getFullYear()}-${String(month).padStart(2, '0')}`]);
+
+    const future = wrapper.findAll('#export-month option').slice(now.getMonth() + 1);
+    expect(future.every((option) => option.attributes('disabled') !== undefined)).toBe(true);
+  });
+
+  it('shows zero counts when the period is empty', () => {
     const wrapper = mountComponent({ hasData: false });
-    expect(wrapper.text()).toContain('Este mes no tiene registros');
+    expect(wrapper.text()).toContain('0 resúmenes · 0 casos');
   });
 });

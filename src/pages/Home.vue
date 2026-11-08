@@ -16,6 +16,7 @@
   import NotifyModal from '@/shared/components/NotifyModal.vue';
   import HomeSidebar from '@/shared/components/HomeSidebar.vue';
   import { initHome } from '@/logic/home.logic';
+  import { buildDemoEntries } from '@/logic/demo.logic';
   import { useSummaryStore } from '@/modules/summaries/store/summary.store';
   import { useCaseStore } from '@/modules/cases/store/case.store';
   import { save } from '@tauri-apps/plugin-dialog';
@@ -77,6 +78,19 @@
   function clearName(): void {
     userStore.clearName();
     openNameModal(true);
+  }
+
+  // Dev only: fills the last 12 months with 20–50 summaries and 20–50 cases each.
+  function seedDemo(): void {
+    const summaries = buildDemoEntries('summaries');
+    const cases = buildDemoEntries('cases');
+    summaryStore.addMany(summaries);
+    caseStore.addMany(cases);
+    notify(
+      'Datos demo generados',
+      `Se agregaron ${summaries.length} resúmenes y ${cases.length} casos de los últimos 12 meses.`,
+      'success'
+    );
   }
 
   function seedSummaries(): void {
@@ -241,6 +255,7 @@
         @change-name="openNameModal(true)"
         @clear-name="clearName"
         @seed-data="seedSummaries"
+        @seed-demo="seedDemo"
       />
     </div>
 

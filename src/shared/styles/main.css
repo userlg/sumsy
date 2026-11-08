@@ -26,6 +26,9 @@
   --activity-3: #2563eb;
   --activity-4: #1e40af;
   --activity-edge: rgb(15 23 42 / 0.06);
+
+  /* Background pattern: a faint dot grid, tinted with the accent blue */
+  --pattern-color: rgb(37 99 235 / 0.22);
 }
 
 .dark {
@@ -35,6 +38,8 @@
   --activity-3: #3b82f6;
   --activity-4: #93c5fd;
   --activity-edge: rgb(255 255 255 / 0.04);
+
+  --pattern-color: rgb(148 163 184 / 0.24);
 }
 
 html {
@@ -118,5 +123,26 @@ button {
     box-shadow:
       0 0 25px rgba(59, 130, 246, 0.8),
       0 0 40px rgba(79, 70, 229, 0.6);
+  }
+}
+
+/*
+ * Background pattern: an even dot grid over the whole window (MagicPattern's "dots").
+ * Dots add texture without lines that would compete with the heatmap or the bars.
+ * It sits on a fixed layer, so it does not repaint while scrolling.
+ */
+.app-pattern {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: radial-gradient(var(--pattern-color) 1px, transparent 1.5px);
+  background-size: 22px 22px;
+  background-position: center;
+}
+
+@media (prefers-contrast: more), (prefers-reduced-transparency: reduce) {
+  .app-pattern {
+    display: none;
   }
 }
