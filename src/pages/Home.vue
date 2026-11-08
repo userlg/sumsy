@@ -203,7 +203,7 @@
 
     <!-- Layout principal -->
     <!-- On large screens: spacer · welcome · sidebar in equal side columns, so the welcome
-         stays centered and the sidebar lines up with the nav bar's right edge, inside the
+         stays centered and the sidebar rests near the window's right edge, inside the
          main area (never over the navbar or footer). -->
     <div
       v-if="showContent"

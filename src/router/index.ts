@@ -14,7 +14,7 @@ declare module 'vue-router' {
   interface RouteMeta {
     /** Position in the nav bar; decides which way the view transition slides. */
     order?: number;
-    /** Uses the nav bar's wider container instead of the narrow reading width. */
+    /** Spans the whole window (with side margins) instead of the narrow reading width. */
     wide?: boolean;
   }
 }
