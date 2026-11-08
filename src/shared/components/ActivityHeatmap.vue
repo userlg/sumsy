@@ -145,10 +145,10 @@
 <template>
   <section
     ref="cardRef"
-    class="relative w-full bg-white dark:bg-slate-800/80 rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-700 p-6"
+    class="relative w-full bg-white dark:bg-slate-800/80 rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-none border border-slate-200 dark:border-slate-700 p-6 sm:p-8"
     aria-labelledby="activity-title"
   >
-    <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-5">
+    <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
       <div>
         <h3 id="activity-title" class="text-xl font-bold text-slate-800 dark:text-slate-100">
           Actividad
@@ -214,7 +214,7 @@
     </div>
 
     <footer
-      class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 mt-4 text-sm text-slate-500 dark:text-slate-400"
+      class="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3 mt-7 text-sm text-slate-500 dark:text-slate-400"
     >
       <dl class="flex flex-wrap gap-x-6 gap-y-1 tabular-nums">
         <div class="flex gap-1.5">
@@ -263,12 +263,12 @@
 <style scoped>
   .activity-layout {
     --cell: 12px;
-    --gap: 3px;
+    --gap: 4px;
     display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: auto auto;
-    column-gap: 8px;
-    row-gap: 6px;
+    column-gap: 10px;
+    row-gap: 8px;
     width: max-content;
     margin-inline: auto;
   }

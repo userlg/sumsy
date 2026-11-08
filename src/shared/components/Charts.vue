@@ -199,9 +199,8 @@
         />
         {{ title }}
       </h3>
-      <p class="text-sm text-slate-500 dark:text-slate-400 tabular-nums">
-        <span class="font-semibold text-slate-700 dark:text-slate-200">{{ total }}</span>
-        en el período
+      <p class="text-sm font-semibold tabular-nums text-slate-700 dark:text-slate-200">
+        {{ total }}
       </p>
     </header>
     <div class="flex-1 min-h-[300px] relative w-full">
