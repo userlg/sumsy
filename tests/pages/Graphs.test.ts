@@ -16,18 +16,19 @@ vi.mock('chart.js', () => ({
   Chart: class MockChart {
     static register() {}
     destroy() {}
+    update() {}
     constructor() {}
   },
   registerables: [],
 }));
 
 describe('Graphs.vue', () => {
-  it('renders the title "Estadísticas General"', async () => {
+  it('renders the title "Estadísticas generales"', async () => {
     const wrapper = await mountFactory({
       component: Graphs,
       initialRoute: '/graphs',
     });
-    expect(wrapper.text()).toContain('Estadísticas General');
+    expect(wrapper.text()).toContain('Estadísticas generales');
   });
 
   it('shows empty state when no data exists', async () => {

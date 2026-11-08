@@ -16,6 +16,7 @@ const { MockChart } = vi.hoisted(() => {
   class MockChart {
     static register() {}
     destroy() {}
+    update() {}
     constructor() {}
   }
   return { MockChart };

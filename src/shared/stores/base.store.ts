@@ -6,6 +6,7 @@
 
 import { defineStore } from 'pinia';
 import { BaseItem } from '@/shared/interfaces/BaseItem';
+import { parseItemDate } from '@/shared/utils/date.utils';
 
 export function createListStore(storeId: string) {
   return defineStore(storeId, {
@@ -24,15 +25,10 @@ export function createListStore(storeId: string) {
           groupedMap.set(item.date, count + 1);
         });
 
-        const sortedEntries = Array.from(groupedMap.entries()).sort((a, b) => {
-          // Parse date DD-MM-YY to verify order
-          const [dayA, monthA, yearA] = a[0].split('-').map(Number);
-          const [dayB, monthB, yearB] = b[0].split('-').map(Number);
-          // Assume 20XX for year
-          const dateA = new Date(2000 + yearA, monthA - 1, dayA);
-          const dateB = new Date(2000 + yearB, monthB - 1, dayB);
-          return dateA.getTime() - dateB.getTime();
-        });
+        const time = (ddmmyy: string) => parseItemDate(ddmmyy)?.getTime() ?? 0;
+        const sortedEntries = Array.from(groupedMap.entries()).sort(
+          (a, b) => time(a[0]) - time(b[0])
+        );
 
         return sortedEntries.map(([date, count]) => ({ date, count }));
       },
