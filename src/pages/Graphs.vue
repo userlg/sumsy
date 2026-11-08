@@ -36,7 +36,9 @@
 
 <template>
   <div class="mx-auto max-w-5xl py-4 space-y-8">
-    <h1 class="text-3xl font-bold tracking-tight text-slate-800 dark:text-slate-100 text-balance">
+    <h1
+      class="text-3xl font-bold tracking-tight text-center text-slate-800 dark:text-slate-100 text-balance"
+    >
       Estadísticas generales
     </h1>
 
