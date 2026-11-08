@@ -9,18 +9,28 @@
    * <NavBar />
    */
 
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
+  import { useScrollY } from '@/shared/composables/useScrollY';
   import DarkMode from '@/shared/components/ButtonDarkMode.vue';
   import { useUserStore } from '@/stores/user.store';
 
   const userStore = useUserStore();
 
   const isOpen = ref(false);
+
+  // The bar lifts off the page (stronger blur + shadow) once content scrolls under it.
+  const scrollY = useScrollY();
+  const isScrolled = computed(() => scrollY.value > 4);
 </script>
 
 <template>
   <header
-    class="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-lg border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-colors duration-500"
+    :class="[
+      'navbar sticky top-0 z-50 backdrop-blur-lg border-b',
+      isScrolled
+        ? 'bg-white/85 dark:bg-slate-900/85 border-slate-200/80 dark:border-slate-800/80 shadow-md shadow-slate-900/5 dark:shadow-black/20'
+        : 'bg-white/60 dark:bg-slate-900/60 border-transparent shadow-none',
+    ]"
   >
     <div class="container mx-auto flex items-center justify-between px-6 py-3">
       <!-- Logo -->
@@ -51,7 +61,7 @@
             :class="[
               userStore.getName.toLowerCase() === 'orlando'
                 ? 'neon-name'
-                : 'text-gray-800 dark:text-white',
+                : 'text-slate-800 dark:text-white',
             ]"
           >
             {{ userStore.getName }}
@@ -63,8 +73,9 @@
 
         <!-- Burger icon menu -->
         <button
-          class="md:hidden p-4 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+          class="md:hidden p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           aria-label="Menú"
+          :aria-expanded="isOpen"
           @click="isOpen = !isOpen"
         >
           <svg
@@ -86,10 +97,10 @@
     </div>
 
     <!-- Mobile menu -->
-    <transition name="fade" mode="out-in">
+    <transition name="fade-slide">
       <nav
         v-if="isOpen"
-        class="md:hidden flex flex-col gap-4 px-6 py-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700"
+        class="md:hidden flex flex-col gap-4 px-6 py-4 bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800"
       >
         <router-link
           to="/"
@@ -123,3 +134,12 @@
     </transition>
   </header>
 </template>
+
+<style scoped>
+  .navbar {
+    transition:
+      background-color 240ms ease,
+      border-color 240ms ease,
+      box-shadow 240ms ease;
+  }
+</style>

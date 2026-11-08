@@ -20,9 +20,12 @@
 
   const tweened = reactive({ number: 0 });
 
+  // Any change to the list (add, delete, ASC/DESC) spins the counter up to 50 (75 when the
+  // total is already 50) and settles on the real total.
   watch(
     () => props.store.list,
     (newVal) => {
+      gsap.killTweensOf(tweened);
       gsap
         .timeline()
         .to(tweened, {
@@ -44,16 +47,15 @@
   <div class="flex flex-col items-center justify-center space-y-2 cursor-default">
     <!-- Circle-->
     <div
-      ref="circleEl"
-      class="relative flex items-center justify-center w-20 h-20 rounded-full border-4 border-sky-500 dark:border-blue-300 bg-white dark:bg-gray-800 shadow-md transition-all duration-500 hover:scale-105 hover:shadow-lg"
+      class="relative flex items-center justify-center w-20 h-20 rounded-full border-4 border-blue-500 dark:border-blue-400 bg-white dark:bg-slate-800 shadow-md shadow-blue-500/10 transition-[transform,box-shadow] duration-300 hover:scale-105 hover:shadow-lg"
     >
-      <span class="text-3xl font-bold text-gray-700 dark:text-gray-100">
+      <span class="text-3xl font-bold tabular-nums text-slate-800 dark:text-slate-100">
         {{ tweened.number.toFixed(0) }}
       </span>
     </div>
 
     <!-- Title -->
-    <h2 class="text-sm font-medium text-gray-600 dark:text-gray-300 text-center">
+    <h2 class="text-sm font-medium text-slate-600 dark:text-slate-300 text-center">
       {{ props.title }}
     </h2>
   </div>

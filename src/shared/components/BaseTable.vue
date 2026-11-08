@@ -9,7 +9,7 @@
    * <BaseTable />
    */
 
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch } from 'vue';
   import EditModal from './EditModal.vue';
   import ConfirmModal from './ConfirmModal.vue';
   import type { BaseItem } from '@/shared/interfaces/BaseItem';
@@ -99,9 +99,19 @@
     showConfirmModal.value = false;
   }
 
+  // Deleting the last row of the last page would leave an empty page: step back instead.
+  watch(totalPages, (pages) => {
+    if (currentPage.value > pages) currentPage.value = pages;
+  });
+
+  const tableRef = ref<HTMLElement | null>(null);
+
   function goToPage(page: number) {
     if (page >= 1 && page <= totalPages.value) {
       currentPage.value = page;
+      // Bring the start of the table back into view if the user scrolled past it.
+      const top = tableRef.value?.getBoundingClientRect().top ?? 0;
+      if (top < 0) tableRef.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
 
@@ -127,9 +137,28 @@
 
       <div v-if="filteredItems.length > 0" class="flex gap-2 w-full sm:w-auto">
         <button
-          class="flex-1 sm:flex-none bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium px-4 py-2.5 rounded-xl transition-all border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-slate-400"
+          class="sort-button flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-slate-400"
+          :aria-label="
+            isReversed
+              ? 'Orden ascendente; cambiar a descendente'
+              : 'Orden descendente; cambiar a ascendente'
+          "
           @click="onReverse"
         >
+          <svg
+            :class="['sort-arrow size-4', { 'is-up': isReversed }]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 4.5v15m0 0 6.75-6.75M12 19.5l-6.75-6.75"
+            />
+          </svg>
           {{ isReversed ? 'ASC' : 'DESC' }}
         </button>
 
@@ -159,7 +188,8 @@
     <!-- Table -->
     <div v-else>
       <div
-        class="bg-white/70 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-x-auto"
+        ref="tableRef"
+        class="scroll-mt-24 bg-white/70 dark:bg-slate-800/50 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm overflow-x-auto"
       >
         <table class="w-full text-left text-sm whitespace-nowrap">
           <thead
@@ -172,10 +202,11 @@
               <th class="px-6 py-4 text-center font-medium">Opciones</th>
             </tr>
           </thead>
-          <transition-group tag="tbody" name="bounce" appear>
+          <transition-group tag="tbody" name="row" appear>
             <tr
-              v-for="item in paginatedItems"
+              v-for="(item, index) in paginatedItems"
               :key="item.id"
+              :style="{ '--i': Math.min(index, 5) }"
               class="transition-colors duration-200 hover:bg-slate-50 dark:hover:bg-slate-700/40 border-b last:border-none border-slate-100 dark:border-slate-700/50"
             >
               <td class="px-6 py-4 text-center text-slate-500 dark:text-slate-400">
@@ -224,23 +255,29 @@
       </div>
 
       <!-- Pagination-->
-      <div v-if="totalPages > 1" class="flex justify-center items-center gap-2 mt-4">
+      <nav
+        v-if="totalPages > 1"
+        class="flex justify-center items-center gap-3 mt-4 text-sm"
+        aria-label="Paginación"
+      >
         <button
           :disabled="currentPage === 1"
-          class="px-3 py-1 border rounded disabled:opacity-50"
+          class="btn-secondary px-3.5 py-1.5"
           @click="goToPage(currentPage - 1)"
         >
           Anterior
         </button>
-        <span>Página {{ currentPage }} de {{ totalPages }}</span>
+        <span class="text-slate-500 dark:text-slate-400 tabular-nums">
+          Página {{ currentPage }} de {{ totalPages }}
+        </span>
         <button
           :disabled="currentPage === totalPages"
-          class="px-3 py-1 border rounded disabled:opacity-50"
+          class="btn-secondary px-3.5 py-1.5"
           @click="goToPage(currentPage + 1)"
         >
           Siguiente
         </button>
-      </div>
+      </nav>
     </div>
 
     <!-- Edit Modal -->
@@ -274,3 +311,29 @@
     />
   </div>
 </template>
+
+<style scoped>
+  .sort-button {
+    transition:
+      background-color 160ms ease,
+      transform 120ms var(--ease-out);
+  }
+
+  .sort-button:active {
+    transform: scale(0.96);
+  }
+
+  .sort-arrow {
+    transition: transform 220ms var(--ease-out);
+  }
+
+  .sort-arrow.is-up {
+    transform: rotate(180deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sort-arrow {
+      transition: none;
+    }
+  }
+</style>

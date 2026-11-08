@@ -1,19 +1,65 @@
-.bounce-enter-active {
-  animation: bounce-in 0.5s;
+/* Modals: grow from almost full size, never from nothing; leave faster than they enter */
+.pop-enter-active {
+  transition:
+    opacity 220ms var(--ease-out),
+    transform 220ms var(--ease-out);
 }
-.bounce-leave-active {
-  animation: bounce-in 0.5s reverse;
+.pop-leave-active {
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
 }
-@keyframes bounce-in {
+.pop-enter-from,
+.pop-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+/* Table rows (BaseTable.vue).
+   ASC/DESC: rows that stay on the page glide to their new place (FLIP, *-move); rows that come
+   into the page pop in with a slight overshoot, the first few staggered by --i.
+   Leaving rows go at once: a <tr> cannot leave the flow while it fades, so a fade would make
+   the table grow before it shrinks. */
+.row-move {
+  transition: transform 420ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.row-enter-active {
+  animation: row-pop 380ms cubic-bezier(0.2, 1.35, 0.4, 1) both;
+  animation-delay: calc(var(--i, 0) * 30ms);
+}
+.row-leave-active {
+  display: none;
+}
+
+@keyframes row-pop {
   0% {
-    transform: scale(0);
+    opacity: 0;
+    transform: translateY(8px) scale(0.97);
   }
-  50% {
-    transform: scale(1.25);
+  60% {
+    opacity: 1;
+    transform: translateY(0) scale(1.015);
   }
   100% {
-    transform: scale(1);
+    opacity: 1;
+    transform: none;
   }
+}
+
+/* Small text that changes in place (export period summary) */
+.swap-enter-active,
+.swap-leave-active {
+  transition:
+    opacity 160ms ease,
+    transform 160ms var(--ease-out);
+}
+.swap-enter-from {
+  opacity: 0;
+  transform: translateY(4px);
+}
+.swap-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 
 .fade-slide-enter-active,
@@ -31,14 +77,88 @@
   transform: translateY(-10px);
 }
 
-.slide-fade-enter-active {
-  transition: all 0.4s ease;
+/* View transitions (App.vue). Leaving is quicker than entering so navigation feels immediate;
+   the 140ms leave must match VIEW_LEAVE_MS in router/index.ts. */
+.view-forward-enter-active,
+.view-back-enter-active {
+  transition:
+    opacity 280ms var(--ease-out),
+    transform 280ms var(--ease-out),
+    filter 280ms var(--ease-out);
 }
-.slide-fade-enter-from {
-  transform: translateX(20px);
-  opacity: 0;
+
+.view-forward-leave-active,
+.view-back-leave-active {
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    filter 140ms ease;
 }
-.slide-fade-leave-to {
-  transform: translateX(-20px);
+
+.view-forward-enter-from,
+.view-back-leave-to {
   opacity: 0;
+  transform: translateX(16px);
+  filter: blur(3px);
+}
+
+.view-forward-leave-to,
+.view-back-enter-from {
+  opacity: 0;
+  transform: translateX(-16px);
+  filter: blur(3px);
+}
+
+/* Views with position:fixed children (the Home sidebar) only fade: a transform or filter on
+   the view would make those children jump when the transition ends. */
+[data-view-static].view-forward-enter-from,
+[data-view-static].view-forward-leave-to,
+[data-view-static].view-back-enter-from,
+[data-view-static].view-back-leave-to {
+  transform: none;
+  filter: none;
+}
+
+/* v-reveal (shared/directives/reveal.ts) */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 520ms var(--ease-out),
+    transform 520ms var(--ease-out);
+}
+
+.reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .view-forward-enter-active,
+  .view-forward-leave-active,
+  .view-back-enter-active,
+  .view-back-leave-active {
+    transition: opacity 120ms ease;
+  }
+
+  .view-forward-enter-from,
+  .view-forward-leave-to,
+  .view-back-enter-from,
+  .view-back-leave-to {
+    transform: none;
+    filter: none;
+  }
+
+  .row-move,
+  .reveal,
+  .swap-enter-active,
+  .swap-leave-active,
+  .pop-enter-active,
+  .pop-leave-active {
+    transition: none;
+  }
+
+  .row-enter-active {
+    animation: none;
+  }
 }

@@ -14,12 +14,76 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  /* Motion: strong ease-out for things entering, ease-in-out for things moving on screen */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  /* Activity calendar: 0 = no items, 4 = busiest days */
+  --activity-0: #f1f5f9;
+  --activity-1: #bfdbfe;
+  --activity-2: #60a5fa;
+  --activity-3: #2563eb;
+  --activity-4: #1e40af;
+  --activity-edge: rgb(15 23 42 / 0.06);
+}
+
+.dark {
+  --activity-0: rgb(51 65 85 / 0.55);
+  --activity-1: #1e3a8a;
+  --activity-2: #1d4ed8;
+  --activity-3: #3b82f6;
+  --activity-4: #93c5fd;
+  --activity-edge: rgb(255 255 255 / 0.04);
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+::selection {
+  @apply bg-blue-500/25 text-inherit;
+}
+
 body {
   @apply font-inter antialiased text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-950;
 }
 
 button {
   @apply cursor-pointer;
+}
+
+/* In the components layer so utility classes on an element can still override them */
+@layer components {
+  /* Shared buttons: a press always answers with a small scale-down */
+  .btn-primary,
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 font-medium px-5 py-2.5 rounded-xl shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none;
+    transition:
+      background-color 160ms ease,
+      box-shadow 160ms ease,
+      transform 120ms var(--ease-out);
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md disabled:hover:bg-blue-600;
+  }
+
+  .btn-secondary {
+    @apply bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700;
+  }
+
+  .btn-primary:active:not(:disabled),
+  .btn-secondary:active:not(:disabled) {
+    transform: scale(0.97);
+  }
 }
 
 .nav-link {

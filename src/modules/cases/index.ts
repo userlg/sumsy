@@ -12,6 +12,7 @@ export const casesRoute = {
   path: '/cases',
   name: 'Cases',
   component: CasesView,
+  meta: { order: 2 },
 };
 
 export { CasesView };

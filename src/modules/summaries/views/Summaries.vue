@@ -69,13 +69,7 @@
         class="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 flex-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100"
         @keyup.enter="addSummary"
       />
-      <button
-        :disabled="!name.trim()"
-        class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2.5 rounded-xl transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-        @click="addSummary"
-      >
-        Agregar
-      </button>
+      <button :disabled="!name.trim()" class="btn-primary" @click="addSummary">Agregar</button>
     </div>
 
     <p v-if="error" class="text-red-500 text-sm mt-1">

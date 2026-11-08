@@ -12,6 +12,7 @@ export const summariesRoute = {
   path: '/summaries',
   name: 'Summaries',
   component: SummariesView,
+  meta: { order: 1 },
 };
 
 export { SummariesView };

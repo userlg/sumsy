@@ -12,11 +12,8 @@
   animation: subtlePulse 3s ease-in-out infinite;
 }
 
-@media (prefers-color-scheme: dark) {
-  .neon-name {
-    --text-color: #ffffff;
-    color: var(--text-color);
-  }
+.dark .neon-name {
+  --text-color: #ffffff;
 }
 
 @keyframes subtlePulse {

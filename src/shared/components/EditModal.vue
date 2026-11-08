@@ -91,7 +91,7 @@
 
 <template>
   <div>
-    <transition name="bounce">
+    <transition name="pop">
       <div
         v-show="modelValue"
         class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40"
