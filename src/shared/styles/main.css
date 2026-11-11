@@ -27,8 +27,8 @@
   --activity-4: #1e40af;
   --activity-edge: rgb(15 23 42 / 0.06);
 
-  /* Background pattern: a faint dot grid, tinted with the accent blue */
-  --pattern-color: rgb(37 99 235 / 0.22);
+  /* Background pattern: a barely-there dot grid in the slate neutrals */
+  --pattern-color: rgb(71 85 105 / 0.1);
 }
 
 .dark {
@@ -39,7 +39,7 @@
   --activity-4: #93c5fd;
   --activity-edge: rgb(255 255 255 / 0.04);
 
-  --pattern-color: rgb(148 163 184 / 0.24);
+  --pattern-color: rgb(148 163 184 / 0.08);
 }
 
 html {
