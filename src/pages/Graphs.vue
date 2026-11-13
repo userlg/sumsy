@@ -18,6 +18,7 @@
   import SegmentedControl from '@/shared/components/SegmentedControl.vue';
   import { buildSeries, CHART_RANGES, type ChartRange } from '@/logic/chart.logic';
   import { reveal as vReveal } from '@/shared/directives/reveal';
+  import { splitCases } from '@/shared/utils/case.utils';
 
   const summaryStore = useSummaryStore();
   const caseStore = useCaseStore();
@@ -25,10 +26,13 @@
   const range = ref<ChartRange>('30d');
 
   const summaryDates = computed(() => summaryStore.list.map((item) => item.date));
-  const caseDates = computed(() => caseStore.list.map((item) => item.date));
+  const cases = computed(() => splitCases(caseStore.list));
+  const caseDates = computed(() => cases.value.normal.map((item) => item.date));
+  const extraDates = computed(() => cases.value.extra.map((item) => item.date));
 
   const summarySeries = computed(() => buildSeries(summaryDates.value, range.value));
   const caseSeries = computed(() => buildSeries(caseDates.value, range.value));
+  const extraSeries = computed(() => buildSeries(extraDates.value, range.value));
 
   const hasSummaries = computed(() => summaryStore.list.length > 0);
   const hasCases = computed(() => caseStore.list.length > 0);
@@ -43,9 +47,18 @@
     </h1>
 
     <template v-if="hasSummaries || hasCases">
-      <ActivityHeatmap :summary-dates="summaryDates" :case-dates="caseDates" />
+      <ActivityHeatmap
+        :summary-dates="summaryDates"
+        :case-dates="caseDates"
+        :extra-dates="extraDates"
+      />
 
-      <ShareDonut v-reveal :summaries="summaryStore.list.length" :cases="caseStore.list.length" />
+      <ShareDonut
+        v-reveal
+        :summaries="summaryStore.list.length"
+        :cases="cases.normal.length"
+        :extras="cases.extra.length"
+      />
 
       <section v-reveal class="space-y-4" aria-labelledby="trend-title">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -62,7 +75,9 @@
             v-reveal="hasSummaries ? 80 : 0"
             title="Casos"
             tone="indigo"
+            items-label="Normales"
             :items="caseSeries"
+            :stacked="{ label: 'Extras', tone: 'pink', items: extraSeries }"
           />
         </div>
       </section>

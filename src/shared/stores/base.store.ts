@@ -34,7 +34,8 @@ export function createListStore(storeId: string) {
       },
     },
     actions: {
-      create(name: string): void {
+      /** `extra` is only used by cases; it is stored only when true. */
+      create(name: string, extra = false): void {
         const dateCurrent = new Date();
         const today = this.formatDate(dateCurrent);
 
@@ -43,6 +44,7 @@ export function createListStore(storeId: string) {
           name,
           date: today,
           element: this.nextElement++,
+          ...(extra && { extra: true }),
         };
 
         this.list.push(newItem);
@@ -63,6 +65,11 @@ export function createListStore(storeId: string) {
       delete(id: number): void {
         this.list = this.list.filter((r) => r.id !== id);
         this.reindexAndSort();
+      },
+      /** Cases only: marks a case as extra, or back to normal. */
+      toggleExtra(id: number): void {
+        const item = this.list.find((i) => i.id === id);
+        if (item) item.extra = !item.extra;
       },
       updateName(id: number, newName: string): void {
         const item = this.list.find((i) => i.id === id);
@@ -94,9 +101,15 @@ export function createListStore(storeId: string) {
         return `${day}-${month}-${year}`;
       },
       /** Appends several items at once, keeping each one's own date (used by demo data). */
-      addMany(entries: { name: string; date: string }[]): void {
-        for (const { name, date } of entries) {
-          this.list.push({ id: this.nextId++, name, date, element: this.nextElement++ });
+      addMany(entries: { name: string; date: string; extra?: boolean }[]): void {
+        for (const { name, date, extra } of entries) {
+          this.list.push({
+            id: this.nextId++,
+            name,
+            date,
+            element: this.nextElement++,
+            ...(extra && { extra: true }),
+          });
         }
         this.reindexAndSort();
       },

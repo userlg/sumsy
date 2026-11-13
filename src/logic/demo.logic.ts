@@ -9,6 +9,8 @@ import { formatItemDate } from '@/shared/utils/date.utils';
 export interface DemoEntry {
   name: string;
   date: string;
+  /** Only set on the entries from buildDemoExtras. */
+  extra?: boolean;
 }
 
 export type DemoKind = 'summaries' | 'cases';
@@ -95,4 +97,32 @@ export function buildDemoEntries(
   }
 
   return entries;
+}
+
+/**
+ * Between `min` and `max` extra cases in total, on random days of the last `months` months
+ * (never after `today`). Oldest first.
+ */
+export function buildDemoExtras({
+  months = 12,
+  min = 30,
+  max = 50,
+  today = new Date(),
+  random = Math.random as RandomSource,
+} = {}): DemoEntry[] {
+  const end = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const start = new Date(today.getFullYear(), today.getMonth() - months + 1, 1);
+  const spanDays = Math.round((end.getTime() - start.getTime()) / 86_400_000);
+
+  const dates = Array.from({ length: between(min, max, random) }, () => {
+    const date = new Date(start);
+    date.setDate(start.getDate() + between(0, spanDays, random));
+    return date;
+  }).sort((a, b) => a.getTime() - b.getTime());
+
+  return dates.map((date) => ({
+    name: randomName('cases', random),
+    date: formatItemDate(date),
+    extra: true,
+  }));
 }

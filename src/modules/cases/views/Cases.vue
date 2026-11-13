@@ -20,6 +20,8 @@
   const caseStore = useCaseStore();
   const name = ref('');
   const error = ref('');
+  /** Stays on after adding, so several extras in a row need a single click. */
+  const isExtra = ref(false);
 
   function addSummary(): void {
     if (!name.value.trim()) {
@@ -27,7 +29,7 @@
       return;
     }
     error.value = '';
-    caseStore.create(name.value.trim());
+    caseStore.create(name.value.trim(), isExtra.value);
     name.value = '';
   }
 
@@ -47,6 +49,10 @@
     caseStore.reverseList();
   }
 
+  function handleToggleExtra(id: number) {
+    caseStore.toggleExtra(id);
+  }
+
   function handleClear() {
     caseStore.clearAll();
   }
@@ -54,7 +60,7 @@
 
 <template>
   <div class="flex flex-col">
-    <Total title="Casos Extras" :store="caseStore" />
+    <Total title="Casos" :store="caseStore" />
 
     <div>
       <PasteClipboard @pasted="onPasted" />
@@ -69,6 +75,22 @@
         class="bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-2.5 flex-1 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all shadow-sm placeholder-slate-400 dark:placeholder-slate-500 text-slate-800 dark:text-slate-100"
         @keyup.enter="addSummary"
       />
+      <label
+        :class="[
+          'flex items-center gap-2 px-3.5 py-2.5 rounded-xl border text-sm font-medium cursor-pointer select-none transition-colors duration-200',
+          isExtra
+            ? 'border-pink-300 bg-pink-50 text-pink-700 dark:border-pink-500/40 dark:bg-pink-500/10 dark:text-pink-300'
+            : 'border-slate-200 bg-white/60 text-slate-600 dark:border-slate-700 dark:bg-slate-800/60 dark:text-slate-300',
+        ]"
+      >
+        <input
+          id="case-extra"
+          v-model="isExtra"
+          type="checkbox"
+          class="size-4 rounded accent-pink-500 cursor-pointer"
+        />
+        Extra
+      </label>
       <button :disabled="!name.trim()" class="btn-primary" @click="addSummary">Agregar</button>
     </div>
 
@@ -84,10 +106,12 @@
       :user-store="userStore"
       title-modal-view="Detalles del Caso"
       message="No hay casos disponibles."
+      extras
       @delete-summary="handleDeleteSummary"
       @reverse="handleReverse"
       @clear="handleClear"
       @edit-summary="handleEditSummary"
+      @toggle-extra="handleToggleExtra"
     />
   </div>
 </template>

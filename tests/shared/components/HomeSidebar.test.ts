@@ -140,7 +140,7 @@ describe('HomeSidebar.vue', () => {
     );
     const shown = wrapper.findAll('#export-month option')[now.getMonth()];
     expect(shown.text()).not.toMatch(/\d/);
-    expect(wrapper.text()).toContain('3 resúmenes · 1 caso');
+    expect(wrapper.text()).toContain('3 resúmenes · 1 caso · 0 extras');
   });
 
   it('emits the picked month and the full backup scope', async () => {
@@ -177,6 +177,11 @@ describe('HomeSidebar.vue', () => {
 
   it('shows zero counts when the period is empty', () => {
     const wrapper = mountComponent({ hasData: false });
-    expect(wrapper.text()).toContain('0 resúmenes · 0 casos');
+    expect(wrapper.text()).toContain('0 resúmenes · 0 casos · 0 extras');
+  });
+
+  it('shows the extra cases of the period', () => {
+    const wrapper = mountComponent({ summaryCount: 2, caseCount: 5, extraCount: 1 });
+    expect(wrapper.text()).toContain('2 resúmenes · 5 casos · 1 extra');
   });
 });

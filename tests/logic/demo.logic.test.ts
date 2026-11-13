@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { buildDemoEntries, randomName } from '@/logic/demo.logic';
+import { buildDemoEntries, buildDemoExtras, randomName } from '@/logic/demo.logic';
 import { parseItemDate } from '@/shared/utils/date.utils';
 
 /** Deterministic pseudo-random source (mulberry32). */
@@ -51,5 +51,22 @@ describe('demo.logic', () => {
     expect(dates.every((date) => date <= today)).toBe(true);
     const times = dates.map((date) => date.getTime());
     expect(times).toEqual([...times].sort((a, b) => a - b));
+  });
+
+  it('creates 30 to 50 extra cases in total over the last 12 months', () => {
+    const extras = buildDemoExtras({ today, random: seeded(11) });
+    expect(extras.length).toBeGreaterThanOrEqual(30);
+    expect(extras.length).toBeLessThanOrEqual(50);
+    expect(extras.every((entry) => entry.extra === true)).toBe(true);
+
+    const dates = extras.map((entry) => parseItemDate(entry.date)!);
+    expect(dates.every((date) => date <= today && date >= new Date(2025, 11, 1))).toBe(true);
+    const times = dates.map((date) => date.getTime());
+    expect(times).toEqual([...times].sort((a, b) => a - b));
+  });
+
+  it('never marks the regular demo entries as extra', () => {
+    const cases = buildDemoEntries('cases', { today, random: seeded(11) });
+    expect(cases.every((entry) => !entry.extra)).toBe(true);
   });
 });

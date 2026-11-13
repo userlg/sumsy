@@ -16,7 +16,9 @@
   import NotifyModal from '@/shared/components/NotifyModal.vue';
   import HomeSidebar from '@/shared/components/HomeSidebar.vue';
   import { initHome } from '@/logic/home.logic';
-  import { buildDemoEntries } from '@/logic/demo.logic';
+  import { buildDemoEntries, buildDemoExtras } from '@/logic/demo.logic';
+  import { splitCases } from '@/shared/utils/case.utils';
+  import { parseItemDate } from '@/shared/utils/date.utils';
   import { useSummaryStore } from '@/modules/summaries/store/summary.store';
   import { useCaseStore } from '@/modules/cases/store/case.store';
   import { save } from '@tauri-apps/plugin-dialog';
@@ -61,6 +63,7 @@
   const exportLists = computed(() =>
     scopedLists({ summaries: summaryStore.list, cases: caseStore.list }, exportScope.value)
   );
+  const exportCases = computed(() => splitCases(exportLists.value.cases));
   const hasDataToExport = computed(
     () => exportLists.value.summaries.length > 0 || exportLists.value.cases.length > 0
   );
@@ -84,11 +87,16 @@
   function seedDemo(): void {
     const summaries = buildDemoEntries('summaries');
     const cases = buildDemoEntries('cases');
+    const extras = buildDemoExtras();
+    // Mixed by date, so extras sit among the normal cases in the table.
+    const allCases = [...cases, ...extras].sort(
+      (a, b) => (parseItemDate(a.date)?.getTime() ?? 0) - (parseItemDate(b.date)?.getTime() ?? 0)
+    );
     summaryStore.addMany(summaries);
-    caseStore.addMany(cases);
+    caseStore.addMany(allCases);
     notify(
       'Datos demo generados',
-      `Se agregaron ${summaries.length} resúmenes y ${cases.length} casos de los últimos 12 meses.`,
+      `Se agregaron ${summaries.length} resúmenes, ${cases.length} casos y ${extras.length} extras de los últimos 12 meses.`,
       'success'
     );
   }
@@ -254,7 +262,8 @@
         class="mt-8 lg:mt-0 lg:justify-self-end"
         :has-data="hasDataToExport"
         :summary-count="exportLists.summaries.length"
-        :case-count="exportLists.cases.length"
+        :case-count="exportCases.normal.length"
+        :extra-count="exportCases.extra.length"
         :is-dev="isDev"
         :has-user="!!(userStore.getName && userStore.getName.trim() !== '')"
         @import-click="triggerImport"

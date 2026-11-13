@@ -2,26 +2,31 @@
   /**
    * @file ShareDonut.vue
    * @namespace src.shared.components
-   * @description Doughnut chart of how all-time items split between summaries and cases
+   * @description Doughnut chart of how all-time items split between summaries, cases and extras
    *
    * @component
    * @example
-   * <ShareDonut :summaries="120" :cases="40" />
+   * <ShareDonut :summaries="120" :cases="40" :extras="8" />
    */
 
   import { computed, onBeforeUnmount, onMounted, ref } from 'vue';
 
-  const props = defineProps<{
-    summaries: number;
-    cases: number;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      summaries: number;
+      /** Normal cases only. */
+      cases: number;
+      extras?: number;
+    }>(),
+    { extras: 0 }
+  );
 
   const RADIUS = 52;
   const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
   /** Gap between the two arcs, in the same units as the circumference. */
   const GAP = 6;
 
-  const total = computed(() => props.summaries + props.cases);
+  const total = computed(() => props.summaries + props.cases + props.extras);
 
   const percentFormat = new Intl.NumberFormat('es-ES', { maximumFractionDigits: 1 });
 
@@ -33,6 +38,7 @@
     const items = [
       { id: 'summaries', label: 'Resúmenes', count: props.summaries, tone: 'text-blue-500' },
       { id: 'cases', label: 'Casos', count: props.cases, tone: 'text-indigo-500' },
+      { id: 'extras', label: 'Extras', count: props.extras, tone: 'text-pink-500' },
     ];
     const visible = items.filter((item) => item.count > 0);
     // A lone segment closes the ring, so it needs no gap.

@@ -9,4 +9,6 @@ export interface BaseItem {
   name: string;
   date: string;
   element: number;
+  /** Cases only: true for an extra case. Missing means a normal case (older data has no flag). */
+  extra?: boolean;
 }

@@ -56,4 +56,25 @@ describe('ActivityHeatmap.vue', () => {
     await wrapper.find('.activity-grid').trigger('mouseleave');
     expect(wrapper.find('[role="status"]').exists()).toBe(false);
   });
+
+  it('filters extra cases and lists them in the day breakdown', async () => {
+    const wrapper = mount(ActivityHeatmap, {
+      props: {
+        summaryDates: ['03-11-26'],
+        caseDates: [],
+        extraDates: ['03-11-26', '03-11-26'],
+        today,
+      },
+      attachTo: document.body,
+    });
+    expect(wrapper.find('[data-key="2026-11-03"]').attributes('aria-label')).toContain(
+      '3 registros (1 resumen, 2 extras)'
+    );
+
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text() === 'Extras')!
+      .trigger('click');
+    expect(wrapper.text()).toContain('2 registros en el último año');
+  });
 });

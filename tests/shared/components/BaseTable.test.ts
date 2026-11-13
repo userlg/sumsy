@@ -205,4 +205,42 @@ describe('BaseTable.vue', () => {
       expect(wrapper.findComponent({ name: 'ConfirmModal' }).props('modelValue')).toBe(false);
     }
   });
+
+  describe('extras mode', () => {
+    // transition-group is stubbed in tests, so rows are found as any <tr> holding a <td>.
+    const rowsOf = (wrapper: ReturnType<typeof mountComponent>) =>
+      wrapper.findAll('tr').filter((row) => row.find('td').exists());
+
+    const cases: BaseItem[] = [
+      { id: 1, name: 'Normal', date: '01-01-25', element: 1 },
+      { id: 2, name: 'Extra', date: '02-01-25', element: 2, extra: true },
+    ];
+
+    it('shows the Extra label and the type filter only in extras mode', () => {
+      expect(mountComponent({ items: cases }).text()).not.toContain('Normales');
+
+      const wrapper = mountComponent({ items: cases, extras: true });
+      const rows = rowsOf(wrapper);
+      expect(rows[0].find('span.rounded-full').exists()).toBe(false);
+      expect(rows[1].find('span.rounded-full').text()).toBe('Extra');
+      expect(wrapper.text()).toContain('Normales');
+    });
+
+    it('filters normal and extra cases', async () => {
+      const wrapper = mountComponent({ items: cases, extras: true });
+      const button = (label: string) => wrapper.findAll('button').find((b) => b.text() === label)!;
+
+      await button('Extras').trigger('click');
+      expect(rowsOf(wrapper).map((r) => r.find('td:nth-child(2)').text())).toEqual(['Extra Extra']);
+
+      await button('Normales').trigger('click');
+      expect(rowsOf(wrapper).map((r) => r.find('td:nth-child(2)').text())).toEqual(['Normal']);
+    });
+
+    it('emits toggleExtra from the row button', async () => {
+      const wrapper = mountComponent({ items: cases, extras: true });
+      await wrapper.get('button[title="Quitar extra"]').trigger('click');
+      expect(wrapper.emitted('toggleExtra')).toEqual([[2]]);
+    });
+  });
 });

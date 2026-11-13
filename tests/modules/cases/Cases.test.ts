@@ -22,9 +22,23 @@ describe('Cases.vue', () => {
     });
   }
 
-  it('renders the title "Casos Extras"', async () => {
+  it('renders the title "Casos"', async () => {
     const wrapper = await mountCases();
-    expect(wrapper.text()).toContain('Casos Extras');
+    expect(wrapper.text()).toContain('Casos');
+    expect(wrapper.text()).not.toContain('Casos Extras');
+  });
+
+  it('adds an extra case when the Extra box is checked, and keeps it checked', async () => {
+    const wrapper = await mountCases();
+    const caseStore = useCaseStore();
+
+    await wrapper.get('#case-extra').setValue(true);
+    await wrapper.find('input[aria-label="Nombre del caso"]').setValue('Caso extra');
+    await wrapper.find('input[aria-label="Nombre del caso"]').trigger('keyup.enter');
+    await flushPromises();
+
+    expect(caseStore.list[0].extra).toBe(true);
+    expect((wrapper.get('#case-extra').element as HTMLInputElement).checked).toBe(true);
   });
 
   it('renders the input and Agregar button', async () => {

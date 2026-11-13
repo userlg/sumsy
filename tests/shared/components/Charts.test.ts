@@ -101,4 +101,24 @@ describe('Charts.vue', () => {
     // If the watch fired, the chart would have been updated/re-rendered.
     expect(wrapper.find('canvas').exists()).toBe(true);
   });
+
+  it('adds a stacked series to the total and the legend', () => {
+    const wrapper = mountComponent({
+      title: 'Casos',
+      itemsLabel: 'Normales',
+      stacked: {
+        label: 'Extras',
+        tone: 'pink',
+        items: [
+          { date: '01-01-25', count: 1 },
+          { date: '02-01-25', count: 0 },
+          { date: '03-01-25', count: 2 },
+        ],
+      },
+    });
+    expect(wrapper.find('header p').text()).toBe('19');
+    expect(wrapper.find('ul').text()).toContain('Normales 16');
+    expect(wrapper.find('ul').text()).toContain('Extras 3');
+    expect(wrapper.find('canvas').attributes('aria-label')).toContain('(16 normales, 3 extras)');
+  });
 });

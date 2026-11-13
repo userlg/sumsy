@@ -225,4 +225,35 @@ describe('Base Store', () => {
       expect(new Set(store.list.map((i) => i.id)).size).toBe(3);
     });
   });
+
+  describe('extra cases', () => {
+    it('stores the extra flag only when the item is extra', () => {
+      store.create('Normal');
+      store.create('Extra', true);
+
+      expect('extra' in store.list[0]).toBe(false);
+      expect(store.list[1].extra).toBe(true);
+    });
+
+    it('toggles a case between extra and normal', () => {
+      store.create('Caso');
+      const id = store.list[0].id;
+
+      store.toggleExtra(id);
+      expect(store.list[0].extra).toBe(true);
+      store.toggleExtra(id);
+      expect(store.list[0].extra).toBe(false);
+    });
+
+    it('keeps the extra flag when adding many and when editing', () => {
+      store.addMany([
+        { name: 'A', date: '01-01-26', extra: true },
+        { name: 'B', date: '02-01-26' },
+      ]);
+      expect(store.list.map((i) => i.extra === true)).toEqual([true, false]);
+
+      store.update(store.list[0].id, { name: 'A2' });
+      expect(store.list[0].extra).toBe(true);
+    });
+  });
 });

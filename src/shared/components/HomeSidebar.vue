@@ -14,9 +14,11 @@
       hasUser: boolean;
       /** Items of the chosen export period. */
       summaryCount?: number;
+      /** Normal cases only. */
       caseCount?: number;
+      extraCount?: number;
     }>(),
-    { summaryCount: 0, caseCount: 0 }
+    { summaryCount: 0, caseCount: 0, extraCount: 0 }
   );
 
   const currentMonth = monthKey(new Date());
@@ -64,7 +66,11 @@
   const periodSummary = computed(() => {
     const plural = (count: number, one: string, many: string) =>
       `${count} ${count === 1 ? one : many}`;
-    return `${plural(props.summaryCount, 'resumen', 'resúmenes')} · ${plural(props.caseCount, 'caso', 'casos')}`;
+    return [
+      plural(props.summaryCount, 'resumen', 'resúmenes'),
+      plural(props.caseCount, 'caso', 'casos'),
+      plural(props.extraCount, 'extra', 'extras'),
+    ].join(' · ');
   });
 
   defineEmits<{

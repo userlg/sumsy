@@ -16,11 +16,12 @@
 - **Modern UI**: Polished interface with glassmorphism, dark mode, a subtle dot-grid background and smooth transitions.
 - **Minimalist Architecture**: Clean, centered layouts with a dedicated sidebar for all actions, maintaining visual simplicity.
 - **Data Management**: Add, edit, sort (with animated reordering) and delete cases and summaries.
+- **Extra Cases**: Check "Extra" when adding a case, or toggle the star on any row. Filter by all, normal or extra cases; older cases count as normal.
 - **Statistics**:
-  - **Activity calendar**: a GitHub-style heatmap of the last year whose cells get deeper with more items per day, with streaks, filters and keyboard navigation.
-  - **All-time share**: a doughnut chart with the percentage of summaries and cases.
-  - **Evolution**: bar charts for the last 7, 30 or 90 days, or 12 months grouped by week.
-- **Monthly Export**: Exports the current month by default (JSON or TXT report). You can pick a past month (year above, month name below) or make a full backup.
+  - **Activity calendar**: a GitHub-style heatmap of the last year whose cells get deeper with more items per day, with streaks, filters (summaries, cases, extras) and keyboard navigation.
+  - **All-time share**: a doughnut chart with the percentage of summaries, cases and extra cases.
+  - **Evolution**: bar charts for the last 7, 30 or 90 days, or 12 months grouped by week; extra cases are stacked on top of normal ones.
+- **Monthly Export**: Exports the current month by default (JSON or TXT report; the report lists extra cases in their own section). You can pick a past month (year above, month name below) or make a full backup.
 - **Safe Import**: Imported JSON files are merged by id and malformed items are skipped.
 - **Motion with care**: Directional view transitions, scroll reveal and a "back to top" button, all respecting `prefers-reduced-motion`.
 - **Desktop Native**: Works offline with native operating system integration.
@@ -30,7 +31,7 @@
 In development mode (`yarn tauri dev`), the sidebar shows a **Dev** section that production builds hide:
 
 - **Cargar Datos**: adds 30 sample summaries.
-- **Generar demo**: fills the last 12 months with 20–50 random summaries and 20–50 random cases per month, to try the charts and every behavior.
+- **Generar demo**: fills the last 12 months with 20–50 random summaries and 20–50 random cases per month, plus 30–50 extra cases in total, to try the charts and every behavior.
 - **Borrar Nombre**: clears the user name.
 
 ## 🛠 Tech Stack

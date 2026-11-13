@@ -6,7 +6,7 @@
    *
    * @component
    * @example
-   * <ActivityHeatmap :summary-dates="['03-11-26']" :case-dates="[]" />
+   * <ActivityHeatmap :summary-dates="['03-11-26']" :case-dates="[]" :extra-dates="[]" />
    */
 
   import { computed, nextTick, onMounted, ref } from 'vue';
@@ -18,30 +18,37 @@
   } from '@/logic/activity.logic';
   import SegmentedControl from '@/shared/components/SegmentedControl.vue';
 
-  type Source = 'all' | 'summaries' | 'cases';
+  type Source = 'all' | 'summaries' | 'cases' | 'extras';
 
-  const props = defineProps<{
-    summaryDates: string[];
-    caseDates: string[];
-    today?: Date;
-  }>();
+  const props = withDefaults(
+    defineProps<{
+      summaryDates: string[];
+      /** Normal cases only. */
+      caseDates: string[];
+      extraDates?: string[];
+      today?: Date;
+    }>(),
+    { extraDates: () => [], today: undefined }
+  );
 
   const sources: { id: Source; label: string }[] = [
     { id: 'all', label: 'Todos' },
     { id: 'summaries', label: 'Resúmenes' },
     { id: 'cases', label: 'Casos' },
+    { id: 'extras', label: 'Extras' },
   ];
   const source = ref<Source>('all');
 
-  const calendar = computed(() => {
-    const dates =
-      source.value === 'summaries'
-        ? props.summaryDates
-        : source.value === 'cases'
-          ? props.caseDates
-          : [...props.summaryDates, ...props.caseDates];
-    return buildActivityCalendar(dates, props.today);
-  });
+  const datesBySource = computed<Record<Source, string[]>>(() => ({
+    summaries: props.summaryDates,
+    cases: props.caseDates,
+    extras: props.extraDates,
+    all: [...props.summaryDates, ...props.caseDates, ...props.extraDates],
+  }));
+
+  const calendar = computed(() =>
+    buildActivityCalendar(datesBySource.value[source.value], props.today)
+  );
 
   const dayFormat = new Intl.DateTimeFormat('es-ES', {
     weekday: 'short',
@@ -71,19 +78,24 @@
     return `${count} ${count === 1 ? singular : plural}`;
   }
 
-  const summaryCounts = computed(() => countByDay(props.summaryDates));
-  const caseCounts = computed(() => countByDay(props.caseDates));
+  const breakdown = computed(() => [
+    { counts: countByDay(props.summaryDates), one: 'resumen', many: 'resúmenes' },
+    { counts: countByDay(props.caseDates), one: 'caso', many: 'casos' },
+    { counts: countByDay(props.extraDates), one: 'extra', many: 'extras' },
+  ]);
 
-  /** "3 registros (2 resúmenes, 1 caso) · mié, 12 nov 2026" */
+  /** "3 registros (2 resúmenes, 1 extra) · mié, 12 nov 2026" */
   function describe(day: ActivityDay): string {
     const when = dayFormat.format(day.date).replace(/\./g, '');
     if (day.count === 0) return `Sin registros · ${when}`;
 
     let what = pluralize(day.count, 'registro', 'registros');
-    const summaries = summaryCounts.value.get(day.key) ?? 0;
-    const cases = caseCounts.value.get(day.key) ?? 0;
-    if (source.value === 'all' && summaries > 0 && cases > 0) {
-      what += ` (${pluralize(summaries, 'resumen', 'resúmenes')}, ${pluralize(cases, 'caso', 'casos')})`;
+    if (source.value === 'all') {
+      const parts = breakdown.value
+        .map(({ counts, one, many }) => ({ count: counts.get(day.key) ?? 0, one, many }))
+        .filter((part) => part.count > 0)
+        .map((part) => pluralize(part.count, part.one, part.many));
+      if (parts.length > 1) what += ` (${parts.join(', ')})`;
     }
     return `${what} · ${when}`;
   }

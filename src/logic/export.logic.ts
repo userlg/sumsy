@@ -6,6 +6,7 @@
 
 import type { BaseItem } from '@/shared/interfaces/BaseItem';
 import { parseItemDate } from '@/shared/utils/date.utils';
+import { splitCases } from '@/shared/utils/case.utils';
 
 /** "YYYY-MM" for one month, or 'all' for a full backup. */
 export type ExportScope = string;
@@ -13,6 +14,7 @@ export const FULL_BACKUP: ExportScope = 'all';
 
 export interface ExportLists {
   summaries: BaseItem[];
+  /** Normal and extra cases together; each extra case carries `extra: true`. */
   cases: BaseItem[];
 }
 
@@ -54,10 +56,11 @@ export function exportFileName(scope: ExportScope, extension: 'json' | 'txt', to
 }
 
 export function buildJsonExport(lists: ExportLists, scope: ExportScope, now = new Date()) {
+  const { normal, extra } = splitCases(lists.cases);
   return {
     exportDate: now.toISOString(),
     scope,
-    totals: { summaries: lists.summaries.length, cases: lists.cases.length },
+    totals: { summaries: lists.summaries.length, cases: normal.length, extras: extra.length },
     summaries: lists.summaries,
     cases: lists.cases,
   };
@@ -101,9 +104,12 @@ export function buildTxtReport(
   text += `====================================================\n\n`;
   text += `Periodo: ${scopeLabel(scope)}\n`;
   text += `Fecha de generación: ${generated}\n`;
-  text += `Usuario: ${userName || 'Desconocido'}\n\n`;
+  const { normal, extra } = splitCases(lists.cases);
+  text += `Usuario: ${userName || 'Desconocido'}\n`;
+  text += `Totales: ${lists.summaries.length} resúmenes · ${normal.length} casos · ${extra.length} extras\n\n`;
   text += section('RESÚMENES', lists.summaries, 'No hay resúmenes registrados');
-  text += section('CASOS', lists.cases, 'No hay casos registrados');
+  text += section('CASOS', normal, 'No hay casos registrados');
+  text += section('CASOS EXTRAS', extra, 'No hay casos extras registrados');
   text += `====================================================\n`;
   return text;
 }
@@ -126,7 +132,8 @@ function isBaseItem(value: unknown): value is BaseItem {
     Number.isInteger(item.id) &&
     typeof item.name === 'string' &&
     typeof item.date === 'string' &&
-    parseItemDate(item.date) !== null
+    parseItemDate(item.date) !== null &&
+    (item.extra === undefined || typeof item.extra === 'boolean')
   );
 }
 

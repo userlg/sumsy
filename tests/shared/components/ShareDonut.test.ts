@@ -16,7 +16,7 @@ describe('ShareDonut.vue', () => {
     expect(text).toContain('25 %');
     expect(text).toContain('Total de todos los tiempos');
     expect(wrapper.find('figure').attributes('aria-label')).toBe(
-      'Resúmenes: 3 (75 %), Casos: 1 (25 %)'
+      'Resúmenes: 3 (75 %), Casos: 1 (25 %), Extras: 0 (0 %)'
     );
   });
 
@@ -30,5 +30,13 @@ describe('ShareDonut.vue', () => {
     const wrapper = mount(ShareDonut, { props: { summaries: 5, cases: 0 } });
     expect(wrapper.text()).toContain('100 %');
     expect(wrapper.text()).toContain('0 %');
+  });
+
+  it('shows extra cases as their own share', () => {
+    const wrapper = mount(ShareDonut, { props: { summaries: 2, cases: 1, extras: 1 } });
+    expect(wrapper.find('figure').attributes('aria-label')).toBe(
+      'Resúmenes: 2 (50 %), Casos: 1 (25 %), Extras: 1 (25 %)'
+    );
+    expect(wrapper.text()).toContain('Extras');
   });
 });
