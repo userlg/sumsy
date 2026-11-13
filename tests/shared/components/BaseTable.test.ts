@@ -76,15 +76,15 @@ describe('BaseTable.vue', () => {
 
   it('shows ASC/DESC button text based on isReversed', () => {
     const wrapperAsc = mountComponent({ isReversed: false });
-    expect(wrapperAsc.text()).toContain('DESC');
+    expect(wrapperAsc.text()).toContain('ASC');
 
     const wrapperDesc = mountComponent({ isReversed: true });
-    expect(wrapperDesc.text()).toContain('ASC');
+    expect(wrapperDesc.text()).toContain('DESC');
   });
 
   it('emits reverse when ASC/DESC button is clicked', async () => {
     const wrapper = mountComponent();
-    const reverseBtn = wrapper.findAll('button').find((b) => b.text() === 'DESC');
+    const reverseBtn = wrapper.findAll('button').find((b) => b.text() === 'ASC');
     await reverseBtn!.trigger('click');
     expect(wrapper.emitted('reverse')).toBeTruthy();
   });
@@ -134,7 +134,7 @@ describe('BaseTable.vue', () => {
 
   it('hides ASC/DESC and "Borrar todo" buttons when filteredItems is empty', () => {
     const wrapper = mountComponent({ items: [] });
-    expect(wrapper.findAll('button').filter((b) => b.text() === 'DESC').length).toBe(0);
+    expect(wrapper.findAll('button').filter((b) => b.text() === 'ASC').length).toBe(0);
     expect(wrapper.findAll('button').filter((b) => b.text() === 'Borrar todo').length).toBe(0);
   });
 

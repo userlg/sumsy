@@ -15,7 +15,7 @@ describe('Total.vue', () => {
     const wrapper = mount(Total, {
       props: {
         title: 'Resúmenes',
-        store,
+        items: store.list,
       },
     });
     expect(wrapper.text()).toContain('Resúmenes');
@@ -26,7 +26,7 @@ describe('Total.vue', () => {
     const wrapper = mount(Total, {
       props: {
         title: 'Casos',
-        store,
+        items: store.list,
       },
     });
     // The circle should exist
@@ -38,7 +38,7 @@ describe('Total.vue', () => {
     const wrapper = mount(Total, {
       props: {
         title: 'Test',
-        store,
+        items: store.list,
       },
     });
     // GSAP animation starts immediately with value 0 for empty list
@@ -49,15 +49,12 @@ describe('Total.vue', () => {
     const wrapper = mount(Total, {
       props: {
         title: 'Casos',
-        store,
+        items: store.list,
       },
     });
 
-    // Change store.list to trigger the watch
-    store.list = [{ id: 1 }, { id: 2 }];
-
-    // Wait for the watch to execute
-    await wrapper.vm.$nextTick();
+    // A new list triggers the watch
+    await wrapper.setProps({ items: [{ id: 1 }, { id: 2 }] });
 
     // Value will animate, GSAP changes the internal tweened value
     expect(wrapper.find('span').exists()).toBe(true);
@@ -67,7 +64,7 @@ describe('Total.vue', () => {
     const wrapper = mount(Total, {
       props: {
         title: 'Mis Casos',
-        store,
+        items: store.list,
       },
     });
     expect(wrapper.find('h2').text()).toBe('Mis Casos');

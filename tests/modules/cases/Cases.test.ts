@@ -147,4 +147,15 @@ describe('Cases.vue', () => {
     const wrapper = await mountCases();
     expect(wrapper.text()).toContain('No hay casos disponibles.');
   });
+
+  it('shows one counter for normal cases and one for extras', async () => {
+    const wrapper = await mountCases();
+    const caseStore = useCaseStore();
+    caseStore.create('A');
+    caseStore.create('B', true);
+    await flushPromises();
+    const titles = wrapper.findAll('h2').map((h) => h.text());
+    expect(titles).toEqual(expect.arrayContaining(['Casos', 'Extras']));
+    expect(wrapper.findAll('.rounded-full.border-4')).toHaveLength(2);
+  });
 });

@@ -86,7 +86,7 @@
 
 <template>
   <aside
-    class="w-full sm:w-60 lg:w-64 flex-shrink-0 bg-white/80 dark:bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm p-5 flex flex-col gap-4 h-fit"
+    class="w-full sm:w-64 lg:w-72 flex-shrink-0 bg-white/80 dark:bg-slate-800/60 backdrop-blur-md rounded-2xl border border-slate-200 dark:border-slate-700/80 shadow-sm p-5 flex flex-col gap-4 h-fit"
     aria-label="Panel de acciones"
   >
     <!-- Sección: Datos -->

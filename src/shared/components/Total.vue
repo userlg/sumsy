@@ -2,20 +2,22 @@
   /**
    * @file Total.vue
    * @namespace src.shared.components
-   * @description Total component for the application
+   * @description Animated counter of a list's length
    *
    * @component
    * @example
-   * <Total :title="'Summaries'" :store="useSummaryStore()" />
+   * <Total title="Resúmenes" :items="summaryStore.list" />
+   * <Total title="Extras" :items="extraCases" tone="pink" />
    */
 
   import { reactive, watch } from 'vue';
   import gsap from 'gsap';
 
-  // ✅ Ahora recibe el store como prop
   const props = defineProps<{
     title: string;
-    store: { list: unknown[] }; // mínimo que debe tener (puedes tipar con BaseItem[])
+    /** The list to count; any change to it (add, delete, ASC/DESC) replays the animation. */
+    items: unknown[];
+    tone?: 'blue' | 'pink';
   }>();
 
   const tweened = reactive({ number: 0 });
@@ -23,7 +25,7 @@
   // Any change to the list (add, delete, ASC/DESC) spins the counter up to 50 (75 when the
   // total is already 50) and settles on the real total.
   watch(
-    () => props.store.list,
+    () => props.items,
     (newVal) => {
       gsap.killTweensOf(tweened);
       gsap
@@ -47,7 +49,12 @@
   <div class="flex flex-col items-center justify-center space-y-2 cursor-default">
     <!-- Circle-->
     <div
-      class="relative flex items-center justify-center w-20 h-20 rounded-full border-4 border-blue-500 dark:border-blue-400 bg-white dark:bg-slate-800 shadow-md shadow-blue-500/10 transition-[transform,box-shadow] duration-300 hover:scale-105 hover:shadow-lg"
+      :class="[
+        'relative flex items-center justify-center w-20 h-20 rounded-full border-4 bg-white dark:bg-slate-800 shadow-md transition-[transform,box-shadow] duration-300 hover:scale-105 hover:shadow-lg',
+        tone === 'pink'
+          ? 'border-pink-500 dark:border-pink-400 shadow-pink-500/10'
+          : 'border-blue-500 dark:border-blue-400 shadow-blue-500/10',
+      ]"
     >
       <span class="text-3xl font-bold tabular-nums text-slate-800 dark:text-slate-100">
         {{ tweened.number.toFixed(0) }}

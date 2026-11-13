@@ -9,15 +9,17 @@
    * <Cases />
    */
 
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
   import { useCaseStore } from '@/modules/cases/store/case.store';
   import { useUserStore } from '@/stores/user.store';
   import PasteClipboard from '@/shared/components/PasteClipBoard.vue';
   import Total from '@/shared/components/Total.vue';
   import Table from '@/shared/components/BaseTable.vue';
+  import { splitCases } from '@/shared/utils/case.utils';
 
   const userStore = useUserStore();
   const caseStore = useCaseStore();
+  const cases = computed(() => splitCases(caseStore.list));
   const name = ref('');
   const error = ref('');
   /** Stays on after adding, so several extras in a row need a single click. */
@@ -60,7 +62,10 @@
 
 <template>
   <div class="flex flex-col">
-    <Total title="Casos" :store="caseStore" />
+    <div class="flex justify-center gap-10">
+      <Total title="Casos" :items="cases.normal" />
+      <Total title="Extras" :items="cases.extra" tone="pink" />
+    </div>
 
     <div>
       <PasteClipboard @pasted="onPasted" />

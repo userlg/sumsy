@@ -54,7 +54,7 @@
 
 <template>
   <div class="flex flex-col">
-    <Total title="Resúmenes" :store="summaryStore" />
+    <Total title="Resúmenes" :items="summaryStore.list" />
 
     <div>
       <PasteClipboard @pasted="onPasted" />
