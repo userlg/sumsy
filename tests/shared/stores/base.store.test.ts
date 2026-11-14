@@ -212,15 +212,15 @@ describe('Base Store', () => {
   });
 
   describe('addMany()', () => {
-    it('appends the entries in order and keeps their dates', () => {
+    it('adds the entries in date order and keeps their dates', () => {
       store.create('Existente');
       store.addMany([
         { name: 'Viejo', date: '01-01-26' },
         { name: 'Nuevo', date: '05-03-26' },
       ]);
 
-      expect(store.list.map((i) => i.name)).toEqual(['Existente', 'Viejo', 'Nuevo']);
-      expect(store.list.slice(1).map((i) => i.date)).toEqual(['01-01-26', '05-03-26']);
+      expect(store.list.map((i) => i.name)).toEqual(['Viejo', 'Nuevo', 'Existente']);
+      expect(store.list.slice(0, 2).map((i) => i.date)).toEqual(['01-01-26', '05-03-26']);
       expect(store.list.map((i) => i.element)).toEqual([1, 2, 3]);
       expect(new Set(store.list.map((i) => i.id)).size).toBe(3);
     });
@@ -254,6 +254,43 @@ describe('Base Store', () => {
 
       store.update(store.list[0].id, { name: 'A2' });
       expect(store.list[0].extra).toBe(true);
+    });
+  });
+
+  describe('order by date', () => {
+    const names = () => store.list.map((i) => i.name);
+
+    it('moves an item edited to an earlier day into place and renumbers', () => {
+      store.addMany([
+        { name: 'A', date: '01-11-26' },
+        { name: 'B', date: '05-11-26' },
+        { name: 'C', date: '10-11-26' },
+      ]);
+      store.update(store.list[2].id, { date: '03-11-26' });
+
+      expect(names()).toEqual(['A', 'C', 'B']);
+      expect(store.list.map((i) => i.element)).toEqual([1, 2, 3]);
+    });
+
+    it('keeps the order they were added in on the same day', () => {
+      store.addMany([
+        { name: 'A', date: '02-11-26' },
+        { name: 'B', date: '02-11-26' },
+        { name: 'C', date: '01-11-26' },
+      ]);
+      expect(names()).toEqual(['C', 'A', 'B']);
+    });
+
+    it('keeps DESC when the order changes', () => {
+      store.addMany([
+        { name: 'A', date: '01-11-26' },
+        { name: 'B', date: '05-11-26' },
+      ]);
+      store.reverseList();
+      store.update(store.list[0].id, { date: '01-10-26' });
+
+      expect(names()).toEqual(['A', 'B']);
+      expect(store.isReversed).toBe(true);
     });
   });
 });

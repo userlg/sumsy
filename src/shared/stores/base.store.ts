@@ -84,8 +84,13 @@ export function createListStore(storeId: string) {
         this.nextElement = 1;
         this.isReversed = false;
       },
+      /**
+       * Orders the list by date (oldest first; same day keeps the order they were added in),
+       * renumbers it and applies DESC if it is on. A case edited to an earlier day moves into place.
+       */
       reindexAndSort(): void {
-        this.list.sort((a, b) => a.element - b.element);
+        const time = (item: BaseItem) => parseItemDate(item.date)?.getTime() ?? 0;
+        this.list.sort((a, b) => time(a) - time(b) || a.element - b.element);
         this.list.forEach((item, index) => {
           item.element = index + 1;
         });
