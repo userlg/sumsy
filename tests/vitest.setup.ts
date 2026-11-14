@@ -18,16 +18,4 @@ vi.mock('@tauri-apps/plugin-dialog', () => ({
 // Mock Tauri filesystem plugin
 vi.mock('@tauri-apps/plugin-fs', () => ({
   writeTextFile: vi.fn().mockResolvedValue(undefined),
-  readTextFile: vi.fn().mockResolvedValue(''),
-  exists: vi.fn().mockResolvedValue(false),
-}));
-
-// Mock Tauri opener plugin
-vi.mock('@tauri-apps/plugin-opener', () => ({
-  openUrl: vi.fn().mockResolvedValue(undefined),
-}));
-
-// Mock Tauri core API
-vi.mock('@tauri-apps/api', () => ({
-  invoke: vi.fn().mockResolvedValue(undefined),
 }));

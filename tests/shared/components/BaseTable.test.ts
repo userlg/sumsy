@@ -37,6 +37,8 @@ describe('BaseTable.vue', () => {
         isReversed: false,
         userStore,
         message: 'No hay items.',
+        itemName: 'resumen',
+        itemNamePlural: 'resúmenes',
         ...props,
       },
     });
@@ -91,7 +93,7 @@ describe('BaseTable.vue', () => {
 
   it('emits deleteSummary when delete button is clicked', async () => {
     const wrapper = mountComponent();
-    const deleteBtn = wrapper.findAll('button[title="Borrar"]')[0];
+    const deleteBtn = wrapper.findAll('button[aria-label^="Borrar:"]')[0];
     await deleteBtn.trigger('click');
     expect(wrapper.emitted('deleteSummary')).toBeTruthy();
     expect(wrapper.emitted('deleteSummary')![0]).toEqual([1]);
@@ -150,7 +152,7 @@ describe('BaseTable.vue', () => {
   it('handles ViewModal close event', async () => {
     const wrapper = mountComponent();
     // Click view button on first item
-    await wrapper.findAll('button[title="Ver"]')[0].trigger('click');
+    await wrapper.findAll('button[aria-label^="Ver:"]')[0].trigger('click');
     expect(wrapper.text()).toContain('Detalles');
 
     const viewModal = wrapper.findComponent({ name: 'ViewModal' });
@@ -165,7 +167,7 @@ describe('BaseTable.vue', () => {
   it('handles EditModal save and close events', async () => {
     const wrapper = mountComponent();
     // Click edit button on first item
-    await wrapper.findAll('button[title="Editar"]')[0].trigger('click');
+    await wrapper.findAll('button[aria-label^="Editar:"]')[0].trigger('click');
 
     const editModal = wrapper.findComponent({ name: 'EditModal' });
     if (editModal.exists()) {
@@ -239,8 +241,18 @@ describe('BaseTable.vue', () => {
 
     it('emits toggleExtra from the row button', async () => {
       const wrapper = mountComponent({ items: cases, extras: true });
-      await wrapper.get('button[title="Quitar extra"]').trigger('click');
+      await wrapper.get('button[aria-label^="Quitar extra:"]').trigger('click');
       expect(wrapper.emitted('toggleExtra')).toEqual([[2]]);
     });
+  });
+
+  it('names the rows of the page it is on in its modals', async () => {
+    const wrapper = mountComponent({ itemName: 'caso', itemNamePlural: 'casos' });
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text() === 'Borrar todo')!
+      .trigger('click');
+    expect(wrapper.text()).toContain('¿Seguro que quieres borrar todos los casos?');
+    expect(wrapper.text()).not.toContain('resúmenes');
   });
 });

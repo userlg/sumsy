@@ -6,13 +6,18 @@
 
 /**
  * Parses a stored DD-MM-YY date into a local Date (years are 20XX).
- * Returns null when the text does not follow that format.
+ * Returns null when the text does not follow that format or names a day that does not exist.
  */
 export function parseItemDate(ddmmyy: string): Date | null {
   const parts = ddmmyy.split('-').map(Number);
-  if (parts.length !== 3 || parts.some(Number.isNaN)) return null;
+  if (parts.length !== 3 || !parts.every(Number.isInteger)) return null;
   const [day, month, year] = parts;
-  return new Date(2000 + year, month - 1, day);
+  if (year < 0 || year > 99) return null;
+
+  const date = new Date(2000 + year, month - 1, day);
+  // Date rolls impossible days over (32-13-26 would become a day in 2027), so check it round-trips.
+  const isRealDay = date.getDate() === day && date.getMonth() === month - 1;
+  return isRealDay ? date : null;
 }
 
 /**

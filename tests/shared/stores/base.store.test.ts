@@ -57,22 +57,6 @@ describe('Base Store', () => {
     });
   });
 
-  describe('updateName()', () => {
-    it('updates only the name of an item', () => {
-      store.create('Initial');
-      store.updateName(1, 'Renamed');
-
-      expect(store.list[0].name).toBe('Renamed');
-    });
-
-    it('does nothing if id is not found', () => {
-      store.create('Existing');
-      store.updateName(99, 'Ignored');
-
-      expect(store.list[0].name).toBe('Existing');
-    });
-  });
-
   describe('delete()', () => {
     it('removes an item from the list', () => {
       store.create('Task to remove');
@@ -151,34 +135,6 @@ describe('Base Store', () => {
 
       // Verify the output matches DD-MM-YY
       expect(formatted).toBe('15-01-25');
-    });
-  });
-
-  describe('getItemsGroupedByDate getter', () => {
-    it('groups items by date and counts them', () => {
-      store.list = [
-        { id: 1, name: 'A', date: '01-01-23', element: 1 },
-        { id: 2, name: 'B', date: '01-01-23', element: 2 },
-        { id: 3, name: 'C', date: '02-01-23', element: 3 },
-      ];
-
-      const grouped = store.getItemsGroupedByDate;
-
-      expect(grouped).toHaveLength(2);
-      expect(grouped[0]).toEqual({ date: '01-01-23', count: 2 });
-      expect(grouped[1]).toEqual({ date: '02-01-23', count: 1 });
-    });
-
-    it('sorts grouped items by date ascending', () => {
-      store.list = [
-        { id: 1, name: 'A', date: '05-01-23', element: 1 },
-        { id: 2, name: 'B', date: '01-01-23', element: 2 },
-      ];
-
-      const grouped = store.getItemsGroupedByDate;
-
-      expect(grouped[0].date).toBe('01-01-23');
-      expect(grouped[1].date).toBe('05-01-23');
     });
   });
 

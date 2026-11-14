@@ -5,6 +5,7 @@
    */
 
   import { computed, ref } from 'vue';
+  import Tooltip from './Tooltip.vue';
   import { FULL_BACKUP, monthKey, type ExportScope } from '@/logic/export.logic';
 
   const props = withDefaults(
@@ -140,48 +141,56 @@
           {{ pickedYear }}
         </span>
         <div class="flex items-center gap-1">
-          <button
-            id="export-year-prev"
-            type="button"
-            class="grid size-7 place-items-center rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700/60 dark:hover:text-slate-200 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors duration-150 disabled:opacity-30 disabled:pointer-events-none"
-            aria-label="Año anterior"
-            :disabled="isFullBackup"
-            @click="changeYear(-1)"
-          >
-            <svg
-              class="size-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+          <Tooltip text="Año anterior">
+            <button
+              id="export-year-prev"
+              type="button"
+              class="grid size-7 place-items-center rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700/60 dark:hover:text-slate-200 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors duration-150 disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Año anterior"
+              :disabled="isFullBackup"
+              @click="changeYear(-1)"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M15.75 19.5 8.25 12l7.5-7.5"
-              />
-            </svg>
-          </button>
-          <button
-            id="export-year-next"
-            type="button"
-            class="grid size-7 place-items-center rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700/60 dark:hover:text-slate-200 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors duration-150 disabled:opacity-30 disabled:pointer-events-none"
-            aria-label="Año siguiente"
-            :disabled="isFullBackup || pickedYear >= currentYear"
-            @click="changeYear(1)"
-          >
-            <svg
-              class="size-4"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.75"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+              <svg
+                class="size-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5 8.25 12l7.5-7.5"
+                />
+              </svg>
+            </button>
+          </Tooltip>
+          <Tooltip text="Año siguiente">
+            <button
+              id="export-year-next"
+              type="button"
+              class="grid size-7 place-items-center rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 hover:text-slate-700 dark:hover:bg-slate-700/60 dark:hover:text-slate-200 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none transition-colors duration-150 disabled:opacity-30 disabled:pointer-events-none"
+              aria-label="Año siguiente"
+              :disabled="isFullBackup || pickedYear >= currentYear"
+              @click="changeYear(1)"
             >
-              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
+              <svg
+                class="size-4"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.75"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </button>
+          </Tooltip>
         </div>
       </div>
 

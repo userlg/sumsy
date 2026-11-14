@@ -75,9 +75,8 @@ describe('PasteClipBoard.vue', () => {
     expect(wrapper.find('.animate-pulse').exists()).toBe(false);
   });
 
-  it('handles clipboard read error gracefully', async () => {
+  it('emits an error, without a blocking alert, when the clipboard cannot be read', async () => {
     const alertSpy = vi.spyOn(window, 'alert').mockImplementation(() => {});
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     Object.defineProperty(navigator, 'clipboard', {
       value: {
@@ -92,10 +91,10 @@ describe('PasteClipBoard.vue', () => {
     await new Promise((r) => setTimeout(r, 0));
     await wrapper.vm.$nextTick();
 
-    expect(alertSpy).toHaveBeenCalled();
+    expect(alertSpy).not.toHaveBeenCalled();
+    expect(wrapper.emitted('error')).toEqual([['No se pudo leer el portapapeles.']]);
     expect(wrapper.emitted('pasted')).toBeFalsy();
 
     alertSpy.mockRestore();
-    consoleSpy.mockRestore();
   });
 });

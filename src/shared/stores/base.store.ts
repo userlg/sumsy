@@ -16,23 +16,6 @@ export function createListStore(storeId: string) {
       nextElement: 1,
       isReversed: false,
     }),
-    getters: {
-      getItemsGroupedByDate: (state) => {
-        const groupedMap = new Map<string, number>();
-
-        state.list.forEach((item) => {
-          const count = groupedMap.get(item.date) || 0;
-          groupedMap.set(item.date, count + 1);
-        });
-
-        const time = (ddmmyy: string) => parseItemDate(ddmmyy)?.getTime() ?? 0;
-        const sortedEntries = Array.from(groupedMap.entries()).sort(
-          (a, b) => time(a[0]) - time(b[0])
-        );
-
-        return sortedEntries.map(([date, count]) => ({ date, count }));
-      },
-    },
     actions: {
       /** `extra` is only used by cases; it is stored only when true. */
       create(name: string, extra = false): void {
@@ -71,13 +54,6 @@ export function createListStore(storeId: string) {
         const item = this.list.find((i) => i.id === id);
         if (item) item.extra = !item.extra;
       },
-      updateName(id: number, newName: string): void {
-        const item = this.list.find((i) => i.id === id);
-        if (item) {
-          item.name = newName;
-        }
-      },
-
       clearAll(): void {
         this.list = [];
         this.nextId = 1;

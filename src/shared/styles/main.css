@@ -112,20 +112,6 @@ button {
   @apply scale-x-100 origin-left bg-blue-600 dark:bg-blue-400;
 }
 
-@keyframes glow {
-  0%,
-  100% {
-    box-shadow:
-      0 0 15px rgba(59, 130, 246, 0.6),
-      0 0 30px rgba(79, 70, 229, 0.4);
-  }
-  50% {
-    box-shadow:
-      0 0 25px rgba(59, 130, 246, 0.8),
-      0 0 40px rgba(79, 70, 229, 0.6);
-  }
-}
-
 /*
  * Background pattern: an even dot grid over the whole window (MagicPattern's "dots").
  * Dots add texture without lines that would compete with the heatmap or the bars.

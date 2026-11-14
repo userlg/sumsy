@@ -1,22 +1,29 @@
 /**
  * @file reset-app.ts
  * @namespace src.scripts
- * @description  Script to reset the application state
+ * @description Deletes Sumsy's local data folder (dev tool: `yarn clean:app`)
  */
 
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 
-export function deleteFolderRecursive(folderPath: string): void {
-  if (fs.existsSync(folderPath)) {
-    for (const file of fs.readdirSync(folderPath)) {
-      const curPath = path.join(folderPath, file);
-      if (fs.lstatSync(curPath).isDirectory()) {
-        deleteFolderRecursive(curPath);
-      } else {
-        fs.unlinkSync(curPath);
-      }
-    }
-    fs.rmdirSync(folderPath);
-  }
+/** Deletes a folder and everything in it; does nothing if it does not exist. */
+export function deleteFolder(folderPath: string): void {
+  fs.rmSync(folderPath, { recursive: true, force: true });
+}
+
+/**
+ * Where Tauri keeps this app's local data on the current machine, from the identifier in
+ * tauri.conf.json (Windows: %LOCALAPPDATA%; macOS: ~/Library/Application Support; Linux: ~/.local/share).
+ */
+export function appDataFolder(identifier: string, platform = process.platform): string {
+  const home = os.homedir();
+  const base =
+    platform === 'win32'
+      ? (process.env.LOCALAPPDATA ?? path.join(home, 'AppData', 'Local'))
+      : platform === 'darwin'
+        ? path.join(home, 'Library', 'Application Support')
+        : (process.env.XDG_DATA_HOME ?? path.join(home, '.local', 'share'));
+  return path.join(base, identifier);
 }

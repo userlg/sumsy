@@ -57,7 +57,7 @@
     <Total title="Resúmenes" :items="summaryStore.list" />
 
     <div>
-      <PasteClipboard @pasted="onPasted" />
+      <PasteClipboard @pasted="onPasted" @error="(message) => (error = message)" />
     </div>
 
     <div class="flex justify-center items-center gap-2 mt-1">
@@ -79,6 +79,8 @@
     <div class="border-t border-slate-200 dark:border-slate-700/80 my-4" />
 
     <Table
+      item-name="resumen"
+      item-name-plural="resúmenes"
       :items="summaryStore.list"
       :is-reversed="summaryStore.isReversed"
       :user-store="userStore"

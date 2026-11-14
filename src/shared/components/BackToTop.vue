@@ -29,7 +29,6 @@
       type="button"
       class="back-to-top fixed bottom-6 right-6 z-40 flex items-center justify-center size-11 rounded-full bg-white/90 dark:bg-slate-800/90 backdrop-blur-md text-blue-600 dark:text-blue-300 border border-slate-200 dark:border-slate-700 shadow-lg shadow-slate-900/10 dark:shadow-black/30 hover:bg-white dark:hover:bg-slate-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
       aria-label="Volver arriba"
-      title="Volver arriba"
       @click="scrollToTop"
     >
       <svg

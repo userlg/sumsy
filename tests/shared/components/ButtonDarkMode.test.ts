@@ -43,14 +43,14 @@ describe('ButtonDarkMode.vue', () => {
 });
 
 describe('ButtonDarkMode.vue - toggleDarkMode', () => {
-  it('calls darkMode.changeMode() when clicking the button', async () => {
+  it('calls darkMode.toggleDarkMode() when clicking the button', async () => {
     const wrapper = await mountFactory({
       component: ButtonDarkMode,
     });
 
     const darkModeStore = useDarkModeStore();
 
-    const spy = vi.spyOn(darkModeStore, 'changeMode');
+    const spy = vi.spyOn(darkModeStore, 'toggleDarkMode');
 
     await wrapper.get('#toggle-dark-mode').trigger('click');
 

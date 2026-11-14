@@ -19,6 +19,7 @@
   import ViewModal from './ViewModal.vue';
   import ViewSvg from './ViewSvg.vue';
   import SegmentedControl from './SegmentedControl.vue';
+  import Tooltip from './Tooltip.vue';
   import { isExtraCase } from '@/shared/utils/case.utils';
 
   const props = defineProps<{
@@ -26,6 +27,9 @@
     titleModalView: string;
     isReversed: boolean;
     userStore: ReturnType<typeof useUserStore>;
+    /** What one row is called, for the modals: "resumen", "caso". */
+    itemName: string;
+    itemNamePlural: string;
     message: string;
     /** Cases only: shows the "Extra" label, the normal/extra filter and the mark button. */
     extras?: boolean;
@@ -161,32 +165,37 @@
       />
 
       <div v-if="filteredItems.length > 0" class="flex gap-2 w-full sm:w-auto">
-        <button
-          class="sort-button flex-1 sm:flex-none inline-flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-slate-400"
-          :aria-label="
-            isReversed
-              ? 'Orden descendente; cambiar a ascendente'
-              : 'Orden ascendente; cambiar a descendente'
-          "
-          @click="onReverse"
+        <Tooltip
+          class="flex-1 sm:flex-none"
+          :text="isReversed ? 'Más recientes primero' : 'Más antiguos primero'"
         >
-          <svg
-            :class="['sort-arrow size-4', { 'is-up': !isReversed }]"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="2"
-            stroke="currentColor"
-            aria-hidden="true"
+          <button
+            class="sort-button w-full inline-flex items-center justify-center gap-2 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-600 focus:ring-2 focus:ring-slate-400"
+            :aria-label="
+              isReversed
+                ? 'Orden descendente; cambiar a ascendente'
+                : 'Orden ascendente; cambiar a descendente'
+            "
+            @click="onReverse"
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M12 4.5v15m0 0 6.75-6.75M12 19.5l-6.75-6.75"
-            />
-          </svg>
-          <!-- The current order: oldest first is ascending, newest first descending. -->
-          {{ isReversed ? 'DESC' : 'ASC' }}
-        </button>
+            <svg
+              :class="['sort-arrow size-4', { 'is-up': !isReversed }]"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="2"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 4.5v15m0 0 6.75-6.75M12 19.5l-6.75-6.75"
+              />
+            </svg>
+            <!-- The current order: oldest first is ascending, newest first descending. -->
+            {{ isReversed ? 'DESC' : 'ASC' }}
+          </button>
+        </Tooltip>
 
         <button
           class="flex-1 sm:flex-none bg-red-500/10 hover:bg-red-500 text-red-600 dark:text-red-400 hover:text-white font-medium px-4 py-2.5 rounded-xl transition-all border border-red-200 dark:border-red-900/50 hover:border-red-500 focus:ring-2 focus:ring-red-400"
@@ -258,57 +267,67 @@
               </td>
               <td class="px-6 py-4">
                 <div class="flex justify-center gap-4">
-                  <button
+                  <Tooltip
                     v-if="extras"
-                    :title="isExtraCase(item) ? 'Quitar extra' : 'Marcar como extra'"
-                    :aria-pressed="isExtraCase(item)"
-                    :class="[
-                      'transition-colors',
-                      isExtraCase(item)
-                        ? 'text-pink-500 hover:text-pink-600'
-                        : 'text-slate-400 hover:text-pink-500',
-                    ]"
-                    @click="emit('toggleExtra', item.id)"
+                    :text="isExtraCase(item) ? 'Quitar extra' : 'Marcar como extra'"
                   >
-                    <svg
-                      class="size-5"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="1.75"
-                      :fill="isExtraCase(item) ? 'currentColor' : 'none'"
-                      aria-hidden="true"
+                    <button
+                      :aria-label="`${isExtraCase(item) ? 'Quitar extra' : 'Marcar como extra'}: ${item.name}`"
+                      :aria-pressed="isExtraCase(item)"
+                      :class="[
+                        'transition-colors',
+                        isExtraCase(item)
+                          ? 'text-pink-500 hover:text-pink-600'
+                          : 'text-slate-400 hover:text-pink-500',
+                      ]"
+                      @click="emit('toggleExtra', item.id)"
                     >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        class="size-5"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.75"
+                        :fill="isExtraCase(item) ? 'currentColor' : 'none'"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
+                        />
+                      </svg>
+                    </button>
+                  </Tooltip>
 
-                  <button
-                    title="Editar"
-                    class="text-slate-400 hover:text-blue-500 transition-colors"
-                    @click="openEditModal(item.id, item.name, item.date)"
-                  >
-                    <EditSvg />
-                  </button>
+                  <Tooltip text="Editar">
+                    <button
+                      :aria-label="`Editar: ${item.name}`"
+                      class="text-slate-400 hover:text-blue-500 transition-colors"
+                      @click="openEditModal(item.id, item.name, item.date)"
+                    >
+                      <EditSvg />
+                    </button>
+                  </Tooltip>
 
-                  <button
-                    title="Ver"
-                    class="text-slate-400 hover:text-emerald-500 transition-colors"
-                    @click="openViewModal(item.id, item.name, item.date)"
-                  >
-                    <ViewSvg />
-                  </button>
+                  <Tooltip text="Ver">
+                    <button
+                      :aria-label="`Ver: ${item.name}`"
+                      class="text-slate-400 hover:text-emerald-500 transition-colors"
+                      @click="openViewModal(item.id, item.name, item.date)"
+                    >
+                      <ViewSvg />
+                    </button>
+                  </Tooltip>
 
-                  <button
-                    title="Borrar"
-                    class="text-slate-400 hover:text-red-500 transition-colors"
-                    @click="onDelete(item.id)"
-                  >
-                    <DeleteSvg />
-                  </button>
+                  <Tooltip text="Borrar">
+                    <button
+                      :aria-label="`Borrar: ${item.name}`"
+                      class="text-slate-400 hover:text-red-500 transition-colors"
+                      @click="onDelete(item.id)"
+                    >
+                      <DeleteSvg />
+                    </button>
+                  </Tooltip>
                 </div>
               </td>
             </tr>
@@ -345,7 +364,7 @@
     <!-- Edit Modal -->
     <EditModal
       v-model="showEditModal"
-      title="Editar resumen"
+      :title="`Editar ${itemName}`"
       :user-store="props.userStore"
       :initial-name="tempName"
       :initial-date="tempDate"
@@ -357,7 +376,7 @@
     <ConfirmModal
       v-model="showConfirmModal"
       title="Confirmar acción"
-      message="¿Seguro que quieres borrar todos los resúmenes?"
+      :message="`¿Seguro que quieres borrar todos los ${itemNamePlural}?`"
       confirm-text="Sí, borrar todo"
       cancel-text="Cancelar"
       @confirm="clearAll"

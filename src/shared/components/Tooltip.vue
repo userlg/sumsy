@@ -2,81 +2,192 @@
   /**
    * @file Tooltip.vue
    * @namespace src.shared.components
-   * @description Tooltip component
+   * @description Short label shown over a control on hover or keyboard focus
+   *
+   * Follows the WAI-ARIA tooltip pattern and WCAG 1.4.13 (content on hover or focus):
+   * - opens on mouse hover and on keyboard focus (`:focus-visible`), never on touch;
+   * - Escape closes it, the pointer can move onto it without it vanishing, and it stays
+   *   open until the pointer or focus leaves (no timer hides it);
+   * - it is teleported to <body> with fixed positioning, so tables and cards never clip it,
+   *   and it flips below the control or shifts sideways to stay inside the window.
+   *
+   * The control keeps its own accessible name (`aria-label`); the tooltip only shows it.
+   * When the control has no name of its own, the tooltip is linked with `aria-describedby`.
    *
    * @component
    * @example
-   * <Tooltip />
+   * <Tooltip text="Editar">
+   *   <button aria-label="Editar Caso 12">…</button>
+   * </Tooltip>
    */
 
-  import { ref, onUnmounted } from 'vue';
+  import { nextTick, onBeforeUnmount, ref, useId } from 'vue';
   import { DEFAULT_TOOLTIP_DELAY } from '@/shared/constants/tooltip.constants';
 
-  const props = defineProps<{
-    text: string;
-    delay?: number;
-  }>();
+  // Two roots (the wrapper and the teleported tooltip): attributes go to the wrapper.
+  defineOptions({ inheritAttrs: false });
 
-  const show = ref(false);
-  let timeoutId: ReturnType<typeof setTimeout> | null = null;
+  const props = withDefaults(
+    defineProps<{
+      text: string;
+      /** Preferred side; it flips when there is no room. */
+      placement?: 'top' | 'bottom';
+      /** Milliseconds before it opens, so it does not flash while the pointer passes by. */
+      delay?: number;
+    }>(),
+    { placement: 'top', delay: DEFAULT_TOOLTIP_DELAY }
+  );
 
-  function clearTooltipTimeout() {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-      timeoutId = null;
+  /** Gap between the control and the tooltip, and minimum distance to the window edge. */
+  const GAP = 8;
+  /** Lets the pointer travel from the control onto the tooltip without closing it. */
+  const HIDE_GRACE_MS = 120;
+
+  const id = `tooltip-${useId()}`;
+  const anchor = ref<HTMLElement | null>(null);
+  const bubble = ref<HTMLElement | null>(null);
+  const isOpen = ref(false);
+  const position = ref({ top: 0, left: 0 });
+
+  let showTimer: ReturnType<typeof setTimeout> | undefined;
+  let hideTimer: ReturnType<typeof setTimeout> | undefined;
+
+  /** The wrapped control (the first element in the slot). */
+  function trigger(): HTMLElement | null {
+    return (anchor.value?.firstElementChild as HTMLElement | null) ?? null;
+  }
+
+  function scheduleOpen(): void {
+    clearTimeout(hideTimer);
+    if (isOpen.value || !props.text) return;
+    clearTimeout(showTimer);
+    showTimer = setTimeout(() => void open(), props.delay);
+  }
+
+  /** The pointer reached the tooltip itself: keep it (WCAG 1.4.13, hoverable). */
+  function keepOpen(): void {
+    clearTimeout(hideTimer);
+  }
+
+  function scheduleClose(): void {
+    clearTimeout(showTimer);
+    hideTimer = setTimeout(close, HIDE_GRACE_MS);
+  }
+
+  async function open(): Promise<void> {
+    isOpen.value = true;
+    document.addEventListener('keydown', onKeydown);
+    window.addEventListener('scroll', close, { capture: true, passive: true });
+    window.addEventListener('resize', close);
+    linkDescription(true);
+    await nextTick();
+    place();
+  }
+
+  function close(): void {
+    clearTimeout(showTimer);
+    clearTimeout(hideTimer);
+    if (!isOpen.value) return;
+    isOpen.value = false;
+    document.removeEventListener('keydown', onKeydown);
+    window.removeEventListener('scroll', close, { capture: true });
+    window.removeEventListener('resize', close);
+    linkDescription(false);
+  }
+
+  /** Only describes the control when it has no name of its own, so screen readers never repeat it. */
+  function linkDescription(linked: boolean): void {
+    const control = trigger();
+    if (!control || control.hasAttribute('aria-label') || control.hasAttribute('aria-labelledby')) {
+      return;
     }
+    if (linked) control.setAttribute('aria-describedby', id);
+    else control.removeAttribute('aria-describedby');
   }
 
-  function onMouseEnter() {
-    timeoutId = setTimeout(() => {
-      show.value = true;
-    }, props.delay ?? DEFAULT_TOOLTIP_DELAY);
+  /** Centres the tooltip on the control, on the preferred side if it fits. */
+  function place(): void {
+    const control = trigger();
+    if (!control || !bubble.value) return;
+    const box = control.getBoundingClientRect();
+    const { offsetWidth: width, offsetHeight: height } = bubble.value;
+
+    const above = box.top - height - GAP;
+    const below = box.bottom + GAP;
+    const fitsAbove = above >= GAP;
+    const fitsBelow = below + height <= window.innerHeight - GAP;
+    const top = props.placement === 'top' ? (fitsAbove ? above : below) : fitsBelow ? below : above;
+
+    const centred = box.left + box.width / 2 - width / 2;
+    const left = Math.min(Math.max(centred, GAP), window.innerWidth - width - GAP);
+    position.value = { top, left };
   }
 
-  function onMouseLeave() {
-    clearTooltipTimeout();
-    show.value = false;
+  function onPointerEnter(event: PointerEvent): void {
+    // On touch the tap already acts; a tooltip would only cover the screen.
+    if (event.pointerType !== 'touch') scheduleOpen();
   }
 
-  onUnmounted(() => {
-    clearTooltipTimeout();
-  });
+  function onFocusIn(event: FocusEvent): void {
+    // Keyboard focus only: a mouse click also focuses, and the hover already covers it.
+    if ((event.target as HTMLElement).matches(':focus-visible')) scheduleOpen();
+  }
 
-  defineExpose({
-    onMouseEnter,
-    onMouseLeave,
-    clearTooltipTimeout,
-    show,
-  });
+  function onKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') close();
+  }
+
+  onBeforeUnmount(close);
+
+  defineExpose({ isOpen });
 </script>
 
 <template>
-  <div>
-    <span class="relative inline-block" @mouseenter="onMouseEnter" @mouseleave="onMouseLeave">
-      <slot />
-      <transition name="fade-scale">
-        <div
-          v-if="show"
-          data-testid="tooltip"
-          class="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-gray-700 text-white text-xs rounded px-2 py-1 whitespace-nowrap select-none z-50 pointer-events-none"
-        >
-          {{ text }}
-        </div>
-      </transition>
-    </span>
-  </div>
+  <span
+    ref="anchor"
+    v-bind="$attrs"
+    class="inline-flex"
+    @pointerenter="onPointerEnter"
+    @pointerleave="scheduleClose"
+    @focusin="onFocusIn"
+    @focusout="close"
+  >
+    <slot />
+  </span>
+
+  <Teleport to="body">
+    <Transition name="tooltip">
+      <div
+        v-if="isOpen"
+        :id="id"
+        ref="bubble"
+        role="tooltip"
+        class="tooltip fixed z-[70] max-w-60 rounded-md bg-slate-900 px-2.5 py-1.5 text-xs font-medium leading-snug text-white shadow-lg shadow-slate-900/20 dark:bg-slate-100 dark:text-slate-900"
+        :style="{ top: `${position.top}px`, left: `${position.left}px` }"
+        @pointerenter="keepOpen"
+        @pointerleave="scheduleClose"
+      >
+        {{ text }}
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped>
-  .fade-scale-enter-active,
-  .fade-scale-leave-active {
-    transition:
-      opacity 0.2s ease,
-      transform 0.2s ease;
+  .tooltip-enter-active,
+  .tooltip-leave-active {
+    transition: opacity 120ms ease;
   }
-  .fade-scale-enter-from,
-  .fade-scale-leave-to {
+
+  .tooltip-enter-from,
+  .tooltip-leave-to {
     opacity: 0;
-    transform: scale(0.8);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tooltip-enter-active,
+    .tooltip-leave-active {
+      transition: none;
+    }
   }
 </style>

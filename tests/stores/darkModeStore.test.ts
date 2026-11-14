@@ -86,19 +86,4 @@ describe('darkModeStore', () => {
 
     vi.restoreAllMocks();
   });
-
-  it('changeMode toggles correctly', () => {
-    // Start with light
-    store.setTheme(false);
-
-    store.changeMode();
-    expect(store.darkIsActive).toBe(true);
-    expect(localStorage.theme).toBe('dark');
-    expect(document.documentElement.classList.contains('dark')).toBe(true);
-
-    store.changeMode();
-    expect(store.darkIsActive).toBe(false);
-    expect(localStorage.theme).toBe('light');
-    expect(document.documentElement.classList.contains('dark')).toBe(false);
-  });
 });

@@ -1,10 +1,15 @@
 /**
  * @file run-reset-app.ts
  * @namespace src.scripts
- * @description A runner to execute the reset-app script
+ * @description Runs the reset: deletes this app's local data folder
  */
 
-import { deleteFolderRecursive } from './reset-app.ts';
+import fs from 'fs';
+import { appDataFolder, deleteFolder } from './reset-app.ts';
 
-const folderPath = 'C:\\Users\\Kike\\AppData\\Local\\com.kike.sumsy';
-deleteFolderRecursive(folderPath);
+const config = JSON.parse(fs.readFileSync('src-tauri/tauri.conf.json', 'utf-8')) as {
+  identifier: string;
+};
+const folder = appDataFolder(config.identifier);
+deleteFolder(folder);
+console.log(`Datos locales borrados: ${folder}`);

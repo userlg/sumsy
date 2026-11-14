@@ -4,4 +4,5 @@
  * @description Constants for the Tooltip component
  */
 
-export const DEFAULT_TOOLTIP_DELAY = 7000;
+/** Short enough to feel responsive, long enough not to flash while the pointer passes by. */
+export const DEFAULT_TOOLTIP_DELAY = 400;

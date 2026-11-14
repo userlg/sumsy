@@ -36,8 +36,5 @@ export const useDarkModeStore = defineStore('darkMode', {
         this.setTheme(prefersDark);
       }
     },
-    changeMode(): void {
-      this.toggleDarkMode();
-    },
   },
 });
