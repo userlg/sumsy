@@ -2,15 +2,18 @@
   /**
    * @file ConfirmModal.vue
    * @namespace src.shared.components
-   * @description Main modal component for confirming actions
+   * @description Asks before a destructive action; focus starts on the safe choice (cancel)
    *
    * @component
    * @example
-   * <ConfirmModal />
+   * <ConfirmModal v-model="show" title="Confirmar acción" message="¿Seguro?" @confirm="clear" />
    */
 
-  const props = defineProps<{
-    modelValue: boolean;
+  import BaseModal from './BaseModal.vue';
+
+  const open = defineModel<boolean>({ required: true });
+
+  defineProps<{
     title: string;
     message: string;
     confirmText?: string;
@@ -18,54 +21,34 @@
   }>();
 
   const emit = defineEmits<{
-    (e: 'update:modelValue', value: boolean): void;
     (e: 'confirm'): void;
   }>();
 
-  function closeModal() {
-    emit('update:modelValue', false);
-  }
-
-  function confirmAction() {
+  function confirmAction(): void {
     emit('confirm');
-    closeModal();
+    open.value = false;
   }
 </script>
 
 <template>
-  <div>
-    <transition name="pop">
-      <div
-        v-if="props.modelValue"
-        class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm bg-black/40"
-      >
-        <div
-          v-if="props.modelValue"
-          class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md shadow-lg"
-        >
-          <h2 class="text-xl font-bold mb-4">
-            {{ title }}
-          </h2>
-          <p class="text-gray-700 dark:text-gray-300 mb-6">
-            {{ props.message }}
-          </p>
+  <BaseModal v-model="open" :title="title">
+    <p class="text-slate-600 dark:text-slate-300">
+      {{ message }}
+    </p>
 
-          <div class="flex justify-end gap-2">
-            <button
-              class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition"
-              @click="closeModal"
-            >
-              {{ props.cancelText || 'Cancelar' }}
-            </button>
-            <button
-              class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition"
-              @click="confirmAction"
-            >
-              {{ props.confirmText || 'Confirmar' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </transition>
-  </div>
+    <template #footer>
+      <button
+        class="px-4 py-2 bg-gray-300 dark:bg-gray-600 rounded hover:bg-gray-400 dark:hover:bg-gray-500 transition"
+        @click="open = false"
+      >
+        {{ cancelText || 'Cancelar' }}
+      </button>
+      <button
+        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:ring-2 focus:ring-red-400 transition"
+        @click="confirmAction"
+      >
+        {{ confirmText || 'Confirmar' }}
+      </button>
+    </template>
+  </BaseModal>
 </template>

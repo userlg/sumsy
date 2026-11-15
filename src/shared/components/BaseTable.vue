@@ -13,20 +13,20 @@
   import EditModal from './EditModal.vue';
   import ConfirmModal from './ConfirmModal.vue';
   import type { BaseItem } from '@/shared/interfaces/BaseItem';
-  import type { useUserStore } from '@/stores/user.store';
-  import DeleteSvg from './DeleteSvg.vue';
-  import EditSvg from './EditSvg.vue';
   import ViewModal from './ViewModal.vue';
-  import ViewSvg from './ViewSvg.vue';
   import SegmentedControl from './SegmentedControl.vue';
   import Tooltip from './Tooltip.vue';
   import { isExtraCase } from '@/shared/utils/case.utils';
+  import ArrowDownIcon from '@/shared/icons/arrow-down.svg?component';
+  import EyeIcon from '@/shared/icons/eye.svg?component';
+  import PencilSquareIcon from '@/shared/icons/pencil-square.svg?component';
+  import StarIcon from '@/shared/icons/star.svg?component';
+  import TrashIcon from '@/shared/icons/trash.svg?component';
 
   const props = defineProps<{
     items: BaseItem[];
     titleModalView: string;
     isReversed: boolean;
-    userStore: ReturnType<typeof useUserStore>;
     /** What one row is called, for the modals: "resumen", "caso". */
     itemName: string;
     itemNamePlural: string;
@@ -38,8 +38,8 @@
   const emit = defineEmits<{
     (e: 'reverse'): void;
     (e: 'clear'): void;
-    (e: 'deleteSummary', id: number): void;
-    (e: 'editSummary', id: number, newName: string, newDate?: string): void;
+    (e: 'deleteItem', id: number): void;
+    (e: 'editItem', id: number, newName: string, newDate?: string): void;
     (e: 'toggleExtra', id: number): void;
   }>();
 
@@ -83,7 +83,7 @@
   });
 
   function onDelete(id: number) {
-    emit('deleteSummary', id);
+    emit('deleteItem', id);
   }
 
   function openEditModal(id: number, name: string, date: string) {
@@ -138,7 +138,7 @@
 
   function saveEdit(newName: string, newDate?: string) {
     if (tempId.value !== null) {
-      emit('editSummary', tempId.value, newName, newDate);
+      emit('editItem', tempId.value, newName, newDate);
       closeModal();
     }
   }
@@ -178,20 +178,10 @@
             "
             @click="onReverse"
           >
-            <svg
+            <ArrowDownIcon
               :class="['sort-arrow size-4', { 'is-up': !isReversed }]"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="2"
-              stroke="currentColor"
               aria-hidden="true"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M12 4.5v15m0 0 6.75-6.75M12 19.5l-6.75-6.75"
-              />
-            </svg>
+            />
             <!-- The current order: oldest first is ascending, newest first descending. -->
             {{ isReversed ? 'DESC' : 'ASC' }}
           </button>
@@ -282,20 +272,11 @@
                       ]"
                       @click="emit('toggleExtra', item.id)"
                     >
-                      <svg
+                      <StarIcon
                         class="size-5"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        stroke-width="1.75"
                         :fill="isExtraCase(item) ? 'currentColor' : 'none'"
                         aria-hidden="true"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z"
-                        />
-                      </svg>
+                      />
                     </button>
                   </Tooltip>
 
@@ -305,7 +286,10 @@
                       class="text-slate-400 hover:text-blue-500 transition-colors"
                       @click="openEditModal(item.id, item.name, item.date)"
                     >
-                      <EditSvg />
+                      <PencilSquareIcon
+                        class="size-6 stroke-2 stroke-gray-400 dark:stroke-pink-400 hover:stroke-gray-500 dark:hover:stroke-pink-500 transition duration-500 ease-in-out"
+                        aria-hidden="true"
+                      />
                     </button>
                   </Tooltip>
 
@@ -315,7 +299,10 @@
                       class="text-slate-400 hover:text-emerald-500 transition-colors"
                       @click="openViewModal(item.id, item.name, item.date)"
                     >
-                      <ViewSvg />
+                      <EyeIcon
+                        class="size-6 stroke-2 stroke-green-600 dark:stroke-green-200 hover:stroke-green-700 dark:hover:stroke-hover-300 transition duration-500 ease-in-out"
+                        aria-hidden="true"
+                      />
                     </button>
                   </Tooltip>
 
@@ -325,7 +312,10 @@
                       class="text-slate-400 hover:text-red-500 transition-colors"
                       @click="onDelete(item.id)"
                     >
-                      <DeleteSvg />
+                      <TrashIcon
+                        class="size-5 stroke-2 stroke-pink-500 dark:stroke-blue-300 dark:hover:stroke-blue-400 hover:stroke-pink-600 transition duration-500 ease-in-out"
+                        aria-hidden="true"
+                      />
                     </button>
                   </Tooltip>
                 </div>
@@ -365,7 +355,6 @@
     <EditModal
       v-model="showEditModal"
       :title="`Editar ${itemName}`"
-      :user-store="props.userStore"
       :initial-name="tempName"
       :initial-date="tempDate"
       place-holder="editar"

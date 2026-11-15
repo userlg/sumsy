@@ -5,6 +5,10 @@
  */
 
 import { vi } from 'vitest';
+import { config } from '@vue/test-utils';
+
+// Modals and tooltips teleport to <body>; render them in place so wrapper.find() sees them.
+config.global.stubs = { ...config.global.stubs, teleport: true };
 
 // Mock Tauri dialog plugin
 vi.mock('@tauri-apps/plugin-dialog', () => ({

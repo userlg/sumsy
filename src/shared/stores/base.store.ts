@@ -6,7 +6,8 @@
 
 import { defineStore } from 'pinia';
 import { BaseItem } from '@/shared/interfaces/BaseItem';
-import { parseItemDate } from '@/shared/utils/date.utils';
+import { formatItemDate, parseItemDate } from '@/shared/utils/date.utils';
+import { mergeById } from '@/logic/export.logic';
 
 export function createListStore(storeId: string) {
   return defineStore(storeId, {
@@ -20,7 +21,7 @@ export function createListStore(storeId: string) {
       /** `extra` is only used by cases; it is stored only when true. */
       create(name: string, extra = false): void {
         const dateCurrent = new Date();
-        const today = this.formatDate(dateCurrent);
+        const today = formatItemDate(dateCurrent);
 
         const newItem: BaseItem = {
           id: this.nextId++,
@@ -75,12 +76,6 @@ export function createListStore(storeId: string) {
           this.list = [...this.list].reverse();
         }
       },
-      formatDate(date: Date): string {
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = String(date.getFullYear()).slice(-2);
-        return `${day}-${month}-${year}`;
-      },
       /** Appends several items at once, keeping each one's own date (used by demo data). */
       addMany(entries: { name: string; date: string; extra?: boolean }[]): void {
         for (const { name, date, extra } of entries) {
@@ -94,6 +89,16 @@ export function createListStore(storeId: string) {
         }
         this.reindexAndSort();
       },
+      /**
+       * Adds or updates items from a backup by id, never replacing the whole list:
+       * importing one month must not erase the others.
+       */
+      importItems(items: BaseItem[]): void {
+        if (items.length === 0) return;
+        this.list = mergeById(this.list, items);
+        this.nextId = Math.max(0, ...this.list.map((item) => item.id)) + 1;
+        this.reindexAndSort();
+      },
       seed(count: number, prefix: string): void {
         const currentDate = new Date();
         const oneYearAgo = new Date();
@@ -104,7 +109,7 @@ export function createListStore(storeId: string) {
           const randomTimestamp =
             oneYearAgo.getTime() + Math.random() * (currentDate.getTime() - oneYearAgo.getTime());
           const randomDate = new Date(randomTimestamp);
-          const formattedDate = this.formatDate(randomDate);
+          const formattedDate = formatItemDate(randomDate);
 
           const newItem: BaseItem = {
             id: this.nextId++,

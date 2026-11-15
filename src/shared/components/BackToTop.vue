@@ -11,6 +11,7 @@
 
   import { computed } from 'vue';
   import { useScrollY } from '@/shared/composables/useScrollY';
+  import ChevronUpIcon from '@/shared/icons/chevron-up.svg?component';
 
   const SHOW_AFTER_PX = 500;
 
@@ -31,16 +32,7 @@
       aria-label="Volver arriba"
       @click="scrollToTop"
     >
-      <svg
-        class="size-5"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="2"
-        stroke="currentColor"
-        aria-hidden="true"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75 12 8.25l7.5 7.5" />
-      </svg>
+      <ChevronUpIcon class="size-5" aria-hidden="true" />
     </button>
   </Transition>
 </template>

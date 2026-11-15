@@ -6,7 +6,14 @@ import svgLoader from 'vite-svg-loader';
 import path from 'path';
 
 export default defineConfig({
-  plugins: [vue(), svgLoader()],
+  plugins: [
+    vue(),
+    svgLoader({
+      svgoConfig: {
+        plugins: [{ name: 'preset-default', params: { overrides: { removeViewBox: false } } }],
+      },
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -31,7 +38,7 @@ export default defineConfig({
         'node_modules/',
         'src/main.ts',
         'src/scripts/run-reset-app.ts',
-         'src/shared/interfaces/**',
+        'src/shared/interfaces/**',
       ],
     },
   },

@@ -5,7 +5,7 @@
  */
 
 import { countByDay } from '@/logic/activity.logic';
-import { toDayKey } from '@/shared/utils/date.utils';
+import { addDays, toDayKey } from '@/shared/utils/date.utils';
 
 export type ChartRange = '7d' | '30d' | '90d' | '12m';
 
@@ -34,12 +34,6 @@ const titleFormat = new Intl.DateTimeFormat('es-ES', {
 
 function clean(text: string): string {
   return text.replace(/\./g, '');
-}
-
-function addDays(date: Date, amount: number): Date {
-  const next = new Date(date);
-  next.setDate(next.getDate() + amount);
-  return next;
 }
 
 /**

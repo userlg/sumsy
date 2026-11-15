@@ -85,9 +85,7 @@ describe('Home.vue', () => {
       await seedButton.trigger('click');
       await flushPromises();
 
-      // The app now uses NotifyModal instead of window.alert
-      const notifyModal = wrapper.find('[data-test="notify-modal"]');
-      expect(notifyModal.exists()).toBe(true);
+      expect(wrapper.text()).toContain('Datos cargados');
     } else {
       // Warning if dev mode isn't active in test environment
       console.warn('Seed button not found, isDev might be false in testing environment');
@@ -115,29 +113,13 @@ describe('Home.vue', () => {
     const modal = wrapper.find('[data-test="edit-modal"]');
     expect(modal.exists()).toBe(true);
   });
-  it('handles Sidebar events for export and import', async () => {
+  it('opens the file picker when the sidebar asks to import', async () => {
     const wrapper = await mountHome({ user: { name: 'Tester' } });
+    const fileInput = wrapper.get('input[type="file"]').element as HTMLInputElement;
+    const click = vi.spyOn(fileInput, 'click');
 
-    const sidebar = wrapper.findComponent({ name: 'HomeSidebar' });
-    if (sidebar.exists()) {
-      // Test exportJSON
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      sidebar.vm.$emit('exportJSON');
-      await flushPromises();
-
-      // Test exportTXT
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      sidebar.vm.$emit('exportTXT');
-      await flushPromises();
-
-      // Test importData
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      sidebar.vm.$emit('importData');
-      await flushPromises();
-
-      // Notifications are shown during these async tauri events (since we globally mocked tauri plugins).
-      // Coverage is hit here.
-      expect(wrapper.findComponent({ name: 'NotifyModal' }).exists()).toBe(true);
-    }
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    wrapper.findComponent({ name: 'HomeSidebar' }).vm.$emit('importClick');
+    expect(click).toHaveBeenCalled();
   });
 });

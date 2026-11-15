@@ -9,31 +9,19 @@
    * <Home />
    */
 
-  import { ref, onMounted, computed } from 'vue';
-  import Logo from '@/shared/icons/favicon.svg';
+  import { ref, onMounted } from 'vue';
+  import Logo from '@/shared/icons/favicon.svg?component';
   import { useUserStore } from '@/stores/user.store';
   import EditModal from '@/shared/components/EditModal.vue';
   import NotifyModal from '@/shared/components/NotifyModal.vue';
   import HomeSidebar from '@/shared/components/HomeSidebar.vue';
   import { initHome } from '@/logic/home.logic';
   import { buildDemoEntries, buildDemoExtras } from '@/logic/demo.logic';
-  import { splitCases } from '@/shared/utils/case.utils';
-  import { parseItemDate } from '@/shared/utils/date.utils';
   import { useSummaryStore } from '@/modules/summaries/store/summary.store';
   import { useCaseStore } from '@/modules/cases/store/case.store';
-  import { save } from '@tauri-apps/plugin-dialog';
-  import { writeTextFile } from '@tauri-apps/plugin-fs';
-  import {
-    buildJsonExport,
-    buildTxtReport,
-    exportFileName,
-    mergeById,
-    monthKey,
-    scopeLabel,
-    scopedLists,
-    validItems,
-    type ExportScope,
-  } from '@/logic/export.logic';
+  import { monthKey, type ExportScope } from '@/logic/export.logic';
+  import { useNotify } from '@/shared/composables/useNotify';
+  import { useDataTransfer } from '@/shared/composables/useDataTransfer';
 
   const userStore = useUserStore();
   const summaryStore = useSummaryStore();
@@ -45,28 +33,18 @@
   const showContent = ref(false);
   const isDev = import.meta.env.DEV;
 
-  // Notification modal state
-  const showNotify = ref(false);
-  const notifyTitle = ref('');
-  const notifyMessage = ref('');
-  const notifyType = ref<'success' | 'error' | 'info'>('info');
-
-  function notify(title: string, message: string, type: 'success' | 'error' | 'info' = 'info') {
-    notifyTitle.value = title;
-    notifyMessage.value = message;
-    notifyType.value = type;
-    showNotify.value = true;
-  }
+  const {
+    show: showNotify,
+    title: notifyTitle,
+    message: notifyMessage,
+    type: notifyType,
+    notify,
+  } = useNotify();
 
   // Exports cover the current month unless another month or a full backup is chosen.
   const exportScope = ref<ExportScope>(monthKey(new Date()));
-  const exportLists = computed(() =>
-    scopedLists({ summaries: summaryStore.list, cases: caseStore.list }, exportScope.value)
-  );
-  const exportCases = computed(() => splitCases(exportLists.value.cases));
-  const hasDataToExport = computed(
-    () => exportLists.value.summaries.length > 0 || exportLists.value.cases.length > 0
-  );
+  const { exportLists, exportCases, hasDataToExport, exportJSON, exportTXT, importFile } =
+    useDataTransfer({ scope: exportScope, userName: () => userStore.getName || '', notify });
 
   function openNameModal(isEditing = false) {
     modalTitle.value = isEditing ? 'Editar nombre' : 'Introduce tu nombre';
@@ -88,12 +66,8 @@
     const summaries = buildDemoEntries('summaries');
     const cases = buildDemoEntries('cases');
     const extras = buildDemoExtras();
-    // Mixed by date, so extras sit among the normal cases in the table.
-    const allCases = [...cases, ...extras].sort(
-      (a, b) => (parseItemDate(a.date)?.getTime() ?? 0) - (parseItemDate(b.date)?.getTime() ?? 0)
-    );
     summaryStore.addMany(summaries);
-    caseStore.addMany(allCases);
+    caseStore.addMany([...cases, ...extras]); // the store orders them by date
     notify(
       'Datos demo generados',
       `Se agregaron ${summaries.length} resúmenes, ${cases.length} casos y ${extras.length} extras de los últimos 12 meses.`,
@@ -106,90 +80,18 @@
     notify('Datos cargados', 'Se han cargado 30 resúmenes de prueba.', 'success');
   }
 
-  // EXPORT / IMPORT LOGIC
-  async function saveFile(extension: 'json' | 'txt', content: string): Promise<void> {
-    const label = extension.toUpperCase();
-    try {
-      const filePath = await save({
-        defaultPath: exportFileName(exportScope.value, extension),
-        filters: [{ name: extension === 'json' ? 'JSON' : 'Texto', extensions: [extension] }],
-      });
-
-      if (filePath) {
-        await writeTextFile(filePath, content);
-        notify(
-          'Exportación exitosa',
-          `${scopeLabel(exportScope.value)} exportado a ${label} correctamente.`,
-          'success'
-        );
-      }
-    } catch (err) {
-      console.error(`Error al exportar ${label}:`, err);
-      notify('Error', `No se pudo exportar el archivo ${label}: ${String(err)}`, 'error');
-    }
-  }
-
-  function exportJSON(): Promise<void> {
-    const data = buildJsonExport(exportLists.value, exportScope.value);
-    return saveFile('json', JSON.stringify(data, null, 2));
-  }
-
-  function exportTXT(): Promise<void> {
-    return saveFile(
-      'txt',
-      buildTxtReport(exportLists.value, exportScope.value, userStore.getName || '')
-    );
-  }
-
   const fileInput = ref<HTMLInputElement | null>(null);
 
   function triggerImport(): void {
     fileInput.value?.click();
   }
 
-  function importData(event: Event) {
-    const target = event.target as HTMLInputElement;
-    const file = target.files?.[0];
+  async function onFileChosen(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      try {
-        const content = e.target?.result as string;
-        const data = JSON.parse(content) as { summaries?: unknown; cases?: unknown };
-        const summaries = validItems(data.summaries);
-        const cases = validItems(data.cases);
-        if (summaries.length === 0 && cases.length === 0) throw new Error('Sin registros válidos');
-
-        // Merge, never replace: importing one month must not erase the others.
-        for (const [store, items] of [
-          [summaryStore, summaries],
-          [caseStore, cases],
-        ] as const) {
-          if (items.length === 0) continue;
-          store.list = mergeById(store.list, items);
-          store.nextId = Math.max(0, ...store.list.map((item) => item.id)) + 1;
-          store.reindexAndSort();
-        }
-        notify(
-          'Importación exitosa',
-          `Se agregaron o actualizaron ${summaries.length} resúmenes y ${cases.length} casos.`,
-          'success'
-        );
-      } catch (err) {
-        console.error(err);
-        notify(
-          'Error de importación',
-          'No se pudieron importar los datos. Verifica que sea un archivo JSON válido generado por Sumsy.',
-          'error'
-        );
-      } finally {
-        if (fileInput.value) {
-          fileInput.value.value = '';
-        }
-      }
-    };
-    reader.readAsText(file);
+    await importFile(file);
+    input.value = ''; // so choosing the same file again fires change
   }
 
   onMounted(() => {
@@ -206,7 +108,7 @@
       accept=".json"
       class="hidden"
       aria-label="Seleccionar archivo de copia de seguridad"
-      @change="importData"
+      @change="onFileChosen"
     />
 
     <!-- Layout principal -->
@@ -224,8 +126,8 @@
         <!-- Logo -->
         <Logo
           id="Logo"
-          src="@/shared/icons/favicon.svg"
-          alt="Logotipo de Sumsy"
+          role="img"
+          aria-label="Logotipo de Sumsy"
           class="w-32 h-32 mb-4 hover:scale-110 transition-transform duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-full"
           tabindex="0"
         />
@@ -282,7 +184,7 @@
       :title="modalTitle"
       :initial-name="userStore.getName || ''"
       :place-holder="modalPlaceholder"
-      :user-store="userStore"
+      :can-cancel="!!userStore.getName?.trim()"
       @save="handleSaveName"
     />
 

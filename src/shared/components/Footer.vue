@@ -9,7 +9,7 @@
    * <Footer />
    */
 
-  import Logo from '@/shared/icons/favicon.svg';
+  import Logo from '@/shared/icons/favicon.svg?component';
 </script>
 <template>
   <footer
@@ -20,7 +20,7 @@
     >
       <!-- Logo / Nombre -->
       <div class="flex items-center gap-3">
-        <Logo class="w-8 h-8 text-blue-600 dark:text-blue-400" />
+        <Logo class="w-8 h-8 text-blue-600 dark:text-blue-400" aria-hidden="true" />
         <span class="font-semibold text-blue-700 dark:text-blue-300 text-lg select-none">
           Sumsy
         </span>

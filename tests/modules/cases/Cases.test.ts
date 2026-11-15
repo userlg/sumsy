@@ -95,7 +95,7 @@ describe('Cases.vue', () => {
     if (table.exists()) {
       // Edit
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      table.vm.$emit('editSummary', 1, 'Edited', '15-05-25');
+      table.vm.$emit('editItem', 1, 'Edited', '15-05-25');
       expect(caseStore.list[0].name).toBe('Edited');
 
       // Reverse
@@ -105,7 +105,7 @@ describe('Cases.vue', () => {
 
       // Delete
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-      table.vm.$emit('deleteSummary', 1);
+      table.vm.$emit('deleteItem', 1);
       expect(caseStore.list.length).toBe(0);
 
       // Clear

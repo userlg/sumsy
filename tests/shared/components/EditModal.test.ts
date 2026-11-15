@@ -1,26 +1,21 @@
-import { describe, it, expect, vi } from 'vitest';
+/**
+ * @file EditModal.test.ts
+ * @namespace tests.shared.components
+ * @description Tests for the EditModal component
+ */
+
+import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { createTestingPinia } from '@pinia/testing';
 import EditModal from '@/shared/components/EditModal.vue';
-import { useUserStore } from '@/stores/user.store';
 
 describe('EditModal.vue', () => {
   const mountComponent = (props = {}) => {
     return mount(EditModal, {
-      global: {
-        plugins: [
-          createTestingPinia({
-            createSpy: vi.fn,
-            stubActions: false,
-          }),
-        ],
-      },
       props: {
         modelValue: true,
         title: 'Test Modal',
         initialName: 'Initial Name',
         placeHolder: 'Enter name',
-        userStore: useUserStore(), // We'll mock this or let pinia handle it
         ...props,
       },
     });
@@ -82,6 +77,34 @@ describe('EditModal.vue', () => {
       .trigger('click');
     expect(wrapper.emitted('save')).toBeTruthy();
     expect(wrapper.emitted('save')![0]).toEqual(['Initial Name', '31-12-24']);
+  });
+
+  it('labels the date input', () => {
+    const wrapper = mountComponent({ initialDate: '01-01-23' });
+    const dateInput = wrapper.get('[data-test="input-edit-date"]');
+    const label = wrapper.get(`label[for="${dateInput.attributes('id')}"]`);
+    expect(label.text()).toBe('Fecha');
+  });
+
+  it('can be cancelled by default', async () => {
+    const wrapper = mountComponent();
+    await wrapper.get('#cancel-button').trigger('click');
+    expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([false]);
+  });
+
+  it('cannot be cancelled or dismissed with Escape when canCancel is false', async () => {
+    const wrapper = mountComponent({ canCancel: false });
+    expect(wrapper.get('#cancel-button').attributes('disabled')).toBeDefined();
+
+    await wrapper.get('[role="dialog"]').trigger('keydown', { key: 'Escape' });
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined();
+  });
+
+  it('does not save an empty name', async () => {
+    const wrapper = mountComponent();
+    await wrapper.get('#input-edit-modal').setValue('   ');
+    await wrapper.get('#save-button').trigger('click');
+    expect(wrapper.emitted('save')).toBeUndefined();
   });
 
   it('handles invalid date structures gracefully in fromIsoDate', async () => {

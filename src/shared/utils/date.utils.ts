@@ -37,3 +37,23 @@ export function formatItemDate(date: Date): string {
   const month = String(date.getMonth() + 1).padStart(2, '0');
   return `${day}-${month}-${String(date.getFullYear()).slice(-2)}`;
 }
+
+/** The same date `amount` days later (or earlier when negative), at the same local time. */
+export function addDays(date: Date, amount: number): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + amount);
+  return next;
+}
+
+/** DD-MM-YY → YYYY-MM-DD, the value a native date input expects ('' when not a real date). */
+export function toIsoDate(ddmmyy: string): string {
+  const date = parseItemDate(ddmmyy);
+  return date ? toDayKey(date) : '';
+}
+
+/** YYYY-MM-DD from a native date input → stored DD-MM-YY ('' when empty or malformed). */
+export function fromIsoDate(iso: string): string {
+  const [year, month, day] = iso.split('-').map(Number);
+  if (!year || !month || !day) return '';
+  return formatItemDate(new Date(year, month - 1, day));
+}

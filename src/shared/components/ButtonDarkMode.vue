@@ -12,6 +12,8 @@
   import { computed } from 'vue';
   import { useDarkModeStore } from '@/stores/darkModeStore';
   import Tooltip from './Tooltip.vue';
+  import MoonIcon from '@/shared/icons/moon.svg?component';
+  import SunIcon from '@/shared/icons/sun.svg?component';
 
   const darkMode = useDarkModeStore();
   const label = computed(() =>
@@ -28,46 +30,20 @@
     >
       <template v-if="darkMode.isDarkMode">
         <!-- Moon icon -->
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
+        <MoonIcon
           class="w-5 h-5 stroke-amber-300 stroke-2"
-          aria-hidden="true"
           data-test="icon-moon"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M21.752 15.002A9.72 9.72 0 0 1 18 15.75c-5.385 0-9.75-4.365-9.75-9.75
-               0-1.33.266-2.597.748-3.752A9.753 9.753 0 0 0 3 11.25C3 16.635 7.365 21 12.75 21
-               a9.753 9.753 0 0 0 9.002-5.998Z"
-          />
-        </svg>
+          aria-hidden="true"
+        />
         <span class="sr-only">Dark mode enabled</span>
       </template>
       <template v-else>
         <!-- Sun icon -->
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
+        <SunIcon
           class="w-6 h-6 stroke-2 stroke-yellow-300"
-          aria-hidden="true"
           data-test="icon-sun"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591
-               M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636
-               M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z"
-          />
-        </svg>
+          aria-hidden="true"
+        />
         <span class="sr-only">Light mode enabled</span>
       </template>
     </button>

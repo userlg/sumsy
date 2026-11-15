@@ -4,7 +4,7 @@
  * @description Builds the GitHub-style activity calendar from item dates
  */
 
-import { parseItemDate, toDayKey } from '@/shared/utils/date.utils';
+import { addDays, parseItemDate, toDayKey } from '@/shared/utils/date.utils';
 
 export type ActivityLevel = 0 | 1 | 2 | 3 | 4;
 
@@ -59,12 +59,6 @@ export const LEVEL_RANGES = ['0', '1', '2–3', '4–6', '7+'] as const;
 /** Monday-first weekday index: Monday = 0 … Sunday = 6. */
 function weekdayIndex(date: Date): number {
   return (date.getDay() + 6) % 7;
-}
-
-function addDays(date: Date, amount: number): Date {
-  const next = new Date(date);
-  next.setDate(next.getDate() + amount);
-  return next;
 }
 
 /** Streak lengths in consecutive active days, counted over the visible days up to today. */

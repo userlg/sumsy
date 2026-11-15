@@ -4,11 +4,9 @@
  * @description Tests for the BaseTable component
  */
 
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { mount } from '@vue/test-utils';
-import { createTestingPinia } from '@pinia/testing';
 import BaseTable from '@/shared/components/BaseTable.vue';
-import { useUserStore } from '@/stores/user.store';
 import type { BaseItem } from '@/shared/interfaces/BaseItem';
 
 describe('BaseTable.vue', () => {
@@ -21,28 +19,18 @@ describe('BaseTable.vue', () => {
     }));
   }
 
-  const mountComponent = (props = {}) => {
-    const pinia = createTestingPinia({
-      createSpy: vi.fn,
-      stubActions: false,
-      initialState: { user: { name: 'Tester' } },
-    });
-    const userStore = useUserStore(pinia);
-
-    return mount(BaseTable, {
-      global: { plugins: [pinia] },
+  const mountComponent = (props = {}) =>
+    mount(BaseTable, {
       props: {
         items: createItems(3),
         titleModalView: 'Detalles',
         isReversed: false,
-        userStore,
         message: 'No hay items.',
         itemName: 'resumen',
         itemNamePlural: 'resúmenes',
         ...props,
       },
     });
-  };
 
   it('renders items in the table', () => {
     const wrapper = mountComponent();
@@ -91,12 +79,12 @@ describe('BaseTable.vue', () => {
     expect(wrapper.emitted('reverse')).toBeTruthy();
   });
 
-  it('emits deleteSummary when delete button is clicked', async () => {
+  it('emits deleteItem when delete button is clicked', async () => {
     const wrapper = mountComponent();
     const deleteBtn = wrapper.findAll('button[aria-label^="Borrar:"]')[0];
     await deleteBtn.trigger('click');
-    expect(wrapper.emitted('deleteSummary')).toBeTruthy();
-    expect(wrapper.emitted('deleteSummary')![0]).toEqual([1]);
+    expect(wrapper.emitted('deleteItem')).toBeTruthy();
+    expect(wrapper.emitted('deleteItem')![0]).toEqual([1]);
   });
 
   it('shows pagination when items exceed 20', () => {
@@ -174,8 +162,8 @@ describe('BaseTable.vue', () => {
       // Test save
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
       editModal.vm.$emit('save', 'New Name', '15-05-25');
-      expect(wrapper.emitted('editSummary')).toBeTruthy();
-      expect(wrapper.emitted('editSummary')![0]).toEqual([1, 'New Name', '15-05-25']);
+      expect(wrapper.emitted('editItem')).toBeTruthy();
+      expect(wrapper.emitted('editItem')![0]).toEqual([1, 'New Name', '15-05-25']);
 
       // Test close
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call

@@ -128,16 +128,6 @@ describe('Base Store', () => {
     });
   });
 
-  describe('formatDate()', () => {
-    it('formats a date as DD-MM-YY', () => {
-      const fixedDate = new Date(2025, 0, 15); // Year 2025, Month 0 (Jan), Day 15
-      const formatted = store.formatDate(fixedDate);
-
-      // Verify the output matches DD-MM-YY
-      expect(formatted).toBe('15-01-25');
-    });
-  });
-
   describe('seed()', () => {
     it('populates the list with dummy data', () => {
       store.seed(5, 'Test Item');
@@ -247,6 +237,36 @@ describe('Base Store', () => {
 
       expect(names()).toEqual(['A', 'B']);
       expect(store.isReversed).toBe(true);
+    });
+  });
+
+  describe('importItems()', () => {
+    it('adds new items and updates the ones with the same id, in date order', () => {
+      store.addMany([
+        { name: 'Kept', date: '01-11-26' },
+        { name: 'Old name', date: '03-11-26' },
+      ]);
+      const oldId = store.list[1].id;
+
+      store.importItems([
+        { id: oldId, name: 'New name', date: '03-11-26', element: 1 },
+        { id: 10, name: 'Imported', date: '02-11-26', element: 1 },
+      ]);
+
+      expect(store.list.map((i) => i.name)).toEqual(['Kept', 'Imported', 'New name']);
+      expect(store.list.map((i) => i.element)).toEqual([1, 2, 3]);
+    });
+
+    it('continues ids after the highest one, so new items never collide', () => {
+      store.importItems([{ id: 10, name: 'Imported', date: '02-11-26', element: 1 }]);
+      store.create('Next');
+      expect(store.list.find((i) => i.name === 'Next')!.id).toBe(11);
+    });
+
+    it('does nothing with an empty list', () => {
+      store.create('A');
+      store.importItems([]);
+      expect(store.list).toHaveLength(1);
     });
   });
 });
