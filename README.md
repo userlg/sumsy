@@ -1,12 +1,24 @@
-# Sumsy
+# Sumsy: desktop tracker for daily work cases and summaries
 
+[![Latest release](https://img.shields.io/github/v/release/userlg/sumsy?style=for-the-badge)](https://github.com/userlg/sumsy/releases/latest)
+[![Windows](https://img.shields.io/badge/Windows-x64-0078d4?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/userlg/sumsy/releases/latest)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE.md)
 ![Vue 3](https://img.shields.io/badge/Vue-3.5-brightgreen?style=for-the-badge&logo=vuedotjs&logoColor=white)
 ![Tauri 2](https://img.shields.io/badge/Tauri-2.0-ffc131?style=for-the-badge&logo=tauri&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-7-purple?style=for-the-badge&logo=vite&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/Tailwind-4.0-38bdf8?style=for-the-badge&logo=tailwindcss&logoColor=white)
 
-**Sumsy** is a modern, high-performance desktop application designed to manage case data and summaries efficiently. Built with the latest web technologies, it offers a seamless native experience powered by Tauri and the reactive speed of Vue 3.
+**Sumsy** is a free, open-source desktop app for logging the cases and summaries you work on each day, counting them, and reporting them by month. It runs offline on Windows, keeps your data on your computer, and shows your activity in a calendar heatmap and charts. Built with Tauri 2 (Rust), Vue 3, TypeScript and Tailwind CSS.
+
+The interface is in Spanish.
+
+## ⬇️ Download
+
+Get the installer from the [latest release](https://github.com/userlg/sumsy/releases/latest):
+
+- `Sumsy_x.y.z_x64-setup.exe`: Windows installer
+- `Sumsy_x.y.z_x64_en-US.msi`: MSI package
 
 ![Sumsy Screenshot](./screenshots/1.png)
 
@@ -15,14 +27,15 @@
 - **Blazing Fast**: Powered by Tauri's Rust backend for minimal resource usage.
 - **Modern UI**: Polished interface with glassmorphism, dark mode, a subtle dot-grid background and smooth transitions.
 - **Minimalist Architecture**: Clean, centered layouts with a dedicated sidebar for all actions, maintaining visual simplicity.
-- **Data Management**: Add, edit, sort (with animated reordering) and delete cases and summaries.
-- **Extra Cases**: Check "Extra" when adding a case, or toggle the star on any row. Filter by all, normal or extra cases; older cases count as normal.
+- **Data Management**: Add, edit, search and delete cases and summaries. Lists are ordered by date (ascending or descending), so an item added or edited with an earlier date moves into place.
+- **Extra Cases**: Check "Extra" when adding a case, or toggle the star on any row. Separate counters for normal and extra cases, and a filter for all, normal or extra.
 - **Statistics**:
   - **Activity calendar**: a GitHub-style heatmap of the last year whose cells get deeper with more items per day, with streaks, filters (summaries, cases, extras) and keyboard navigation.
   - **All-time share**: a doughnut chart with the percentage of summaries, cases and extra cases.
   - **Evolution**: bar charts for the last 7, 30 or 90 days, or 12 months grouped by week; extra cases are stacked on top of normal ones.
 - **Monthly Export**: Exports the current month by default (JSON or TXT report; the report lists extra cases in their own section). You can pick a past month (year above, month name below) or make a full backup.
-- **Safe Import**: Imported JSON files are merged by id and malformed items are skipped.
+- **Safe Import**: Imported JSON files are merged by id, malformed items are skipped, and the result counts summaries, cases and extras.
+- **Accessible**: Keyboard tooltips on icon buttons, and dialogs that trap focus, close with Escape and return focus where it was.
 - **Motion with care**: Directional view transitions, scroll reveal and a "back to top" button, all respecting `prefers-reduced-motion`.
 - **Desktop Native**: Works offline with native operating system integration.
 
@@ -83,20 +96,20 @@ In development mode (`yarn tauri dev`), the sidebar shows a **Dev** section that
 
 ```bash
 src/
-├── assets/      # Static assets (images, fonts)
-├── components/  # Local components
 ├── logic/       # Pure business logic (activity, charts, export, demo data)
-├── modules/     # Feature-based architecture
-├── pages/       # Vue Router views
-├── scripts/     # Utility scripts
-├── shared/      # Shared components, styles, and utilities
-│   ├── components/  # Reusable UI components (NavBar, ActivityHeatmap, ShareDonut, etc.)
-│   ├── composables/ # Shared composition functions (useScrollY)
+├── modules/     # Feature modules: cases and summaries (view + store)
+├── pages/       # Home and statistics pages
+├── router/      # Routes and scroll behavior
+├── scripts/     # Utility scripts (reset app data)
+├── shared/      # Shared building blocks
+│   ├── components/  # BaseModal, BaseTable, AddItemForm, Tooltip, charts, heatmap...
+│   ├── composables/ # useDataTransfer (export/import), useNotify, useScrollY
 │   ├── directives/  # Custom directives (v-reveal)
+│   ├── icons/       # SVG icons, imported as components
 │   ├── stores/      # Base list store shared by cases and summaries
 │   ├── styles/      # Global styles, tokens and transitions (Tailwind)
-│   └── utils/       # Helpers (date parsing and formatting)
-├── stores/      # Pinia state stores
+│   └── utils/       # Date and case helpers
+├── stores/      # User and dark mode stores
 ├── App.vue      # Root component
 └── main.ts      # Application entry point
 ```
