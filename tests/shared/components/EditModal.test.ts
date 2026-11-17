@@ -92,11 +92,14 @@ describe('EditModal.vue', () => {
     expect(wrapper.emitted('update:modelValue')?.[0]).toEqual([false]);
   });
 
-  it('cannot be cancelled or dismissed with Escape when canCancel is false', async () => {
+  it('cannot be cancelled or dismissed with Escape when canCancel is false', () => {
     const wrapper = mountComponent({ canCancel: false });
     expect(wrapper.get('#cancel-button').attributes('disabled')).toBeDefined();
 
-    await wrapper.get('[role="dialog"]').trigger('keydown', { key: 'Escape' });
+    // Escape reaches a native <dialog> as a cancelable 'cancel' event.
+    const escape = new Event('cancel', { cancelable: true });
+    wrapper.get('dialog').element.dispatchEvent(escape);
+    expect(escape.defaultPrevented).toBe(true);
     expect(wrapper.emitted('update:modelValue')).toBeUndefined();
   });
 

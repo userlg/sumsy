@@ -57,8 +57,8 @@ describe('NotifyModal.vue', () => {
 
   it('emits update:modelValue(false) when clicking overlay background', async () => {
     const wrapper = mountComponent();
-    // The backdrop is BaseModal's outer layer; only a click on it (not the panel) closes.
-    const overlay = wrapper.get('.fixed.inset-0');
+    // A click whose target is the <dialog> itself landed on the backdrop (not the panel).
+    const overlay = wrapper.get('dialog');
     await overlay.trigger('click');
 
     expect(wrapper.emitted('update:modelValue')).toBeTruthy();

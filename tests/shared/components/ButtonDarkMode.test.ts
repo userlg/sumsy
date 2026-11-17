@@ -20,7 +20,7 @@ describe('ButtonDarkMode.vue', () => {
     darkModeStore.darkIsActive = true;
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.text()).toContain('Dark mode enabled');
+    expect(wrapper.text()).toContain('Modo oscuro activado');
 
     expect(wrapper.find('svg.stroke-amber-300').exists()).toBe(true); // Moon
     expect(wrapper.find('svg.stroke-yellow-300').exists()).toBe(false); // Sun
@@ -36,7 +36,7 @@ describe('ButtonDarkMode.vue', () => {
     darkModeStore.darkIsActive = false;
     await wrapper.vm.$nextTick();
 
-    expect(wrapper.text()).toContain('Light mode enabled');
+    expect(wrapper.text()).toContain('Modo claro activado');
     expect(wrapper.find('svg.stroke-yellow-300').exists()).toBe(true); // Sun
     expect(wrapper.find('svg.stroke-amber-300').exists()).toBe(false); // Moon
   });

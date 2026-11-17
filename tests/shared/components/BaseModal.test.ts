@@ -1,7 +1,7 @@
 /**
  * @file BaseModal.test.ts
  * @namespace tests.shared.components
- * @description Tests for the dialog shell: naming, closing and focus handling
+ * @description Tests for the dialog shell: naming and closing rules (focus is the browser's job)
  */
 
 import { describe, it, expect, afterEach } from 'vitest';
@@ -30,83 +30,75 @@ describe('BaseModal.vue', () => {
     return wrapper;
   };
 
-  const dialog = (w: VueWrapper) => w.get('[role="dialog"]');
+  const dialog = (w: VueWrapper) => w.get('dialog');
 
-  it('is a modal dialog named by its title', () => {
+  it('is a native modal dialog named by its title', async () => {
     const w = mountModal();
-    const titleId = dialog(w).attributes('aria-labelledby');
-    expect(dialog(w).attributes('aria-modal')).toBe('true');
-    expect(w.get(`#${titleId}`).text()).toBe('Título');
+    await flushPromises();
+    const element = dialog(w).element as HTMLDialogElement;
+    expect(element.open).toBe(true);
+    expect(w.get(`#${dialog(w).attributes('aria-labelledby')}`).text()).toBe('Título');
   });
 
-  it('renders nothing while closed', () => {
+  it('renders no content while closed', () => {
     const w = mountModal({ modelValue: false });
-    expect(w.find('[role="dialog"]').exists()).toBe(false);
+    expect((dialog(w).element as HTMLDialogElement).open).toBe(false);
+    expect(w.find('[data-test="first"]').exists()).toBe(false);
   });
 
-  it('closes with Escape', async () => {
+  it('keeps v-model in step when the browser closes it (Escape, closedby)', async () => {
     const w = mountModal();
-    await dialog(w).trigger('keydown', { key: 'Escape' });
+    await dialog(w).trigger('close');
     expect(w.emitted('update:modelValue')).toEqual([[false]]);
   });
 
-  it('ignores Escape and the backdrop when not dismissible', async () => {
+  it('lets Escape through only when dismissible', () => {
+    const cancel = () => new Event('cancel', { cancelable: true });
+
+    const open = mountModal();
+    const allowed = cancel();
+    dialog(open).element.dispatchEvent(allowed);
+    expect(allowed.defaultPrevented).toBe(false);
+    open.unmount();
+
+    const locked = mountModal({ dismissible: false });
+    const blocked = cancel();
+    dialog(locked).element.dispatchEvent(blocked);
+    expect(blocked.defaultPrevented).toBe(true);
+  });
+
+  it('tells the browser how it may close', () => {
+    expect(dialog(mountModal()).attributes('closedby')).toBe('closerequest');
+    wrapper?.unmount();
+    expect(dialog(mountModal({ closeOnBackdrop: true })).attributes('closedby')).toBe('any');
+    wrapper?.unmount();
+    expect(
+      dialog(mountModal({ dismissible: false, closeOnBackdrop: true })).attributes('closedby')
+    ).toBe('none');
+  });
+
+  it('ignores the backdrop when not dismissible', async () => {
     const w = mountModal({ dismissible: false, closeOnBackdrop: true });
-    await dialog(w).trigger('keydown', { key: 'Escape' });
-    await w.get('.fixed.inset-0').trigger('click');
+    await dialog(w).trigger('click');
     expect(w.emitted('update:modelValue')).toBeUndefined();
   });
 
   it('closes on a backdrop click only when closeOnBackdrop is set', async () => {
     const kept = mountModal();
-    await kept.get('.fixed.inset-0').trigger('click');
+    await dialog(kept).trigger('click');
     expect(kept.emitted('update:modelValue')).toBeUndefined();
     kept.unmount();
 
+    // A click whose target is the <dialog> itself landed on the backdrop.
     const closed = mountModal({ closeOnBackdrop: true });
-    await closed.get('.fixed.inset-0').trigger('click');
+    await dialog(closed).trigger('click');
     expect(closed.emitted('update:modelValue')).toEqual([[false]]);
   });
 
-  it('does not close when the panel itself is clicked', async () => {
+  it('does not close when the content is clicked', async () => {
     const w = mountModal({ closeOnBackdrop: true });
-    await dialog(w).trigger('click');
+    await w.get('[data-test="first"]').trigger('click');
     expect(w.emitted('update:modelValue')).toBeUndefined();
-  });
-
-  it('moves focus to the first control when it opens', async () => {
-    const w = mountModal();
-    await flushPromises();
-    expect(document.activeElement).toBe(w.get('[data-test="first"]').element);
-  });
-
-  it('wraps Tab from the last control to the first and Shift+Tab back', async () => {
-    const w = mountModal();
-    await flushPromises();
-    const first = w.get('[data-test="first"]').element as HTMLElement;
-    const last = w.get('[data-test="last"]').element as HTMLElement;
-
-    last.focus();
-    await dialog(w).trigger('keydown', { key: 'Tab' });
-    expect(document.activeElement).toBe(first);
-
-    await dialog(w).trigger('keydown', { key: 'Tab', shiftKey: true });
-    expect(document.activeElement).toBe(last);
-  });
-
-  it('returns focus to the control that opened it', async () => {
-    const opener = document.createElement('button');
-    document.body.appendChild(opener);
-    opener.focus();
-
-    const w = mountModal({ modelValue: false });
-    await w.setProps({ modelValue: true });
-    await flushPromises();
-    expect(document.activeElement).not.toBe(opener);
-
-    await w.setProps({ modelValue: false });
-    await flushPromises();
-    expect(document.activeElement).toBe(opener);
   });
 
   it('applies the size width', () => {

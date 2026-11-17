@@ -20,7 +20,28 @@ Get the installer from the [latest release](https://github.com/userlg/sumsy/rele
 - `Sumsy_x.y.z_x64-setup.exe`: Windows installer
 - `Sumsy_x.y.z_x64_en-US.msi`: MSI package
 
-![Sumsy Screenshot](./screenshots/1.png)
+## 📸 Screenshots
+
+![Sumsy statistics in dark mode: a GitHub-style activity heatmap of the last year with streaks, and the all-time share of summaries, cases and extras](./screenshots/statistics-dark.png)
+
+<table>
+  <tr>
+    <td><img src="./screenshots/cases-light.png" alt="Cases list in light mode with counters for cases and extras, search, filter and ASC/DESC order" /></td>
+    <td><img src="./screenshots/summaries-dark.png" alt="Summaries list in dark mode with the add form, search and order controls" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Cases, with extra cases marked by a star</sub></td>
+    <td align="center"><sub>Summaries, in dark mode</sub></td>
+  </tr>
+  <tr>
+    <td><img src="./screenshots/statistics-light.png" alt="Statistics in light mode: activity heatmap and all-time share" /></td>
+    <td><img src="./screenshots/case-details-light.png" alt="Case details dialog over a blurred backdrop" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Statistics, in light mode</sub></td>
+    <td align="center"><sub>Case details in a native modal dialog</sub></td>
+  </tr>
+</table>
 
 ## ✨ Features
 
@@ -35,7 +56,7 @@ Get the installer from the [latest release](https://github.com/userlg/sumsy/rele
   - **Evolution**: bar charts for the last 7, 30 or 90 days, or 12 months grouped by week; extra cases are stacked on top of normal ones.
 - **Monthly Export**: Exports the current month by default (JSON or TXT report; the report lists extra cases in their own section). You can pick a past month (year above, month name below) or make a full backup.
 - **Safe Import**: Imported JSON files are merged by id, malformed items are skipped, and the result counts summaries, cases and extras.
-- **Accessible**: Keyboard tooltips on icon buttons, and dialogs that trap focus, close with Escape and return focus where it was.
+- **Accessible**: Keyboard tooltips on icon buttons, native modal dialogs (`<dialog>`: focus kept inside, Escape to close, focus returned to where it was), and a single screen-reader announcement when the list order changes.
 - **Motion with care**: Directional view transitions, scroll reveal and a "back to top" button, all respecting `prefers-reduced-motion`.
 - **Desktop Native**: Works offline with native operating system integration.
 
@@ -49,7 +70,7 @@ In development mode (`yarn tauri dev`), the sidebar shows a **Dev** section that
 
 ## 🛠 Tech Stack
 
-- **Core**: [Tauri 2](https://tauri.app/) (Rust + WebView)
+- **Core**: [Tauri 2](https://tauri.app/) (Rust + WebView2; needs a current WebView2 runtime, Chromium 121 or later, which Windows 10 and 11 keep up to date)
 - **Frontend**: [Vue 3](https://vuejs.org/) (Composition API)
 - **Styling**: [TailwindCSS 4](https://tailwindcss.com/) + Glassmorphism
 - **State Management**: [Pinia](https://pinia.vuejs.org/) (with persistence)

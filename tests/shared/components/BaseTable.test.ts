@@ -79,6 +79,19 @@ describe('BaseTable.vue', () => {
     expect(wrapper.emitted('reverse')).toBeTruthy();
   });
 
+  it('announces the new order once, only after the user flips it', async () => {
+    const wrapper = mountComponent();
+    const status = wrapper.get('[data-test="sort-status"]');
+    expect(status.attributes('role')).toBe('status');
+    expect(status.text()).toBe('');
+
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text() === 'ASC')!
+      .trigger('click');
+    expect(status.text()).toBe('Más recientes primero, 3 resúmenes');
+  });
+
   it('emits deleteItem when delete button is clicked', async () => {
     const wrapper = mountComponent();
     const deleteBtn = wrapper.findAll('button[aria-label^="Borrar:"]')[0];

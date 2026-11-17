@@ -107,8 +107,14 @@
     tempDate.value = '';
   }
 
+  /** Read once by screen readers after the user flips the order (not on every moved row). */
+  const sortStatus = ref('');
+
   function onReverse() {
+    const newestFirst = !props.isReversed;
     emit('reverse');
+    const order = newestFirst ? 'Más recientes primero' : 'Más antiguos primero';
+    sortStatus.value = `${order}, ${filteredItems.value.length} ${props.itemNamePlural}`;
   }
 
   function confirmClear() {
@@ -186,6 +192,7 @@
             {{ isReversed ? 'DESC' : 'ASC' }}
           </button>
         </Tooltip>
+        <p role="status" class="sr-only" data-test="sort-status">{{ sortStatus }}</p>
 
         <button
           class="flex-1 sm:flex-none bg-red-500/10 hover:bg-red-500 text-red-600 dark:text-red-400 hover:text-white font-medium px-4 py-2.5 rounded-xl transition-all border border-red-200 dark:border-red-900/50 hover:border-red-500 focus:ring-2 focus:ring-red-400"

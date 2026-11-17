@@ -1,11 +1,24 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="es" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
     <title>Sumsy</title>
+    <!-- Theme before the first paint (classic script, so it blocks): no light flash in dark mode -->
+    <script>
+      {
+        const isDark =
+          localStorage.theme === 'dark' ||
+          (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', isDark);
+        document
+          .querySelector('meta[name="color-scheme"]')
+          .setAttribute('content', isDark ? 'dark' : 'light');
+      }
+    </script>
     <style>
       body {
         margin: 0;
@@ -25,6 +38,14 @@
         transition: opacity 0.3s ease;
       }
 
+      :root {
+        color-scheme: light;
+      }
+
+      :root.dark {
+        color-scheme: dark;
+      }
+
       .spinner {
         width: 60px;
         height: 60px;
@@ -32,9 +53,6 @@
         border-top: 4px solid #4aa3c9;
         border-right: 4px solid #0e84bb;
         border-radius: 50%;
-        animation:
-          spin 0.9s linear infinite,
-          fade 2s ease-in-out infinite;
       }
 
       .dark body,
@@ -68,7 +86,19 @@
         font-weight: 700;
         letter-spacing: 0.5px;
         color: #0f172a;
-        animation: blink 1.5s ease-in-out infinite;
+      }
+
+      /* Motion only when the user has not asked for less; otherwise a still ring and text */
+      @media (prefers-reduced-motion: no-preference) {
+        .spinner {
+          animation:
+            spin 0.9s linear infinite,
+            fade 2s ease-in-out infinite;
+        }
+
+        .loading-text {
+          animation: blink 1.5s ease-in-out infinite;
+        }
       }
 
       @keyframes blink {
@@ -93,15 +123,6 @@
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
     <script>
-      if (
-        localStorage.theme === 'dark' ||
-        (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-      ) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-
       //Finish loader animation
       window.onload = () => {
         const loader = document.getElementById('loader');

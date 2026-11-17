@@ -35,7 +35,7 @@
           data-test="icon-moon"
           aria-hidden="true"
         />
-        <span class="sr-only">Dark mode enabled</span>
+        <span class="sr-only">Modo oscuro activado</span>
       </template>
       <template v-else>
         <!-- Sun icon -->
@@ -44,7 +44,7 @@
           data-test="icon-sun"
           aria-hidden="true"
         />
-        <span class="sr-only">Light mode enabled</span>
+        <span class="sr-only">Modo claro activado</span>
       </template>
     </button>
   </Tooltip>

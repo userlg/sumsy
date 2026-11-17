@@ -2,15 +2,19 @@
   /**
    * @file BaseModal.vue
    * @namespace src.shared.components
-   * @description Dialog shell shared by every modal: overlay, title, focus handling and closing
+   * @description Dialog shell shared by every modal: native <dialog>, title and closing rules
    *
-   * Follows the WAI-ARIA modal dialog pattern:
-   * - `role="dialog"`, `aria-modal="true"`, named by its title;
-   * - on open, focus moves to the first control (or one marked `autofocus`); Tab and Shift+Tab
-   *   stay inside the dialog; on close, focus returns to the control that opened it;
-   * - Escape closes it, and so does a click on the backdrop when `closeOnBackdrop` is set,
-   *   unless `dismissible` is false (e.g. the first-run name prompt);
-   * - teleported to <body>, so no parent's overflow or transform can clip or shift it.
+   * Built on the native modal <dialog> (`showModal()`), so the browser provides what a custom
+   * overlay has to rebuild by hand: the top layer, an inert page behind it, focus kept inside,
+   * focus moved to the first control (or one marked `autofocus`) and returned to the opener
+   * on close, and Escape to close.
+   *
+   * - `dismissible: false` (e.g. the first-run name prompt): Escape does nothing; only the
+   *   modal's own buttons close it.
+   * - `closeOnBackdrop`: a click outside the panel closes it, for dialogs that only show
+   *   something; forms keep their input on a stray click.
+   *
+   * The content is only rendered while open, so a closed modal leaves nothing behind.
    *
    * Slots: default (body), `footer` (buttons, right-aligned), `header` (replaces the title;
    * receives `titleId`, which the custom heading must use as its id).
@@ -23,7 +27,7 @@
    * </BaseModal>
    */
 
-  import { nextTick, ref, useId, watch } from 'vue';
+  import { computed, onMounted, ref, useId, watch } from 'vue';
 
   const open = defineModel<boolean>({ required: true });
 
@@ -40,100 +44,75 @@
   );
 
   const WIDTHS = { sm: 'max-w-sm', md: 'max-w-md', xl: 'max-w-xl' } as const;
-  const FOCUSABLE =
-    'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
   const titleId = `modal-title-${useId()}`;
-  const panel = ref<HTMLElement | null>(null);
-  let opener: HTMLElement | null = null;
+  const dialog = ref<HTMLDialogElement | null>(null);
 
-  function close(): void {
-    if (props.dismissible) open.value = false;
+  /**
+   * How the browser may close it (Chromium 134+). Older WebView2 versions ignore the
+   * attribute; `onCancel` and `onClick` below give the same behavior there.
+   */
+  const closedBy = computed(() => {
+    if (!props.dismissible) return 'none';
+    return props.closeOnBackdrop ? 'any' : 'closerequest';
+  });
+
+  function sync(isOpen: boolean): void {
+    const element = dialog.value;
+    if (!element) return;
+    if (isOpen && !element.open) element.showModal();
+    else if (!isOpen && element.open) element.close();
   }
 
-  function onBackdropClick(): void {
-    if (props.closeOnBackdrop) close();
+  // 'post': the content (v-if) is in the DOM before showModal() picks what to focus.
+  watch(open, sync, { flush: 'post' });
+  onMounted(() => sync(open.value));
+
+  /** Fires however it closed (Escape, backdrop, a button): keep v-model in step. */
+  function onClose(): void {
+    open.value = false;
   }
 
-  function focusables(): HTMLElement[] {
-    return panel.value ? [...panel.value.querySelectorAll<HTMLElement>(FOCUSABLE)] : [];
+  /** Escape asks to close; a modal that needs an answer says no. */
+  function onCancel(event: Event): void {
+    if (!props.dismissible) event.preventDefault();
   }
 
-  function onKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Escape') {
-      event.stopPropagation();
-      close();
-      return;
-    }
-    if (event.key !== 'Tab') return;
-
-    // Keep Tab inside the dialog: wrap from the last control to the first and back.
-    const items = focusables();
-    if (items.length === 0) {
-      event.preventDefault();
-      return;
-    }
-    const first = items[0];
-    const last = items[items.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
+  /**
+   * The dialog has no padding and the panel fills it, so a click whose target is the
+   * <dialog> itself landed on the backdrop.
+   */
+  function onClick(event: MouseEvent): void {
+    if (event.target !== dialog.value) return;
+    if (props.closeOnBackdrop && props.dismissible) open.value = false;
   }
-
-  watch(
-    open,
-    async (isOpen) => {
-      if (isOpen) {
-        opener = document.activeElement as HTMLElement | null;
-        await nextTick();
-        const preferred = panel.value?.querySelector<HTMLElement>('[autofocus]');
-        (preferred ?? focusables()[0] ?? panel.value)?.focus();
-      } else {
-        opener?.focus?.();
-        opener = null;
-      }
-    },
-    { immediate: true }
-  );
 </script>
 
 <template>
-  <Teleport to="body">
-    <Transition name="pop">
-      <div
-        v-if="open"
-        class="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-sm bg-black/40"
-        @click.self="onBackdropClick"
-      >
-        <div
-          ref="panel"
-          role="dialog"
-          aria-modal="true"
-          :aria-labelledby="titleId"
-          tabindex="-1"
-          :class="[
-            'w-full rounded-2xl border border-slate-200 bg-white p-6 shadow-xl focus:outline-none dark:border-slate-700 dark:bg-slate-800',
-            WIDTHS[size],
-          ]"
-          @keydown="onKeydown"
-        >
-          <slot name="header" :title-id="titleId">
-            <h2 :id="titleId" class="mb-4 text-xl font-bold text-slate-800 dark:text-white">
-              {{ title }}
-            </h2>
-          </slot>
+  <dialog
+    ref="dialog"
+    v-bind="{ closedby: closedBy }"
+    :aria-labelledby="titleId"
+    :class="[
+      'base-modal m-auto w-[calc(100%-2rem)] rounded-2xl border border-slate-200 bg-white p-0 text-inherit shadow-xl dark:border-slate-700 dark:bg-slate-800',
+      WIDTHS[size],
+    ]"
+    @close="onClose"
+    @cancel="onCancel"
+    @click="onClick"
+  >
+    <div v-if="open" class="p-6">
+      <slot name="header" :title-id="titleId">
+        <h2 :id="titleId" class="mb-4 text-xl font-bold text-slate-800 dark:text-white">
+          {{ title }}
+        </h2>
+      </slot>
 
-          <slot />
+      <slot />
 
-          <div v-if="$slots.footer" class="mt-6 flex justify-end gap-2">
-            <slot name="footer" />
-          </div>
-        </div>
+      <div v-if="$slots.footer" class="mt-6 flex justify-end gap-2">
+        <slot name="footer" />
       </div>
-    </Transition>
-  </Teleport>
+    </div>
+  </dialog>
 </template>

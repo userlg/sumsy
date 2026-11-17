@@ -18,6 +18,10 @@ export const useDarkModeStore = defineStore('darkMode', {
       this.darkIsActive = isDark;
       localStorage.theme = isDark ? 'dark' : 'light';
       document.documentElement.classList.toggle('dark', isDark);
+      // Native UI painted before the CSS loads (and the CSS itself) follows the chosen theme.
+      document
+        .querySelector('meta[name="color-scheme"]')
+        ?.setAttribute('content', isDark ? 'dark' : 'light');
     },
 
     toggleDarkMode(): void {

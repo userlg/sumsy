@@ -1,18 +1,33 @@
-/* Modals: grow from almost full size, never from nothing; leave faster than they enter */
-.pop-enter-active {
-  transition:
-    opacity 220ms var(--ease-out),
-    transform 220ms var(--ease-out);
+/* Modals (BaseModal.vue, native <dialog>): grow from almost full size, never from nothing.
+   Closing is instant (the content leaves with the dialog). Motion only when the user has not
+   asked for less. */
+dialog.base-modal:modal {
+  overscroll-behavior: contain;
 }
-.pop-leave-active {
-  transition:
-    opacity 150ms ease,
-    transform 150ms ease;
+dialog.base-modal::backdrop {
+  background-color: rgb(0 0 0 / 0.4);
+  backdrop-filter: blur(4px);
+  overflow: hidden;
+  overscroll-behavior: contain;
 }
-.pop-enter-from,
-.pop-leave-to {
-  opacity: 0;
-  transform: scale(0.95);
+@media (prefers-reduced-motion: no-preference) {
+  dialog.base-modal[open] {
+    transition:
+      opacity 220ms var(--ease-out),
+      scale 220ms var(--ease-out);
+
+    @starting-style {
+      opacity: 0;
+      scale: 0.95;
+    }
+  }
+  dialog.base-modal[open]::backdrop {
+    transition: opacity 220ms ease;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
 }
 
 /* Table rows (BaseTable.vue).
@@ -142,9 +157,7 @@
   .row-move,
   .reveal,
   .swap-enter-active,
-  .swap-leave-active,
-  .pop-enter-active,
-  .pop-leave-active {
+  .swap-leave-active {
     transition: none;
   }
 
